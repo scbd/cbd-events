@@ -1,0 +1,38 @@
+{
+  "name": "cbd-events",
+  "version": "1.0.0",
+  "description": "kronos-web",
+  "author": "",
+  "private": true,
+  "scripts": {
+    "dev": "rm -rf .nuxt && nuxt",
+    "build": "rm -rf .nuxt && nuxt build",
+    "start": "nuxt start",
+    "generate": "rm -rf .nuxt && nuxt generate",
+    "cordova": "rm -rf .nuxt && nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
+    "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "@nuxtjs/auth": "^4.5.1",
+    "@nuxtjs/axios": "^5.3.1",
+    "@nuxtjs/proxy": "^1.2.4",
+    "@nuxtjs/pwa": "^2.5.0",
+    "@scbd/ecosystem-icons": "0.0.4",
+    "@scbd/ecosystem-style": "^0.0.4",
+    "add": "^2.0.6",
+    "nuxt": "npm:nuxt-edge",
+    "nuxt-i18n": "^5.2.1",
+    "vue-cordova": "^0.1.2",
+    "yarn": "^1.9.4"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.15.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^2.1.0",
+    "eslint-plugin-vue": "^4.0.0",
+    "replace": "^1.0.0"
+  }
+}

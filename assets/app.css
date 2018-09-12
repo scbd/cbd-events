@@ -1,0 +1,19 @@
+import '@scbd/ecosystem-style/layouts/base/build.min.css'
+import '@scbd/ecosystem-style/layouts/container/build.min.css'
+import '@scbd/ecosystem-style/elements/typography/headings/build.css'
+import '@scbd/ecosystem-style/modifiers/helpers/build.min.css'
+import '@scbd/ecosystem-style/modifiers/text/build.min.css'
+import '@scbd/ecosystem-style/layouts/grid/build.min.css'
+import '@scbd/ecosystem-style/modifiers/responsive/build.min.css'
+
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+{
+  transform: translatey(-35px);
+  opacity: 0;
+}
