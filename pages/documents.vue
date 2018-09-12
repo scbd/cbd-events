@@ -1,25 +1,30 @@
 <template>
   <div class="container-fluid debug">
-        <iframe class="docs-frame" src="https://www.cbd.int/conferences/2018/cop-14/documents"></iframe>
+        <iframe class="docs-frame" ref="docFrame" src="http://localhost:2000/conferences/2018/cop-13/documents?viewOnly"></iframe>
   </div>
 </template>
 
 <script>
   export default {
     components: {},
-    async asyncData ({store,params,route}) {
-  console.log('docs asyncData')
-    },
     watchQuery: ['state'],
-    mounted(){
-            console.log('docs mounted')
-      // this.$router.push({
-      //   path: `${this.$router.currentRoute.path}`
-      // })this.$store.dispatch('conferences/get')
-      // let {conference} =  this.$router.params
-// this.$store.dispatch('requests/get',{conference:'2018',requestType:'media',requestType:this.$route.query.state})
+    mounted() {
+
+      if(!window) return;
+    
+      window.addEventListener('message', receiveMessage)
+
+    },
+  beforeDestroy () {
+      window.removeEventListener('message', receiveMessage)
     }
   }
+
+  function receiveMessage(event)
+  {
+    let message = JSON.parse(event.data);
+    console.log(message)
+  }  
 </script>
 
 <style>
@@ -27,6 +32,7 @@
 .docs-frame{
   width:100%;
   height:95vh;
+  margin-top:24px
 }
 .subtitle {
   font-weight: 300;
