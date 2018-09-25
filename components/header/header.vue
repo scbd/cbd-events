@@ -2,35 +2,18 @@
 <section>
   <transition name="slide-fade">
     <nav v-if="show" class="mainn navbar  navbar-default">
+
       <div class="container-fluid ">
-        <span href="http://www.cbd.int" class="hidden-md hidden-lg pull-left">
+
+        <span class="pull-left">
           <img src="https://attachments.cbd.int/cbd-leaf-green.svg" class="header-nav-img" />
-          <span class="brand">CBD</span>
+          <!-- <span class="brand">CBD</span> -->
         </span>
-        <!-- <div id="CBD-Branding" class="debug">
-          <div class="navbar-header">
-            <span class="hidden-xs hidden-sm ">
-              <i class="eco-menu"></i>
-              <img src="https://attachments.cbd.int/cbd-leaf-green.svg" class="header-nav-img" />
-              <span class="brand">Convention on Biological Diversity</span>
-            </span>
 
-            <span href="http://www.cbd.int" class="hidden-md hidden-lg pull-left">
-              <img src="https://attachments.cbd.int/cbd-leaf-green.svg" class="header-nav-img" />
-              <span class="brand">CBD</span>
-            </span>
-          </div>
-
-          <ul v-if="false" class="hidden-xs hidden-sm">
-            <li><a translation-url href="http://www.cbd.int/convention/" class="color-cbdgrey">The Convention</a></li>
-            <li><a translation-url href="http://bch.cbd.int/protocol" class="color-cbdgrey">Cartagena Protocol</a></li>
-            <li><a translation-url href="http://www.cbd.int/abs/" class="color-cbdgrey">Nagoya Protocol</a></li>
-            <li><a translation-url href="http://www.cbd.int/programmes/" class="color-cbdgrey">Programmes</a></li>
-            <li><a translation-url href="http://www.cbd.int/information/" class="color-cbdgrey">Information</a></li>
-            <li><a translation-url href="http://www.cbd.int/secretariat/" class="color-cbdgrey">Secretariat</a></li>
-          </ul>
-        </div> -->
-        <locale/>
+        <span class="pull-right">
+          <SideMenu/>
+        </span>
+        <div ><b>{{conference.title | lstring}}</b></div>
       </div>
     </nav>
   </transition>
@@ -38,31 +21,23 @@
 </template>
 
 <script>
-  import locale from './locale.vue'
+  import SideMenu from './SideMenu.vue'
   import '@scbd/ecosystem-style/patterns/navs/build.min.css'
   let showLinks = false
 
   export default {
     name:'Header',
-    components:{locale},
+    components:{SideMenu},
     data () {
       return {
-        me: this.$store.state.me,
         showLinks: showLinks,
         lastScrollTop: 0,
         show: true
       }
     },
     computed: {
-      locale: function () {
-        if (this.$store.state.locale.locale !== 'en') { return '/' + this.$store.state.locale.locale }
-        return ''
-      },
-      showLocale: function () {
-        return this.$store.state.locale.showMobileFlag
-      },
-      showSCBD: function () {
-        return this.$store.state.scbd.showMobileFlag
+      conference: function () {
+        return this.$store.state.conferences.selected || {}
       }
     },
     methods: {
@@ -84,6 +59,9 @@
 
       }
     },
+    mounted(){
+        console.log('this.$store.state.conferences.selected',this.$store.state.conferences.selected)
+    },
     beforeMount () {
       window.addEventListener('scroll', this.onScroll)
       setInterval(function () {
@@ -100,8 +78,17 @@
 </script>
 
 <style scoped>
+  .pull-right{
+    float: right;
+    margin:.2em 0 0 0;
+  }
+  .pull-left{
+    float: left;
+    margin-left: -5px;
+  }
   .mainn{
-    color:#bdbdbd;
+    text-align: center;
+    color:#333;
     padding: .2em .2em 0 .2em;
     background-color: white;
     min-height: 30px;
@@ -120,7 +107,7 @@
 
   .brand{
     vertical-align: top;
-    margin-top: .5em;
+    line-height: 1.4em;
   }
 
   .header-nav-img {

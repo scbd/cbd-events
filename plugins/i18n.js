@@ -1,6 +1,6 @@
 
 export default async ({ app, store, serverStore }) => {
-console.log(app)
+
   app.i18n.path = (link) => {
    return app.localePath(link).replace('#','')
   }
@@ -14,4 +14,5 @@ console.log(app)
      if(lang==='ar') return true
      return false
   }
+
 }

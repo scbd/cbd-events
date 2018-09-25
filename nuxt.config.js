@@ -1,8 +1,9 @@
 module.exports = {
-      mode:'spa',
+    mode:'spa', //turn this on for testing IOS
   /*
   ** Headers of the page
   */
+
   head: {
     title: 'UN Biodiversity Events',
     meta: [
@@ -15,14 +16,21 @@ module.exports = {
     ]
   },
   css: [
-    { src: '~assets/app.css' }
+    { src: 'normalize.css' },
+    { src: '@scbd/ecosystem-style/layouts/base/build.min.css' },
+    { src: '@scbd/ecosystem-style/layouts/container/build.min.css' },
+    { src: '@scbd/ecosystem-style/elements/typography/headings/build.css' },
+    { src: '@scbd/ecosystem-style/modifiers/helpers/build.min.css' },
+    { src: '@scbd/ecosystem-style/modifiers/text/build.min.css' },
+    { src: '@scbd/ecosystem-style/layouts/grid/build.min.css' },
+    { src: '@scbd/ecosystem-style/modifiers/responsive/build.min.css' },
+    { src: '~assets/app.css' },
   ],
   modules: [
     '@nuxtjs/proxy',
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     ['nuxt-i18n', {
-      locales: ['en', 'fr'],
       defaultLocale: 'en',
         detectBrowserLanguage: {
           cookieKey: 'localePref',
@@ -43,7 +51,7 @@ module.exports = {
       strategy: 'prefix_except_default',
       lazy: true,
       langDir: 'locales/',
-      vueI18n: {fallbackLocale: 'en',},
+      vueI18n: {fallbackLocale: 'en'},
       seo: true,
       vuex: {
         // Module namespace
@@ -52,19 +60,20 @@ module.exports = {
         // Mutations config
         mutations: {
           // Mutation to commit to store current locale, set to false to disable
-          setLocale: 'I18N_SET_LOCALE',
+          setLocale: 'I18N_SET_LOCALE',//'I18N_SET_LOCALE',
 
           // Mutation to commit to store current message, set to false to disable
-          // setMessages: 'I18N_SET_MESSAGES'
+          setMessages: 'I18N_SET_MESSAGES'
         }
-      },
-
+      }
     }]
 
   ],
   plugins: [
     '~/plugins/axios.js',
-    '~/plugins/i18n.js'
+    '~/plugins/i18n.js',
+    '~/plugins/router.js',
+    '~/plugins/filters.js'
   ],
   /*
   ** Customize the progress bar color
@@ -74,9 +83,9 @@ module.exports = {
   ** Build configuration
   */
   router: {
-      mode: 'hash',
-      linkActiveClass: 'active-link'
-    // middleware: ['auth']
+      mode: 'hash',// turn this on for IOS dev
+      linkActiveClass: 'active-link',
+      middleware: ['redirects']
   },
   build: {
     /*
@@ -96,16 +105,16 @@ module.exports = {
   //module configs
   proxy: {
     '/api': {
-      target: 'http://localhost:8000',
+      target: 'http://api.cbddev.xyz',
       // ws: true,
       changeOrigin: true
     }
   },
   axios: {
     proxy:true,
-    // debug:true,
+     debug:true,
     // browserBaseURL:'/',
-    baseURL:'http://localhost:8000'
+    baseURL:'http://api.cbddev.xyz'
   // proxyHeaders: false
   },
   // auth: {

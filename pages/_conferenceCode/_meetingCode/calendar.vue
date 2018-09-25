@@ -17,14 +17,14 @@
         mixins: [pageMixin],
     components: {},
     async asyncData ({app,store,params,route,router}) {
-console.log('cal async data')
+
       return {
         conference:2018
        }
     },
-    watchQuery: ['state'],
+
     mounted(){
-      console.log('cal mounted')
+
       // this.$router.push({
       //   path: `${this.$router.currentRoute.path}`
       // })this.$store.dispatch('conferences/get')

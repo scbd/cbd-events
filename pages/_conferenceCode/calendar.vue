@@ -2,7 +2,8 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-6">
-                 {{$t('info')}}
+        {{$t('cal')}} {{$i18n.locale}}
+<!-- {{getRouteBaseName(`/calendar`)}} -->
       </div>
     </div>
   </div>
@@ -10,20 +11,25 @@
 
 <script>
 
-
+ import pageMixin from '~/modules/pageMixin'
   export default {
+    name:'calender',
+        mixins: [pageMixin],
     components: {},
-    async asyncData ({store,params,route}) {
-  console.log('info async data')
+    async asyncData ({app,store,params,route,router}) {
+
+      return {
+        conference:2018
+       }
     },
-    watchQuery: ['state'],
+
     mounted(){
-            console.log('info mounted')
+
       // this.$router.push({
       //   path: `${this.$router.currentRoute.path}`
       // })this.$store.dispatch('conferences/get')
       // let {conference} =  this.$router.params
-// this.$store.dispatch('requests/get',{conference:'2018',requestType:'media',requestType:this.$route.query.state})
+      // this.$store.dispatch('requests/get',{conference:'2018',requestType:'media',requestType:this.$route.query.state})
     }
   }
 </script>

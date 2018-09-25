@@ -5,7 +5,16 @@ export default () => {
       docs: 'Documents',
       cal: 'Calendar',
       agenda: 'Agenda',
-      home:'home'                   
+      home:'home',
+      language:'Language',
+      done:'Done',
+      en:'English',
+      fr:'Francais',
+      conferences:'Conferences',
+      meetings:'Meetings',
+      settings:'Settings',
+      switchConference:'Switch Conference',
+      language:'Language'
     })
   });
 }

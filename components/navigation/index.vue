@@ -1,14 +1,12 @@
 <template>
   <nav class="navbar navbar-default menu-gradient">
-    <div class="container-fluid ">
       <ul class="nav nav-pills nav-justified">
-        <li><nuxt-link :to="$i18n.path({ name: 'info'})"><i class="eco-info-circled"></i></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({ name: 'agenda' })"><i class="eco-clock"></i></nuxt-link></li>
-        <li style="line-height: .7em; vertical-align: middle;"><span class="font-m">UN Biodiversity</span></li>
-        <li><nuxt-link :to="$i18n.path({name:'documents'})"><i class="eco-docs"></i></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({name:'calendar'})"><i class="eco-calendar-empty"></i></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-info',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-info-circle"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon-clock-o"><use xlink:href="#icon-clock-o"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-docs"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-calendar-o"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-meetings',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-ellipsis-v"></use></svg></nuxt-link></li>
       </ul>
-    </div>
   </nav>
 </template>
 
@@ -19,10 +17,11 @@ import '@scbd/ecosystem-style/patterns/navbar/build.min.css'
 export default {
   name:'Navigation',
   components:{},
-  data ({route}) {
-
+  data ({$route,$store}) {
+    $store.dispatch('conferences/get')
     return {
-      conference:2018
+      conferenceCode:$route.params.conferenceCode,
+      meetingCode:$route.params.meetingCode
     }
 
   },
@@ -31,6 +30,7 @@ export default {
 <style scoped>
 .nav-justified > li >a {
   color:#FFFFFF;
+  margin:0;
 }
 .nav>li>a:hover, .nav>li>a:focus{
   background-color: #009b48;
@@ -48,11 +48,10 @@ export default {
     position: fixed;
     bottom:-25px;
     width:100%;
-
+   z-index:100000;
   }
   .font-m{
     font-size: .7em;
-
   }
 .menu-gradient {
    background-color: rgba(0,0,0,0);
@@ -61,6 +60,12 @@ export default {
    background: -o-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Opera 11.1 to 12.0 */
    background: -moz-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Firefox 3.6 to 15 */
    background: linear-gradient(to bottom right, #bdc3c7, #2c3e50); /* Standard syntax (must be last) */
+
+   border: none;
+}
+.conf{
+  line-height: .7em;
+  vertical-align: middle;
 }
   @media (min-width: 0px) {
     .nav-justified > li {
@@ -68,6 +73,14 @@ export default {
       width: 1%;
       text-align: center;
       font-size: 1.5em;
+    }
+  }
+  @media (max-width: 330px) {
+    .font-m{
+      font-size: .5em;
+    }
+    .conf{
+      line-height: .5em;
     }
   }
 </style>

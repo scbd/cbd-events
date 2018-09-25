@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-xs-6 debug">
+      <div class="col-xs-6">
          {{$t('home')}}<br>sffgsdfgsdfgs
          {{$i18n.path({name:'calendar'})}} <br><br><br><br><br>fdadfafasadsadsf
 
@@ -17,9 +17,8 @@
   export default {
     components: {},
     async asyncData ({store,params,router}) {
-
+      console.log('index asyncData')
     }
-
   }
 </script>
 

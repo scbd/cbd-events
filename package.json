@@ -5,7 +5,7 @@
   "author": "",
   "private": true,
   "scripts": {
-    "dev": "rm -rf .nuxt && nuxt",
+    "dev": "rm -rf .nuxt  && nuxt",
     "build": "rm -rf .nuxt && nuxt build",
     "start": "nuxt start",
     "generate": "rm -rf .nuxt && nuxt generate",
@@ -19,10 +19,11 @@
     "@nuxtjs/axios": "^5.3.1",
     "@nuxtjs/proxy": "^1.2.4",
     "@nuxtjs/pwa": "^2.5.0",
-    "@scbd/ecosystem-icons": "0.0.4",
-    "@scbd/ecosystem-style": "^0.0.4",
+    "@scbd/ecosystem-style": "0.0.5",
     "add": "^2.0.6",
-    "nuxt": "npm:nuxt-edge",
+    "camelcase-keys": "^4.2.0",
+    "normalize.css": "^8.0.0",
+    "nuxt": "^2.0.0",
     "nuxt-i18n": "^5.2.1",
     "vue-cordova": "^0.1.2",
     "yarn": "^1.9.4"

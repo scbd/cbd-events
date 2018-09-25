@@ -1,9 +1,9 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-xs-6 debug">
+      <div class="col-xs-6">
          {{$t('home')}}<br>sffgsdfgsdfgs
-         {{$i18n.path({name:'calendar'})}} <br><br><br><br><br>fdadfafasadsadsf
+
 
 
          <svg class="icon-clock-o"><use xlink:href="#icon-clock-o"></use></svg>
@@ -17,9 +17,8 @@
   export default {
     components: {},
     async asyncData ({store,params,router}) {
-
+      console.log('index asyncData',params)
     }
-
   }
 </script>
 
