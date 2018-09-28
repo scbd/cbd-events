@@ -15,7 +15,20 @@
         </span>
         <div ><b>{{conference.title | lstring}}</b></div>
       </div>
+      <div class="row sub" v-if="showMeetingNav">
+
+        <div class="sub-con"  v-on:click="toggle()">
+          <b v-if="meeting.title">
+            {{meeting.title}} <span v-if="!~meeting.subTitle.indexOf('COPMOP')">{{meeting.subTitle}}</span>
+          </b>
+          <b v-else>
+            {{meeting.subTitle}}
+          </b>
+          <svg class="icon-clock-o"  ><use xlink:href="#icon-select-arrows"></use></svg>
+        </div>
+      </div>
     </nav>
+
   </transition>
 </section>
 </template>
@@ -29,18 +42,30 @@
     name:'Header',
     components:{SideMenu},
     data () {
+
       return {
         showLinks: showLinks,
         lastScrollTop: 0,
-        show: true
+        show: true,
+
       }
     },
     computed: {
+      showMeetingNav:function(){
+        return this.$store.state.routes.showMeetingNav
+      },
       conference: function () {
         return this.$store.state.conferences.selected || {}
+      },
+      meeting: function () {
+        return this.$store.state.conferences.selectedMeeting || {}
       }
     },
     methods: {
+      toggle(){
+        let locale = this.$store.state.i18n.locale
+        this.$router.push({name:`conferenceCode-meetingCode-meetings___${locale}`,params: this.$route.params })
+      },
       onScroll () {
         this.scrolled = true
       },
@@ -58,9 +83,6 @@
         if (diff > 25) this.lastScrollTop = top
 
       }
-    },
-    mounted(){
-        console.log('this.$store.state.conferences.selected',this.$store.state.conferences.selected)
     },
     beforeMount () {
       window.addEventListener('scroll', this.onScroll)
@@ -85,6 +107,22 @@
   .pull-left{
     float: left;
     margin-left: -5px;
+  }
+  .sub-con{
+    background-color:rgba(0,0,0,0.40);
+  }
+  .sub{
+       color:white;
+
+       background-color: rgba(0,0,0,0);
+       background: #bdc3c7; /* For browsers that do not support gradients */
+       background: -webkit-linear-gradient(left top, #bdc3c7, #2c3e50); /* For Safari 5.1 to 6.0 */
+       background: -o-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Opera 11.1 to 12.0 */
+       background: -moz-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Firefox 3.6 to 15 */
+       background: linear-gradient(to bottom right, #bdc3c7, #2c3e50); /* Standard syntax (must be last) */
+
+       border: none;
+
   }
   .mainn{
     text-align: center;
