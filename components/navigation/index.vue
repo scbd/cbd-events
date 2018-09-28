@@ -1,16 +1,19 @@
 <template>
-  <nav class="navbar navbar-default menu-gradient">
+  <transition name="slide-up">
+    <nav class="navbar navbar-default menu-gradient" v-if="show">
       <ul class="nav nav-pills nav-justified">
-        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-info',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-info-circle"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode',params: { conferenceCode: conferenceCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-info-circle"></use></svg></nuxt-link></li>
         <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon-clock-o"><use xlink:href="#icon-clock-o"></use></svg></nuxt-link></li>
         <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-docs"></use></svg></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-calendar-o"></use></svg></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-meetings',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-ellipsis-v"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }, query: { selected: getCalStartDate() } })"><svg class="icon-clock-o"><use xlink:href="#icon-calendar-o"></use></svg></nuxt-link></li>
       </ul>
-  </nav>
+    </nav>
+  </transition>
 </template>
 
 <script>
+import {DateTime}   from 'luxon'
+
 import '@scbd/ecosystem-style/patterns/navs/build.min.css'
 import '@scbd/ecosystem-style/patterns/navbar/build.min.css'
 
@@ -18,13 +21,62 @@ export default {
   name:'Navigation',
   components:{},
   data ({$route,$store}) {
-    $store.dispatch('conferences/get')
-    return {
-      conferenceCode:$route.params.conferenceCode,
-      meetingCode:$route.params.meetingCode
-    }
 
+    let meetingCode = $route.params.meetingCode
+    let conferenceCode = $route.params.conferenceCode
+
+    if(!meetingCode && $store.state.conferences.selectedMeeting)
+      meetingCode = $store.state.conferences.selectedMeeting.code
+
+    if(!conferenceCode && $store.state.conferences.selected)
+      conferenceCode = $store.state.conferences.selected.code
+
+    return {
+      conferenceCode:conferenceCode,
+      meetingCode:meetingCode,
+      lastScrollTop: 0,
+      show: true
+    }
   },
+  methods: {
+    onScroll () {
+      this.scrolled = true
+    },
+    hasScrolled () {
+      let doc = document.documentElement
+      let top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+      let diff = Math.abs(top - this.lastScrollTop)
+
+      if (top < this.lastScrollTop && diff > 25)
+        this.show = true
+
+      if (top > this.lastScrollTop && diff > 25)
+        this.show = false
+
+      if (diff > 25) this.lastScrollTop = top
+
+    },
+    getCalStartDate(){
+      let start = DateTime.fromISO(this.$store.state.conferences.selected.startDate).startOf('day')
+      let now = DateTime.local().startOf('day')
+      if(now<start)
+        return start.toISODate()
+      return now.toUTC().toISODate()
+    }
+  },
+  beforeMount () {
+    window.addEventListener('scroll', this.onScroll)
+    setInterval(function () {
+      if (this.scrolled) {
+        this.hasScrolled()
+        this.scrolled = false
+      }
+    }.bind(this), 250)
+  },
+  beforeDestroy () {
+    window.removeEventListener('scroll', this.onScroll)
+  }
+
 }
 </script>
 <style scoped>
