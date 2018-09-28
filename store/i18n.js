@@ -11,11 +11,11 @@ function setMessagesMutation (state,payLoad){
 export const state  = () =>({
   locale: 'en',
   prevLocale: 'en',
-  messages: {}
+  messages: {},
 })
 
 export const mutations = {
   'I18N_SET_LOCALE':setLocaleMutation,
   'setLocale':setLocaleMutation,
-  'I18N_SET_MESSAGES':setMessagesMutation
+  'I18N_SET_MESSAGES':setMessagesMutation,
 }

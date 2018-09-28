@@ -1,10 +1,8 @@
 import Vue    from 'vue'
 import {normalizeApiResponse}    from '~/modules/apiNormalize'
 
-//============================================================
-//
-//============================================================
-async function getConferences({state,getters,commit,rootState},data){
+
+async function getConferences({state,dispatch,commit,rootState},data){
 
     if(state.setSelected) return state.docs
 
@@ -21,18 +19,29 @@ async function getConferences({state,getters,commit,rootState},data){
     // if(response.status != 200)
     //   responseHandeler (commit, response)
     response = normalizeApiResponse(response, rootState.i18n.locale)
+    response = hasMeetings(response )
     commit('setConferences',response)
 
     if(!state.selected)
       if(this.$router.currentRoute.params.conference)
-        await commit('setSelected',getters.byCode(this.$router.currentRoute.params.conference))
+        commit('setSelected',getters.byCode(this.$router.currentRoute.params.conference))
       else
-        await commit('setSelected',response[0])
+        commit('setSelected',getActive(response))
 
-    await commit('setMeetings',meetings(state.selected))
+    await dispatch('getMeetings', state.selected)
 
-console.log('meetings(state.selected)',meetings(state.selected))
     return response
+}
+
+function getMeetings({state,commit,rootState}){
+   let meetingCode = rootState.routes.route.params.meetingCode
+
+  commit('setMeetings',meetings(state.selected))
+  if(!state.selectedMeeting){
+    let selected = state.meetings.find(meeting => meeting.code===meetingCode)
+    commit('setSelectedMeeting',selected || state.meetings[0])
+  }
+  return state.meetings
 }
 
 const getByCode = (state) => (code) =>{
@@ -40,9 +49,36 @@ const getByCode = (state) => (code) =>{
     return state.docs.find(conf => conf.code===code)
 }
 
-const getMeetings = (state) => () =>{
+// const getMeetings = (state) => () =>{
+//   let meetings = []
+//   let events = state.selected.conference.events || []
+//
+//   for (let i = 0; i < events.length; i++)
+//     meetings = meetings.concat(events[i].menus||[])
+//
+//   return meetings
+// }
+
+function hasMeetings (docs) {
+  for (let i = 0; i < docs.length; i++) {
+    if(!docs[i].conference) continue
+    let meetings = []
+    //
+    let events = docs[i].conference.events || []
+
+    for (let j = 0; j < events.length; j++)
+      if(events[j] && events[j].menus)
+        meetings = meetings.concat([events[j]])
+
+    docs[i].hasMeetings = !!meetings.length
+  }
+  return docs
+}
+
+function meetings (selected) {
   let meetings = []
-  let events = state.selected.conference.events || []
+  if(!selected.conference) return meetings
+  let events = selected.conference.events || []
 
   for (let i = 0; i < events.length; i++)
     meetings = meetings.concat(events[i].menus||[])
@@ -50,14 +86,8 @@ const getMeetings = (state) => () =>{
   return meetings
 }
 
-function meetings (selected) {
-  let meetings = []
-  let events = selected.conference.events || []
-
-  for (let i = 0; i < events.length; i++)
-    meetings = meetings.concat(events[i].menus||[])
-
-  return meetings
+function getActive (conferences){
+  return conferences.find((c)=>c.active) || conferences[0]
 }
 
 function setConferencesMutation (state,payLoad){
@@ -69,7 +99,8 @@ function setSelectedMeetingMutation (state,payLoad){
   state.selectedMeeting = payLoad
 }
 function setSelectedMutation (state,payLoad){
-
+  state.selectedMeeting = false
+  state.meetings = []
   state.selected = payLoad
 }
 function setMeetingsMutation (state,payLoad){
@@ -84,12 +115,12 @@ export const state  = () =>({
 })
 
 export const actions = {
-  get: getConferences
+  get: getConferences,
+  getMeetings: getMeetings
 }
 
 export const getters = {
-  byCode:getByCode,
-  getMeetings:getMeetings
+  byCode:getByCode
 }
 
 export const mutations = {
