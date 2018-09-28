@@ -4,7 +4,7 @@
     <div class="page container-fluid" >
 
       <div class="row">
-        <div class="block gradient" v-on:click="changeMeeting(meeting)"  v-for="(meeting,index) in meetings" v-bind:key="index">
+        <div class="block gradient" v-on:click="changeMeeting(meeting)"  v-if="!meeting.hideDocumentsLink" v-for="(meeting,index) in meetings" v-bind:key="index">
           <div >
             <h4>{{meeting.title}}</h4>
             <p>{{meeting.subTitle}}</p>
@@ -25,7 +25,7 @@
     layout:'bottom-screen',
     async asyncData ({app, store}) {
 
-      await store.dispatch('conferences/get')
+      //await store.dispatch('conferences/get')
 
       return {
         title:app.i18n.t('meetings'),
@@ -45,7 +45,8 @@
   }
   function changeMeeting(meeting){
     this.$store.commit('conferences/setSelectedMeeting',meeting)
-    this.$router.replace({ name:`conferenceCode-meetingCode___${this.$store.state.i18n.locale}`, params: { conferenceCode: this.$route.params.conferenceCode, meetingCode:meeting.code}})
+    let prev = this.$store.state.routes.prevRoute.name
+    this.$router.push({ name:prev, params: { conferenceCode: this.$route.params.conferenceCode, meetingCode:meeting.code}})
   }
 </script>
 <style scoped>
