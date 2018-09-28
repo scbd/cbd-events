@@ -1,8 +1,9 @@
 module.exports = {
-    mode:'spa',
-  /*
-  ** Headers of the page
-  */
+  mode:'spa',
+  env: {
+    BASE_URL: process.env.BASE_URL,
+    IFRAME_HOST: process.env.IFRAME_HOST
+  },
   head: {
     meta: [
       { name: 'viewport', content: 'viewport', content: 'width=device-width, initial-scale=1, minimal-ui, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' },

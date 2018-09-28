@@ -1,9 +1,14 @@
-module.exports = {
-    mode:'spa', //turn this on for testing IOS
-  /*
-  ** Headers of the page
-  */
+const path = require('path')
 
+require('dotenv').config({path: path.resolve(process.cwd(), '.env.local')})
+require('dotenv').config({path: path.resolve(process.cwd(), '.env')})
+
+module.exports = {
+  mode:'spa', //turn this on for testing IOS
+  env: {
+    BASE_URL: process.env.BASE_URL,
+    IFRAME_HOST: process.env.IFRAME_HOST
+  },
   head: {
     title: 'UN Biodiversity Events',
     meta: [
@@ -112,11 +117,12 @@ module.exports = {
   },
   axios: {
     proxy:true,
-     debug:true,
+  //  debug:true,
     // browserBaseURL:'/',
     baseURL:'http://api.cbddev.xyz'
   // proxyHeaders: false
   },
+  // serverMiddleware: [{ path: '/*', handler: '~/middleware/redirects.js' },]
   // auth: {
   //   strategies: {
   //       local: {
