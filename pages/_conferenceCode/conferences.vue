@@ -3,13 +3,13 @@
     <Header :title="title"/>
     <div class="page container-fluid" >
       <div class="row">
-        <div  v-on:click="changeConference(conference)" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" v-for="conference in conferences" v-bind:key="conference._id">
-          <img v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${conference.title} logo`">
+        <div  v-on:click="changeConference(conference)" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" v-for="conference in conferences" v-if="conference.hasMeetings" v-bind:key="conference._id">
 
+          <img v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${conference.title} logo`">
           <img v-if="!getHeroImage(conference)" :src="getImage(conference) || defaultImage" :alt="`${conference.title} logo`">
           <div v-if="!getHeroImage(conference)">
-            <h4>{{conference.title}}</h4>
-            <p>{{conference.description}}</p>
+            <h4>{{conference.title | lstring}}</h4>
+            <p>{{conference.description | lstring}}</p>
           </div>
 
         </div>
@@ -27,7 +27,7 @@
     layout:'bottom-screen',
     async asyncData ({app, store}) {
 
-      await store.dispatch('conferences/get')
+      //await store.dispatch('conferences/get')
 
       return {
         title:app.i18n.t('conferences'),
