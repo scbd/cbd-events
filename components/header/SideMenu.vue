@@ -1,6 +1,6 @@
 <template>
   <section>
-      <svg class="icon-clock-o" :class="{'active':isOpen}"  v-on:click="toggle()"><use xlink:href="#icon-ellipsis-v"></use></svg>
+      <svg class="icon-clock-o" :class="{'active':isOpen}"  v-on:click="toggle()"><use xlink:href="#icon-cog"></use></svg>
       <transition name="test" >
         <div class="side-menu" v-if="isOpen" v-on:click="toggle()">
           <div class="row">
