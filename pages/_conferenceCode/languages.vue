@@ -43,7 +43,7 @@
     this.switchLocalePath(localeCode)
     this.$store.commit('i18n/I18N_SET_LOCALE',localeCode)
     this.$i18n.locale = localeCode
-    await this.$store.dispatch('conferences/get')
+    this.$forceUpdate()
     let to = this.$store.state.routes.prevRoute
     let pathName = to.name.replace(`___${this.$store.state.i18n.prevLocale}`,`___${this.$store.state.i18n.locale}`)
     this.$router.replace({ name:pathName , params: to.params })
