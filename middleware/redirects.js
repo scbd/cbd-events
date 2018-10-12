@@ -1,4 +1,5 @@
-export default async function ({ router, route, redirect, store }) {
+export default async function ({ router, route, redirect, store}) {
+
   //get confrences if we do not have
   if(!store.state.conferences.selected)
     await store.dispatch('conferences/get')
@@ -10,8 +11,9 @@ export default async function ({ router, route, redirect, store }) {
   if(!store.state.conferences.selected || !store.state.conferences.selectedMeeting) return
   let conferenceCode = store.state.conferences.selected.code
   let meetingCode = store.state.conferences.selectedMeeting.code
-  if(route.name==='index___en' && !Object.keys(route.params).length)
+
+  if(!route.name && !Object.keys(route.params).length)
     if(!store.state.i18n.initalized)
-      redirect(`/fr/${conferenceCode}`)
+      redirect(`/${conferenceCode}`)
 
 }

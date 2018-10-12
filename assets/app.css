@@ -1,4 +1,9 @@
-
+.paddingless{
+  padding: 0 0 0 0;
+}
+.marginless{
+  margin: 0 0 0 0;
+}
 .page-enter-active {
   transition: all .3s ease;
 }

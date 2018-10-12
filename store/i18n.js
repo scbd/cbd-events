@@ -1,6 +1,7 @@
 
 function setLocaleMutation (state,payLoad){
-  state.prevLocale = state.locale || 'en'
+  if(state.locale !== payLoad )
+    state.prevLocale = state.locale || 'en'
   state.locale = payLoad
 }
 

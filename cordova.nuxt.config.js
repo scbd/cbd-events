@@ -1,5 +1,11 @@
+const path = require('path')
+
+require('dotenv').config({path: path.resolve(process.cwd(), '.env.local')})
+require('dotenv').config({path: path.resolve(process.cwd(), '.env')})
+console.log('process.env.NODE_ENVprocess.env.NODE_ENV',process.env.NODE_ENV)
 module.exports = {
-  mode:'spa',
+  dev: true,//(process.env.NODE_ENV !== 'production'),
+  //mode:'spa',
   env: {
     BASE_URL: process.env.BASE_URL,
     IFRAME_HOST: process.env.IFRAME_HOST
@@ -13,6 +19,14 @@ module.exports = {
     ]
   },
   css: [
+    { src: 'normalize.css' },
+    { src: '@scbd/ecosystem-style/layouts/base/build.min.css' },
+    { src: '@scbd/ecosystem-style/layouts/container/build.min.css' },
+    { src: '@scbd/ecosystem-style/elements/typography/headings/build.css' },
+    { src: '@scbd/ecosystem-style/modifiers/helpers/build.min.css' },
+    { src: '@scbd/ecosystem-style/modifiers/text/build.min.css' },
+    { src: '@scbd/ecosystem-style/layouts/grid/build.min.css' },
+    { src: '@scbd/ecosystem-style/modifiers/responsive/build.min.css' },
     { src: '~assets/app.css' }
   ],
   modules: [
@@ -42,7 +56,7 @@ module.exports = {
       lazy: true,
       langDir: 'locales/',
       vueI18n: {fallbackLocale: 'en',},
-      seo: true,
+      seo: false,
       vuex: {
         // Module namespace
         moduleName: 'i18n',
@@ -50,10 +64,10 @@ module.exports = {
         // Mutations config
         mutations: {
           // Mutation to commit to store current locale, set to false to disable
-          setLocale: 'I18N_SET_LOCALE',
+          setLocale: 'I18N_SET_LOCALE',//'I18N_SET_LOCALE',
 
           // Mutation to commit to store current message, set to false to disable
-          // setMessages: 'I18N_SET_MESSAGES'
+          setMessages: 'I18N_SET_MESSAGES'
         }
       },
 
@@ -62,7 +76,9 @@ module.exports = {
   ],
   plugins: [
     '~/plugins/axios.js',
-    '~/plugins/i18n.js'
+    '~/plugins/i18n.js',
+    '~/plugins/router.js',
+    '~/plugins/filters.js'
   ],
   /*
   ** Customize the progress bar color
@@ -76,8 +92,9 @@ module.exports = {
         dir : 'cordova/www'
     },
   router: {
-      mode: 'hash'
-    // middleware: ['auth']
+      mode: 'hash',
+      linkActiveClass: 'active-link',
+      middleware: ['redirects']
   },
   build: {
         publicPath : '/nuxt/',
@@ -96,18 +113,18 @@ module.exports = {
     }
   },
   //module configs
-  proxy: {
-    '/api': {
-      target: 'http://localhost:8000',
-      // ws: true,
-      changeOrigin: true
-    }
-  },
+  // proxy: {
+  //   '/api': {
+  //     target: process.env.API,
+  //     // ws: true,
+  //     changeOrigin: true
+  //   }
+  // },
   axios: {
-    proxy:true,
+    //proxy:true,
     // debug:true,
     // browserBaseURL:'/',
-    baseURL:'http://localhost:8000'
+    baseURL:process.env.API
   // proxyHeaders: false
   },
   // auth: {

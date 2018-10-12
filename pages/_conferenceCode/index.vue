@@ -9,36 +9,27 @@
   export default {
     components: {},
     async asyncData ({app , store}) {
+      store.commit('routes/SET_SHOW_MEETING_NAV',false)
       let article = (await loadArticle(app.$axios,store.state.conferences.selected.code))[0]
-      let conference = store.state.conferences.selected
+      let conference = store.state.conferences.selected.conference.cbdMeet
       return {
         conference:conference,
         article:article,
         title:article.title,
-        image:conference.conference.heroImage || conference.conference.image
+        image:conference.heroImage || conference.image
       }
     },
     methods: {
       getHeroImage:getHeroImage,
       loadArticle:loadArticle,
-      getQuery:getQuery
-    },
-    created () {
-
-      let from = this.$store.state.routes.prevRoute
-      let locale = this.$store.state.i18n.locale
-
-      if(from.fullPath === '/' && this.$route.name === `conferenceCode___${locale}` && !this.$store.state.routes.initalized){
-        this.$store.commit('routes/I18N_INIT', true)
-        let pathName = this.$route.name.replace(`___${this.$store.state.i18n.locale}`,`___${this.$store.state.i18n.prevLocale}`)
-        this.$router.replace({ name:pathName , params: this.$route.params })
-      }
+      getQuery:getQuery,
+      languageInit:languageInit
     }
   }
   function getHeroImage(){
-    let conference = this.$store.state.conferences.selected
-    if(!conference.conference || !conference.conference.heroImage) return false
-    return conference.conference.heroImage
+
+    if(!this.conference || !this.conference.heroImage) return false
+    return this.conference.heroImage
   }
 
   function loadArticle($axios,code){
@@ -60,6 +51,24 @@
     ag.push({'$limit'   : 1 })
 
     return {ag:JSON.stringify(ag)}
+  }
+  // hack for spa language route transitions/
+  function languageInit(){
+    let from = this.$store.state.routes.prevRoute
+    let locale = this.$store.state.i18n.locale
+    let prev = this.$store.state.i18n.prevLocale
+
+    if(from.fullPath === `/${this.$route.params.conferenceCode}` && this.$route.name === `conferenceCode___${locale}` && !this.$store.state.routes.initalized){  
+      this.$store.commit('routes/I18N_INIT', true)
+      let pathName = this.$route.name.replace(`___${this.$store.state.i18n.locale}`,`___${this.$store.state.i18n.prevLocale}`)
+
+      this.switchLocalePath(prev)
+      this.$store.commit('i18n/I18N_SET_LOCALE',prev)
+      this.$i18n.locale = prev
+      this.$forceUpdate()
+
+      this.$router.replace({ name:pathName , params: this.$route.params })
+    }
   }
 </script>
 

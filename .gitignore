@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 # dependencies
 node_modules
-
+sw.*
 # logs
 npm-debug.log
 

@@ -3,9 +3,8 @@ const path = require('path')
 require('dotenv').config({path: path.resolve(process.cwd(), '.env.local')})
 require('dotenv').config({path: path.resolve(process.cwd(), '.env')})
 
-
 module.exports = {
-  mode:'spa', 
+//  mode:'spa',
   env: {
     BASE_URL: process.env.BASE_URL,
     IFRAME_HOST: process.env.IFRAME_HOST
@@ -33,53 +32,55 @@ module.exports = {
     { src: '~assets/app.css' },
   ],
   modules: [
-    '@nuxtjs/proxy',
-    '@nuxtjs/axios',
-    // '@nuxtjs/pwa',
-    ['nuxt-i18n', {
-      defaultLocale: 'en',
-        detectBrowserLanguage: {
-          cookieKey: 'localePref',
-          useCookie: true,
-      },
-      locales: [
-        {
-          code: 'en',
-          file: 'en.js',
-          iso: 'en-US'
-        },
-        {
-          code: 'fr',
-          file: 'fr.js',
-          iso: 'fr-FR'
-        }
-      ],
-      strategy: 'prefix_except_default',
-      lazy: true,
-      langDir: 'locales/',
-      vueI18n: {fallbackLocale: 'en'},
-      seo: false,
-      vuex: {
-        // Module namespace
-        moduleName: 'i18n',
-
-        // Mutations config
-        mutations: {
-          // Mutation to commit to store current locale, set to false to disable
-          setLocale: 'I18N_SET_LOCALE',//'I18N_SET_LOCALE',
-
-          // Mutation to commit to store current message, set to false to disable
-          setMessages: 'I18N_SET_MESSAGES'
-        }
-      }
-    }]
-
-  ],
+    '@nuxtjs/axios'],
+  // modules: [
+  //   '@nuxtjs/proxy',
+  //   '@nuxtjs/axios',
+  //   '@nuxtjs/pwa',
+  //   ['nuxt-i18n', {
+  //     defaultLocale: 'en',
+  //       detectBrowserLanguage: {
+  //         cookieKey: 'localePref',
+  //         useCookie: true,
+  //     },
+  //     locales: [
+  //       {
+  //         code: 'en',
+  //         file: 'en.js',
+  //         iso: 'en-US'
+  //       },
+  //       {
+  //         code: 'fr',
+  //         file: 'fr.js',
+  //         iso: 'fr-FR'
+  //       }
+  //     ],
+  //     strategy: 'prefix_except_default',
+  //     lazy: true,
+  //     langDir: 'locales/',
+  //     vueI18n: {fallbackLocale: 'en'},
+  //     seo: false,
+  //     vuex: {
+  //       // Module namespace
+  //       moduleName: 'i18n',
+  // 
+  //       // Mutations config
+  //       mutations: {
+  //         // Mutation to commit to store current locale, set to false to disable
+  //         setLocale: 'I18N_SET_LOCALE',//'I18N_SET_LOCALE',
+  // 
+  //         // Mutation to commit to store current message, set to false to disable
+  //         setMessages: 'I18N_SET_MESSAGES'
+  //       }
+  //     }
+  //   }]
+  // 
+  // ],
   plugins: [
-    '~/plugins/axios.js',
-    '~/plugins/i18n.js',
-    '~/plugins/router.js',
-    '~/plugins/filters.js'
+    // '~/plugins/axios.js',
+    // '~/plugins/i18n.js',
+    // '~/plugins/router.js',
+    // '~/plugins/filters.js'
   ],
   /*
   ** Customize the progress bar color
@@ -89,7 +90,6 @@ module.exports = {
   ** Build configuration
   */
   router: {
-      mode: 'hash',// turn this on for IOS dev
       linkActiveClass: 'active-link',
       middleware: ['redirects']
   },
@@ -109,21 +109,21 @@ module.exports = {
     }
   },
   //module configs
-  proxy: {
-    '/api': {
-      target: 'http://api.cbddev.xyz',
-      // ws: true,
-      changeOrigin: true
-    }
-  },
+  // proxy: {
+  //   '/api': {
+  //     target: 'http://api.cbddev.xyz',
+  //     // ws: true,
+  //     changeOrigin: true
+  //   }
+  // },
   axios: {
     proxy:true,
   //  debug:true,
     // browserBaseURL:'/',
-    baseURL:process.env.API
+    baseURL:'http://api.cbddev.xyz'
   // proxyHeaders: false
   },
-
+  // serverMiddleware: [{ path: '/*', handler: '~/middleware/redirects.js' },]
   // auth: {
   //   strategies: {
   //       local: {

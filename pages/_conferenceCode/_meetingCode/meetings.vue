@@ -2,14 +2,12 @@
   <section>
     <Header :title="title"/>
     <div class="page container-fluid" >
-
       <div class="row">
-        <div class="block gradient" v-on:click="changeMeeting(meeting)"  v-if="!meeting.hideDocumentsLink" v-for="(meeting,index) in meetings" v-bind:key="index">
+        <div  v-if="hasAgenda(meeting.agenda) ||(!agendasOnly && meeting.id)" class="block gradient" v-on:click="changeMeeting(meeting)"  v-for="(meeting,index) in meetings" v-bind:key="index">
           <div >
             <h4>{{meeting.title}}</h4>
             <p>{{meeting.subTitle}}</p>
           </div>
-
         </div>
       </div>
     </div>
@@ -17,15 +15,14 @@
 </template>
 
 <script>
-  import Header     from '~/components/header/header-bottom-screen'
-
+  import Header   from '~/components/header/header-bottom-screen'
+  import {isObject} from '~/modules/helpers'
+  
   export default {
     name:'meetings',
     components:{Header},
     layout:'bottom-screen',
     async asyncData ({app, store}) {
-
-      //await store.dispatch('conferences/get')
 
       return {
         title:app.i18n.t('meetings'),
@@ -36,13 +33,29 @@
       done:done,
       changeMeeting:changeMeeting
     },
+    computed:{
+      hasAgenda:hasAgenda,
+      agendasOnly:agendasOnly
+    },
     mounted(){
       this.$root.$on('bottom-screen-done',done)
     }
   }
+  function agendasOnly(){
+
+    let showMeetingNav = this.$store.state.routes.showMeetingNav
+    return isObject(showMeetingNav) && showMeetingNav.agendasOnly
+  }  
+  function hasAgenda(){
+
+    let showMeetingNav = this.$store.state.routes.showMeetingNav
+    return agenda => isObject(showMeetingNav) && showMeetingNav.agendasOnly && agenda
+  }
+  
   function done(localeCode){
     this.$router.go(-1)
   }
+  
   function changeMeeting(meeting){
     this.$store.commit('conferences/setSelectedMeeting',meeting)
     let prev = this.$store.state.routes.prevRoute.name

@@ -17,6 +17,7 @@ export const normalizeSolrResponse = (docs, locale='en') => {
       if(isLString(docs[i][sanitizedPropName]))
         docs[i][sanitizedPropName] = normalizeLString(docs[i][sanitizedPropName],locale)
     }
+
     docs[i] = camelcasekeys(docs[i],{deep: true})
 
   }

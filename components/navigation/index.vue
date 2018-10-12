@@ -3,8 +3,12 @@
     <nav class="navbar navbar-default menu-gradient" v-if="show">
       <ul class="nav nav-pills nav-justified">
         <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode',params: { conferenceCode: conferenceCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-info-circle"></use></svg></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon-clock-o"><use xlink:href="#icon-clock-o"></use></svg></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-docs"></use></svg></nuxt-link></li>
+        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon"><use xlink:href="#icon-clock-o"></use></svg></nuxt-link></li>
+        <li v-if="filesExist || downloading">
+          <div v-if="downloading" class="lds-ring"><div></div><div></div><div></div><div></div></div>
+          <nuxt-link v-if="!downloading" :to="$i18n.path({ name:'conferenceCode-meetingCode-downloads',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon"><use xlink:href="#icon-document-download"></use></svg></nuxt-link>
+        </li>
+        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon"><use xlink:href="#icon-docs"></use></svg></nuxt-link></li>      
         <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }, query: { selected: getCalStartDate() } })"><svg class="icon-clock-o"><use xlink:href="#icon-calendar-o"></use></svg></nuxt-link></li>
       </ul>
     </nav>
@@ -14,14 +18,15 @@
 <script>
 import {DateTime}   from 'luxon'
 
+import DownloadsIcon from '~/components/DownloadsIcon.vue'
 import '@scbd/ecosystem-style/patterns/navs/build.min.css'
 import '@scbd/ecosystem-style/patterns/navbar/build.min.css'
 
 export default {
   name:'Navigation',
-  components:{},
+  components:{DownloadsIcon},
   data ({$route,$store}) {
-
+    
     let meetingCode = $route.params.meetingCode
     let conferenceCode = $route.params.conferenceCode
 
@@ -37,6 +42,10 @@ export default {
       lastScrollTop: 0,
       show: true
     }
+  },
+  computed:{
+    filesExist:filesExist,
+    downloading:downloading
   },
   methods: {
     onScroll () {
@@ -56,6 +65,7 @@ export default {
       if (diff > 25) this.lastScrollTop = top
 
     },
+
     getCalStartDate(){
       let start = DateTime.fromISO(this.$store.state.conferences.selected.startDate).startOf('day')
       let now = DateTime.local().startOf('day')
@@ -64,7 +74,8 @@ export default {
       return now.toUTC().toISODate()
     }
   },
-  beforeMount () {
+  async beforeMount () {
+    await this.$store.dispatch('files/LOAD')
     window.addEventListener('scroll', this.onScroll)
     setInterval(function () {
       if (this.scrolled) {
@@ -77,6 +88,14 @@ export default {
     window.removeEventListener('scroll', this.onScroll)
   }
 
+}
+
+function downloading(){
+  return this.$store.state.files.downloading
+}
+
+function filesExist(){
+  return !!this.$store.state.files.data.length
 }
 </script>
 <style scoped>
@@ -135,4 +154,41 @@ export default {
       line-height: .5em;
     }
   }
+  .lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  margin-bottom:-5px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  margin: 3px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 </style>

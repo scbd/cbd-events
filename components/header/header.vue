@@ -55,7 +55,7 @@
         return this.$store.state.routes.showMeetingNav
       },
       conference: function () {
-        return this.$store.state.conferences.selected || {}
+        return this.$store.state.conferences.selected.conference.cbdMeet || {}
       },
       meeting: function () {
         return this.$store.state.conferences.selectedMeeting || {}

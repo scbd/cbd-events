@@ -17,6 +17,7 @@
     mixins: [pageMixin],
     components:{Calendar},
     async asyncData ({store}) {
+      store.commit('routes/SET_SHOW_MEETING_NAV',false)
       let conference = store.state.conferences.selected
       return {
         conference:conference
