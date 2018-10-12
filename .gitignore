@@ -7,6 +7,8 @@ yarn-error.log*
 # dependencies
 node_modules
 sw.*
+cordova
+
 # logs
 npm-debug.log
 
