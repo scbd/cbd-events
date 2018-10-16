@@ -5,8 +5,8 @@
       <div class="row">
         <div  v-on:click="changeConference(conference)" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" v-for="conference in conferences" v-if="conference.hasMeetings" v-bind:key="conference._id">
 
-          <img v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${conference.title} logo`">
-          <img v-if="!getHeroImage(conference)" :src="getImage(conference) || defaultImage" :alt="`${conference.title} logo`">
+          <img crossorigin="anonymous" v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${conference.title} logo`">
+          <img crossorigin="anonymous" v-if="!getHeroImage(conference)" :src="getImage(conference) || defaultImage" :alt="`${conference.title} logo`">
           <div v-if="!getHeroImage(conference)">
             <h4>{{conference.title | lstring}}</h4>
             <p>{{conference.description | lstring}}</p>
@@ -32,7 +32,7 @@
       return {
         title:app.i18n.t('conferences'),
         conferences:store.state.conferences.docs,
-        defaultImage:'https://attachments.cbd.int/cbd-logo-en.svg'
+        defaultImage:'/images/cbd-logo-en.svg'
       }
     },
     methods:{

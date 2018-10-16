@@ -17,6 +17,12 @@
       </div>
       <hr class="hr" v-if="$index != files.length-1">
     </section>
+    <section v-if="!files.length">
+      <div class="text-center">
+        <br><br><br><br>
+        <span>No files downloaded for the <br><b>{{meeting.title}}</b></span>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -40,7 +46,8 @@
       openFile:openFile
     },
     computed:{
-      files:files
+      files:files,
+      meeting:meeting 
     },
     filters: {
       trimName: function (name) {
@@ -53,6 +60,9 @@
     }
   }
 
+  function meeting(){
+    return this.$store.state.conferences.selectedMeeting
+  }
   function openFile(file){
     // IE doesn't allow using a blob object directly as link href
      // instead it is necessary to use msSaveOrOpenBlob
@@ -63,15 +73,14 @@
     
      // For other browsers: 
      // Create a link pointing to the ObjectURL containing the blob.
-     const data = window.URL.createObjectURL(file.blob);
+     let data = window.URL.createObjectURL(file.blob);
      let link = document.createElement('a');
      link.href = data;
      link.download=file.baseName;
      link.click();
-     setTimeout(function(){
-       // For Firefox it is necessary to delay revoking the ObjectURL
-       window.URL.revokeObjectURL(data);
-     , 100}
+     
+     // For Firefox it is necessary to delay revoking the ObjectURL
+     setTimeout(()=>window.URL.revokeObjectURL(data), 100)
   }
   
   function timeDisplay (isoDate) {
@@ -82,6 +91,7 @@
   function isPDF (contentType) {
     return !!~contentType.indexOf('application/pdf')
   }
+  
   function files () {
     return this.$store.state.files.data.filter((file)=> ~file.baseName.indexOf(this.meetingCode))
   }
@@ -96,6 +106,7 @@
 }
 .file{
   min-height: 50px;
+  cursor: pointer;
 }
 .pdf{
   fill:red;

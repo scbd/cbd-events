@@ -5,7 +5,7 @@ require('dotenv').config({path: path.resolve(process.cwd(), '.env')})
 console.log('process.env.NODE_ENVprocess.env.NODE_ENV',process.env.NODE_ENV)
 module.exports = {
   dev: true,//(process.env.NODE_ENV !== 'production'),
-  //mode:'spa',
+  mode:'spa',
   env: {
     BASE_URL: process.env.BASE_URL,
     IFRAME_HOST: process.env.IFRAME_HOST

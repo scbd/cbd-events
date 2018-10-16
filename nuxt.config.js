@@ -1,17 +1,22 @@
-const path = require('path')
+import  path from 'path'
+const icons = require('./static/icons/icons.json')
 
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '.env.local')
-})
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '.env')
-})
+let dotFile = '.env'
+
+if (['local','dev','stg'].includes(process.env.NODE_ENV))
+  dotFile = `${dotFile}.${process.env.NODE_ENV}`
+
+console.info(`##### Building for NODE_ENV: ${process.env.NODE_ENV}`)  
+console.info(`##### Reading dotenv file: ${dotFile}`)
+
+require('dotenv').config({path: path.resolve(process.cwd(), dotFile)})
 
 module.exports = {
-  //  mode:'spa',
   env: {
+    API: process.env.API,
     BASE_URL: process.env.BASE_URL,
-    IFRAME_HOST: process.env.IFRAME_HOST
+    IFRAME_HOST: process.env.IFRAME_HOST,
+    ATTACHMENTS: process.env.ATTACHMENTS
   },
   head: {
     title: 'UN Biodiversity Events',
@@ -42,8 +47,13 @@ module.exports = {
     short_name: 'CBD Events',
     description: 'UN Biodiversity conference app supplying documents and schedules',
     theme_color: '#009b48',
+    background_color:'#ffffff',
     display: 'standalone',
-    background_color: "#ffffff"
+    background_color: '#ffffff',
+    scope: '/cbd-events/',
+    start_url:'/',
+    dir:'rtl',
+    lang: 'en-US'
   },
   css: [{
       src: 'normalize.css'
@@ -76,12 +86,13 @@ module.exports = {
   modules: [
     '@nuxtjs/proxy',
     '@nuxtjs/axios',
-    '@nuxtjs/pwa', ['@nuxtjs/localforage', {
+    ['@nuxtjs/pwa',{icon:false}], 
+    ['~/modules/nuxtModules/localForage.js', {
       name: 'cbd-events',
       version: 1.0,
       size: 4980736, // Size of database, in bytes. WebSQL-only for now.
       storeName: 'files', // Should be alphanumeric, with underscores.
-      description: 'some description'
+      description: 'Main file store'
     }],
     ['nuxt-i18n', {
       defaultLocale: 'en',
@@ -127,7 +138,8 @@ module.exports = {
     '~/plugins/axios.js',
     '~/plugins/i18n.js',
     '~/plugins/router.js',
-    '~/plugins/filters.js'
+    '~/plugins/filters.js',
+    '~/plugins/vue-notifications'
   ],
   /*
    ** Customize the progress bar color
@@ -163,7 +175,12 @@ module.exports = {
   //module configs
   proxy: {
     '/api': {
-      target: 'http://api.cbddev.xyz',
+      target: process.env.API,
+      changeOrigin: true
+    },
+    '/images': {
+      target: process.env.ATTACHMENTS,
+      pathRewrite: { '^/images' : '/' },
       changeOrigin: true
     }
   },
@@ -171,12 +188,32 @@ module.exports = {
     proxy: true,
     //    debug:true,
     browserBaseURL: '/',
-    baseURL: 'http://api.cbddev.xyz',
+    baseURL: process.env.API,
     proxy: true
     // proxyHeaders: false
   },
   workbox: {
-    dev: true
+      //dev:true,
+      runtimeCaching: [
+        {
+          // Should be a regex string. Compiles into new RegExp('https://my-cdn.com/.*')
+          urlPattern: `${process.env.ATTACHMENTS}/*`,
+          // Defaults to `networkFirst` if omitted
+          handler: 'cacheFirst',
+          // Defaults to `GET` if omitted
+          method: 'GET',
+          statuses: [0, 200]
+        },
+        {
+          // Should be a regex string. Compiles into new RegExp('https://my-cdn.com/.*')
+          urlPattern: `/images/*`,
+          // Defaults to `networkFirst` if omitted
+          handler: 'cacheFirst',
+          // Defaults to `GET` if omitted
+          method: 'GET',
+          statuses: [0, 200]
+        }
+    ]
   },
   render: {
     http2: {
@@ -191,6 +228,4 @@ module.exports = {
       }
     }
   }
-
-
 }

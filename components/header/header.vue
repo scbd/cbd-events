@@ -6,14 +6,13 @@
       <div class="container-fluid ">
 
         <span class="pull-left">
-          <img src="https://attachments.cbd.int/cbd-leaf-green.svg" class="header-nav-img" />
-          <!-- <span class="brand">CBD</span> -->
+          <img  :src="'/images/cbd-leaf-green.svg'" class="header-nav-img" :alt="$t('scbdLeafLogo')"/>
         </span>
 
         <span class="pull-right">
           <SideMenu/>
         </span>
-        <div ><b>{{conference.title | lstring}}</b></div>
+        <div class="title"><b>{{conference.title | lstring}}</b></div>
       </div>
       <div class="row sub" v-if="showMeetingNav">
 
@@ -42,12 +41,11 @@
     name:'Header',
     components:{SideMenu},
     data () {
-
       return {
         showLinks: showLinks,
         lastScrollTop: 0,
         show: true,
-
+        attachments:process.env.ATTACHMENTS
       }
     },
     computed: {
@@ -62,6 +60,8 @@
       }
     },
     methods: {
+      offlineNotice:offlineNotice,
+      onlineNotice:onlineNotice,
       toggle(){
         let locale = this.$store.state.i18n.locale
         this.$router.push({name:`conferenceCode-meetingCode-meetings___${locale}`,params: this.$route.params })
@@ -85,6 +85,7 @@
       }
     },
     beforeMount () {
+      if(process.server) return
       window.addEventListener('scroll', this.onScroll)
       setInterval(function () {
         if (this.scrolled) {
@@ -92,10 +93,28 @@
           this.scrolled = false
         }
       }.bind(this), 250)
+      window.addEventListener('online', this.onlineNotice )
+      window.addEventListener('offline', this.offlineNotice )
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.onScroll)
+      window.removeEventListener('online', this.onlineNotice )
+      window.removeEventListener('offline', this.offlineNotice )
     }
+  }
+  
+  function offlineNotice(){
+    this.$swal({
+        title: this.$i18n.t('internetConnectionLost'),
+        text: this.$i18n.t('internetConnectionLostDescription'),
+        icon: "warning",
+      })
+  }
+  function onlineNotice(){
+    this.$swal({
+        title: this.$i18n.t('internetConnectionRestored'),
+        icon: "success",
+      })
   }
 </script>
 
@@ -163,5 +182,10 @@
   {
     transform: translatey(-35px);
     opacity: 0;
+  }
+  @media (max-width: 320px) {
+    .title{
+      font-size: .9em;
+    }
   }
 </style>

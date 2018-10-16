@@ -1,16 +1,16 @@
 <template>
   <div >
-    <Calendar :options="{queryFn:getEvents,conference:conference}"/>
+    <Calendar :options="{queryFn:getEvents,conference:conference,locale:$i18n.locale}"/>
   </div>
 </template>
 
 <script>
   import {DateTime}   from 'luxon'
-  import Calendar     from '@scbd/eco-molecule-cal'
+  // import Calendar     from '@scbd/eco-molecule-cal'
   import pageMixin    from '~/modules/pageMixin'
-
-  import '@scbd/eco-molecule-cal/dist/vue/Cal.css'
-  import '@scbd/ecosystem-icons/all/all.css'
+  import Calendar     from '~/components/Calender/src/components/index.vue'
+  // import '@scbd/eco-molecule-cal/dist/vue/Cal.css'
+  // import '@scbd/ecosystem-icons/all/all.css'
 
   export default {
     name:   'calender',
@@ -18,16 +18,15 @@
     components:{Calendar},
     async asyncData ({store}) {
       store.commit('routes/SET_SHOW_MEETING_NAV',false)
-      let conference = store.state.conferences.selected
       return {
-        conference:conference
+        conference:store.state.conferences.selected
       }
     },
 
     methods:{
       getEvents:getEvents,
       genQuery:genQuery,
-      getConference:()=>this.conference
+      getConference:()=>this.$store.state.conferences.selected
     }
   }
 

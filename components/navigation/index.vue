@@ -18,13 +18,11 @@
 <script>
 import {DateTime}   from 'luxon'
 
-import DownloadsIcon from '~/components/DownloadsIcon.vue'
 import '@scbd/ecosystem-style/patterns/navs/build.min.css'
 import '@scbd/ecosystem-style/patterns/navbar/build.min.css'
 
 export default {
   name:'Navigation',
-  components:{DownloadsIcon},
   data ({$route,$store}) {
     
     let meetingCode = $route.params.meetingCode
@@ -102,6 +100,9 @@ function filesExist(){
 .nav-justified > li >a {
   color:#FFFFFF;
   margin:0;
+}
+.nuxt-link-exact-active{
+    background-color: #009b48;
 }
 .nav>li>a:hover, .nav>li>a:focus{
   background-color: #009b48;

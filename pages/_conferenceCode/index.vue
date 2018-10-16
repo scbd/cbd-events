@@ -1,22 +1,26 @@
 <template>
   <div class='container-fluid home'>
-    <img class='hero' v-if='getHeroImage(conference)' :src='getHeroImage(conference)' :alt='`${conference.title[$i18n.locale]} logo`'/>
+    <img crossorigin="anonymous" class='hero' v-if='getHeroImage(conference)' :src='getHeroImage(conference)' :alt='`${conference.title[$i18n.locale]} logo`'/>
     <span v-html="this.$options.filters.lstring(article.content)"></span>
+    <h3>Overview</h3>
+    <overview :code="conferenceCode" :options="{target:'_blank'}"/>
   </div>
 </template>
 
 <script>
+  import overview from '~/components/conference-cal/src/components/ConferenceCal.vue'
+
   export default {
-    components: {},
-    async asyncData ({app , store}) {
+    components: {overview},
+    async asyncData ({app , store, params}) {
       store.commit('routes/SET_SHOW_MEETING_NAV',false)
       let article = (await loadArticle(app.$axios,store.state.conferences.selected.code))[0]
       let conference = store.state.conferences.selected.conference.cbdMeet
       return {
+        conferenceCode:params.conferenceCode,
         conference:conference,
         article:article,
-        title:article.title,
-        image:conference.heroImage || conference.image
+        title:article.title
       }
     },
     methods: {
@@ -26,10 +30,10 @@
       languageInit:languageInit
     }
   }
+  
   function getHeroImage(){
-
     if(!this.conference || !this.conference.heroImage) return false
-    return this.conference.heroImage
+    return this.conference.heroImage.replace(process.env.ATTACHMENTS,'/images')
   }
 
   function loadArticle($axios,code){

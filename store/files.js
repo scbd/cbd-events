@@ -22,6 +22,7 @@ async function loadAction({state, commit,  rootState}){
 
 // save to localstorage and update state
 async function saveAction({commit}, files){
+
   if(Array.isArray(files)){
     for (let i = 0; i < files.length; i++) {
       commit('SAVE',files[i])
@@ -33,15 +34,28 @@ async function saveAction({commit}, files){
   }
 }
 
-async function deleteAction({commit}, files){
+async function deleteAction({commit,state}, files){
+  
   if(Array.isArray(files)){
-    for (let i = 0; i < files.length; i++) {
+    let length = files.length
+    if(files.length === state.data.length){
+      for (let i = 0; i < length; i++) 
+        this.$localForage.files.removeItem(files[i].name)
+      commit('DELALL')
+    }
+      
+    
+    for (let i = 0; i < length; i++) {
+      if(length !== files.length){ 
+        i = 0
+        length = files.length
+      }
       commit('DELETE',files[i])
-      this.$localForage.files.removeItem(files[i].name)
+      await this.$localForage.files.removeItem(files[i].name)
     }
   }else{
     commit('DELETE',files)
-    return this.$localForage.files.removeItem(files.name)
+    await this.$localForage.files.removeItem(files.name)
   }
 }
 //set the entire file system
@@ -53,11 +67,14 @@ function downloading(state){
 }
 function deleteMutation(state,fileName){
   let newData = []
-  let index = state.data(file => file.name === fileName)
+  let index = state.data.find(file => file.name === fileName)
   state.data.splice(index,1)
   
   state.data.forEach((file)=>newData.push(file)) //reactive hack
   state.data = newData //reactive hack
+}
+function deleteAllMutation(state){
+  state.data = []
 }
 //save a file 
 function save(state,payLoad){
@@ -90,5 +107,6 @@ export const mutations = {
   SET:setMutation,
   SAVE:save,
   DELETE:deleteMutation,
-  DOWNLOADING:downloading
+  DOWNLOADING:downloading,
+  DELALL:deleteAllMutation
 }

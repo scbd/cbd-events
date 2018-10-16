@@ -9,22 +9,25 @@
     </div>
     <hr/>
   </section>
- 
-  <iframe v-if="isInSession" class="docs-frame" :src="`${iFrameHost}/conferences/${conferenceCode}/schedules?viewOnly=true`"></iframe>
+  <Offline v-if="isInSession && offLine"/>
+  <iframe ref="docsFrame" v-if="isInSession && !offLine" class="docs-frame" :src="`${iFrameHost}/conferences/${conferenceCode}/schedules?viewOnly=true&${forceDate}`"></iframe>
   </div>
 </template>
 
 <script>
-  import {DateTime} from 'luxon'
+  import documentDownloadMixin    from '~/modules/documentDownloadMixin'
+  import Offline                  from '~/components/Offline'
+  import {DateTime}               from 'luxon'
+  
   export default {
-    async asyncData ({store,params}) {
+    mixins: [documentDownloadMixin],  
+    components:{Offline}, 
+    async asyncData ({store,params, query}) {
 
-      if(!this.isInSession)
+      if(!isInSessionServer(store, query))
         store.commit('routes/SET_SHOW_MEETING_NAV',{agendasOnly:true})
       else
-        store.commit('routes/SET_SHOW_MEETING_NAV',{agendasOnly:false})
-      
-      // await store.dispatch('conferences/getAgenda')
+        store.commit('routes/SET_SHOW_MEETING_NAV',false)
 
       return {
         conferenceCode:params.conferenceCode,
@@ -34,21 +37,46 @@
       }
     },
     computed:{
-      isInSession:isInSession
+      isInSession:isInSession,
+      forceDate:forceDate,
+      offLine:offLine
     },
     created(){
       if(!this.isInSession)
         this.$store.commit('routes/SET_SHOW_MEETING_NAV',{agendasOnly:true})      
     }
   }//export
-  
+
+  function offLine(){
+    return this.$store.state.offLine.isOffLine
+  }
+  function isInSessionServer(store, {datetime}) {
+    let conference = store.state.conferences.selected
+    let start = DateTime.fromISO(conference.schedule.start)
+    let end = DateTime.fromISO(conference.schedule.start)    
+    let now = DateTime.local().setZone(conference.timezone)
+
+    if((start <= now && now <= end) || isValidDate(datetime)){
+        store.commit('routes/SET_SHOW_MEETING_NAV',false)
+        return true
+    }
+    return false
+  }
+  function forceDate(){
+    if(isValidDate(this.$route.query.datetime)) 
+      return `&datetime=${this.$route.query.datetime}`
+    return ''
+  }
+  function isValidDate(date){
+    return !isNaN(new Date(date).getTime())
+  }
   function isInSession() {
     let conference = this.conference
     let start = DateTime.fromISO(conference.schedule.start)
     let end = DateTime.fromISO(conference.schedule.start)    
     let now = DateTime.local().setZone(conference.timezone)
 
-    if(start <= now && now <= end){
+    if((start <= now && now <= end) || isValidDate(this.$route.query.datetime)){
         this.$store.commit('routes/SET_SHOW_MEETING_NAV',false)
         return true
     }

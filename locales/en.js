@@ -14,7 +14,17 @@ export default () => {
       meetings:'Meetings',
       settings:'Settings',
       switchConference:'Switch Conference',
-      language:'Language'
+      language:'Language',
+      deleteAllDownloads:'Delete all downloaded files',
+      scbdLeafLogo:'The Secretariat of the Convention on Biological Diversity\'s Leaf Logo',
+      internetConnectionRestored:'Internet Connection Restored',
+      internetConnectionLost:'Internet Connection Lost',
+      internetConnectionLostDescription:'Some services will not be available such as Live Agenda & Document Downloads', 
+      serviceUnavailable:'Serivce Unavailable',
+      contactUs:'Contact Us',
+      callThe:'Call the',
+      emailThe:'Email the',
+      scbd:'SCBD'     
     })
   });
 }

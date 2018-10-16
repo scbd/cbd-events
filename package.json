@@ -5,32 +5,32 @@
   "author": "",
   "private": true,
   "scripts": {
-    "dev": "rm -rf .nuxt  &&  nuxt",
+    "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt",
     "dev:ios": "rm -rf .nuxt  && NODE_ENV=local nuxt -c cordova.dev.nuxt.config.js",
     "build": " rm -rf .nuxt && NODE_ENV=production nuxt build",
     "build:dev": " rm -rf .nuxt && NODE_ENV=dev nuxt build",
     "build:stg": " rm -rf .nuxt && NODE_ENV=stg nuxt build",
+    "build:ci": " rm -rf .nuxt && NODE_ENV=$NODE_ENV nuxt build && echo $(process.env)",    
     "build:ios:dev": "rm -rf .nuxt && NODE_ENV=dev nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
     "build:ios": "rm -rf .nuxt && NODE_ENV=production nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
-    "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/"
+    "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
+    "start": "nuxt start"
   },
   "dependencies": {
-    "@nuxtjs/auth": "^4.5.1",
     "@nuxtjs/axios": "^5.3.1",
-    "@nuxtjs/localforage": "^1.0.2",
-    "@nuxtjs/proxy": "^1.2.4",
     "@nuxtjs/pwa": "^2.5.0",
-    "@scbd/eco-molecule-cal": "^0.0.3",
     "@scbd/ecosystem-style": "0.0.5",
     "camelcase-keys": "^4.2.0",
-    "dotenv": "^6.0.0",
+    "dotenv": "^6.1.0",
+    "localforage": "^1.7.2",
     "luxon": "^1.3.3",
     "normalize.css": "^8.0.0",
     "nuxt": "2.0.0",
     "nuxt-i18n": "^5.2.1",
     "object-sizeof": "^1.2.0",
+    "sweetalert": "^2.1.0",
     "vue-cordova": "^0.1.2",
-    "yarn": "^1.9.4"
+    "vue-notifications": "^0.9.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
