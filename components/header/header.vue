@@ -1,7 +1,7 @@
 <template>
 <section>
   <transition name="slide-fade">
-    <nav v-if="show" class="mainn navbar  navbar-default">
+    <nav v-if="showNavs" class="mainn navbar  navbar-default">
 
       <div class="container-fluid ">
 
@@ -57,7 +57,8 @@
       },
       meeting: function () {
         return this.$store.state.conferences.selectedMeeting || {}
-      }
+      },
+      showNavs:showNavs
     },
     methods: {
       offlineNotice:offlineNotice,
@@ -66,7 +67,14 @@
         let locale = this.$store.state.i18n.locale
         this.$router.push({name:`conferenceCode-meetingCode-meetings___${locale}`,params: this.$route.params })
       },
-      onScroll () {
+      onScroll (e) {
+        if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0) {
+          this.scrolled = false
+          this.show = true
+          e.preventDefault()
+          e.stopPropagation() 
+          return
+        }
         this.scrolled = true
       },
       hasScrolled () {
@@ -115,6 +123,12 @@
         title: this.$i18n.t('internetConnectionRestored'),
         icon: "success",
       })
+  }
+  function showNavs(){
+    if(this.$store)
+      return this.$store.state.routes.showNavs
+    else
+      return this.show
   }
 </script>
 

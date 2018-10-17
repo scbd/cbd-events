@@ -1,6 +1,6 @@
 <template>
   <transition name="slide-up">
-    <nav class="navbar navbar-default menu-gradient" v-if="show">
+    <nav class="navbar navbar-default menu-gradient">
       <ul class="nav nav-pills nav-justified">
         <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode',params: { conferenceCode: conferenceCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-info-circle"></use></svg></nuxt-link></li>
         <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon"><use xlink:href="#icon-clock-o"></use></svg></nuxt-link></li>
@@ -43,10 +43,20 @@ export default {
   },
   computed:{
     filesExist:filesExist,
-    downloading:downloading
+    downloading:downloading,
+    showNavs:showNavs
   },
   methods: {
-    onScroll () {
+    onScroll (e) {
+      if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0) {
+        this.scrolled = false
+        this.show = true
+        e.preventDefault()
+        e.stopPropagation() 
+        if(this.$store)
+          this.$store.commit('routes/SET_SHOW_NAVS',true)    
+        return
+      }
       this.scrolled = true
     },
     hasScrolled () {
@@ -54,12 +64,17 @@ export default {
       let top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
       let diff = Math.abs(top - this.lastScrollTop)
 
-      if (top < this.lastScrollTop && diff > 25)
+      if (top < this.lastScrollTop && diff > 25){
         this.show = true
-
-      if (top > this.lastScrollTop && diff > 25)
+        
+        if(this.$store)
+          this.$store.commit('routes/SET_SHOW_NAVS',true)
+      }
+      if (top > this.lastScrollTop && diff > 25){
         this.show = false
-
+        if(this.$store)
+          this.$store.commit('routes/SET_SHOW_NAVS',false)
+      }
       if (diff > 25) this.lastScrollTop = top
 
     },
@@ -87,7 +102,12 @@ export default {
   }
 
 }
-
+function showNavs(){
+  if(this.$store)
+    return this.$store.state.routes.showNavs
+  else
+    return this.show
+}
 function downloading(){
   return this.$store.state.files.downloading
 }

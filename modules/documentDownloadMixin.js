@@ -32,14 +32,15 @@ async function saveFiles({data}){
   let msg = data
 
   if(msg.type!=='saveFiles') return
-
+  
+  this.$store.commit('routes/SET_SHOW_NAVS',true)
   this.$nuxt.$loading.start()
   this.$store.commit('files/DOWNLOADING')
   let blobs = []
   let fileObjs = []
     
   for (let i = 0; i < msg.data.length; i++) 
-    blobs[i] = axios({method:'get', url:msg.data[i],responseType:'blob'}).then((res)=>{
+    blobs[i] = axios({method:'get', url:msg.data[i].replace('https://www.cbd.int',''),responseType:'blob'}).then((res)=>{
       msg.data[i] = { name:msg.data[i] }
       msg.data[i].type = res.headers['content-type']
       return res.data
