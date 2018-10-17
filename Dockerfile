@@ -11,8 +11,15 @@ ENV HOST 0.0.0.0
 ARG BRANCH
 ENV NODE_ENV $BRANCH
 
+RUN cd /usr/src/app/
 COPY . .
 RUN yarn
+RUN cd components/AddToCalendar/src && npm install --production
+RUN cd components/Calender && npm install --production
+RUN cd components/conference-cal && npm install --production
+
+
+
 RUN yarn build:ci
 RUN rm -rf node_modules
 RUN npm install --production
