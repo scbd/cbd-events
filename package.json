@@ -1,8 +1,8 @@
 {
   "name": "cbd-events",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "cbd-events app",
-  "author": "UN Convention on Biological Diversity",
+  "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
   "scripts": {
     "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt",
