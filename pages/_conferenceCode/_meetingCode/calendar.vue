@@ -1,16 +1,15 @@
 <template>
-  <div >
-    <Calendar :options="{queryFn:getEvents,conference:conference,locale:$i18n.locale}"/>
-  </div>
+    <Calendar class="cal" :options="{queryFn:getEvents,conference:conference,locale:$i18n.locale,height:'100vh'}"/>
 </template>
-
+<style>
+  .cal{
+    margin-bottom: 50px;
+  }
+</style>
 <script>
   import {DateTime}   from 'luxon'
-  // import Calendar     from '@scbd/eco-molecule-cal'
   import pageMixin    from '~/modules/pageMixin'
   import Calendar     from '~/components/Calender/src/components/index.vue'
-  // import '@scbd/eco-molecule-cal/dist/vue/Cal.css'
-  // import '@scbd/ecosystem-icons/all/all.css'
 
   export default {
     name:   'calender',
@@ -22,7 +21,6 @@
         conference:store.state.conferences.selected
       }
     },
-
     methods:{
       getEvents:getEvents,
       genQuery:genQuery,
@@ -112,16 +110,12 @@
         }
       }
 
-      if(query.start)//2018-05-14T00:00:00.000Z
+      if(query.start)
         q += `+AND+(start_s:[ ${query.start} TO *])`
 
-      if(query.end)//2018-05-14T00:00:00.000Z
+      if(query.end)
         q += `+AND+(end_s:[ * TO ${query.end}])`
 
-        // keyWordFilter:this.keyWordFilter,
-        // selectedAgendaItem:(this.selectedAgendaItem===this.$t('agendaItem'))? this.selectedAgendaItem:'',
-        // selectedProgramme:this.selectedProgramme,
-        // selectedStream:this.selectedStream
       if(query.selectedStream)
         q += `+AND+(stream_ss:${query.selectedStream})`
       if(query.selectedProgramme)
@@ -132,20 +126,3 @@
     }
 </script>
 
-<style>
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-.right{
-  border-left: 1px solid black;
-}
-</style>
