@@ -5,7 +5,9 @@ let dotFile = '.env'
 
 if (['local','dev','stg'].includes(process.env.NODE_ENV))
   dotFile = `${dotFile}.${process.env.NODE_ENV}`
-
+else 
+  process.env.NODE_ENV = 'production'
+  
 console.info(`##### Building for NODE_ENV: ${process.env.NODE_ENV}`)  
 console.info(`##### Reading dotenv file: ${dotFile}`)
 
@@ -16,7 +18,8 @@ module.exports = {
     API: process.env.API,
     BASE_URL: process.env.BASE_URL,
     IFRAME_HOST: process.env.IFRAME_HOST,
-    ATTACHMENTS: process.env.ATTACHMENTS
+    ATTACHMENTS: process.env.ATTACHMENTS,
+    DOCS_API:process.env.DOCS_API
   },
   head: {
     title: 'UN Biodiversity Events',
@@ -182,7 +185,11 @@ module.exports = {
       target: process.env.ATTACHMENTS,
       pathRewrite: { '^/images' : '/' },
       changeOrigin: true
-    }
+    },
+    '/doc': {
+      target: process.env.DOCS_API,
+      changeOrigin: true
+    },
   },
   axios: {
     proxy: true,
