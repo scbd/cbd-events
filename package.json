@@ -10,7 +10,7 @@
     "build": " rm -rf .nuxt && NODE_ENV=production nuxt build",
     "build:dev": " rm -rf .nuxt && NODE_ENV=dev nuxt build",
     "build:stg": " rm -rf .nuxt && NODE_ENV=stg nuxt build",
-    "build:ci": " rm -rf .nuxt && NODE_ENV=$NODE_ENV nuxt build && echo $(process.env)",    
+    "build:ci": " rm -rf .nuxt && NODE_ENV=$NODE_ENV nuxt build",
     "build:ios:dev": "rm -rf .nuxt && NODE_ENV=dev nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
     "build:ios": "rm -rf .nuxt && NODE_ENV=production nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
     "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
