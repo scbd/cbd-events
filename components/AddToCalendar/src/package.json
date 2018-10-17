@@ -12,6 +12,7 @@
   },
   "main": "dist/AddToCalendar.umd.min.js",
   "dependencies": {
+        "@scbd/ecosystem-icons": "^0.0.1",
     "@scbd/ecosystem-style": "0.0.5",
     "vue": "^2.5.16"
   },
