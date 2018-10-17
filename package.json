@@ -14,7 +14,8 @@
     "build:ios:dev": "rm -rf .nuxt && NODE_ENV=dev nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
     "build:ios": "rm -rf .nuxt && NODE_ENV=production nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
     "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
-    "start": "nuxt start"
+    "start": "nuxt start",
+    "start:dev": "NODE_ENV=dev nuxt start"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.1",

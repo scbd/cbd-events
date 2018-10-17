@@ -1,5 +1,5 @@
-{
-  "icons": [
+const icons = 
+  [
     {
       "src": "windows10/Square71x71Logo.scale-400.png",
       "sizes": "284x284"
@@ -413,4 +413,8 @@
       "sizes": "16x16"
     }
   ]
-}
+
+for (let i = 0; i < icons.length; i++) 
+  icons[i].src = `/icons/${icons[i].src}`
+
+export const iconsObj = {icons:icons}

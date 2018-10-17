@@ -1,5 +1,5 @@
 import  path from 'path'
-const icons = require('./static/icons/icons.json')
+import {iconsObj} from './static/icons/icons.js'
 
 let dotFile = '.env'
 
@@ -53,10 +53,11 @@ module.exports = {
     background_color:'#ffffff',
     display: 'standalone',
     background_color: '#ffffff',
-    scope: '/cbd-events/',
+    scope: '/',
     start_url:'/',
     dir:'rtl',
-    lang: 'en-US'
+    lang: 'en-US',
+    icons:iconsObj.icons
   },
   css: [{
       src: 'normalize.css'
