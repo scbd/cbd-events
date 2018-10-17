@@ -1,7 +1,7 @@
 <template>
   <div class="page-view">
     <Offline v-if="offLine"/>
-    <iframe v-if="!offLine" ref="docsFrame" class="docs-frame" :src="`${iFrameHost}/conferences/${conferenceCode}/${meetingCode}/documents?viewOnly=true`"></iframe>
+    <iframe v-if="!offLine" scrolling="yes" ref="docsFrame" class="docs-frame" :src="`${iFrameHost}/conferences/${conferenceCode}/${meetingCode}/documents?viewOnly=true`"></iframe>
   </div>
 </template>
 
@@ -31,9 +31,6 @@ function offLine(){
 </script>
 
 <style scoped>
-  .page-view{
-    margin-top:60px;
-  }
   .docs-frame{
     width:100%;
     height:85vh;
