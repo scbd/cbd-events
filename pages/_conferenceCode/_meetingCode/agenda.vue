@@ -86,7 +86,7 @@
 
 <style >
 .main {padding-top:.1em;}
-.main.not-in-session {padding-top:1em;}
+.main.not-in-session {padding-top:2em;}
 .agenda.item { padding: 1em 1em 1em 1em;}
 .label.agenda      { background: #777; display: inline-block; min-width: 45px;    }
 .label.agenda.CBD  { background: #009B48; }

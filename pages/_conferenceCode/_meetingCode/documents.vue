@@ -33,7 +33,8 @@ function offLine(){
 <style scoped>
   .docs-frame{
     width:100%;
-    height:85vh;
+    height:95vh;
+    margin-top:2.8em;
     border: none;
   }
   .subtitle {

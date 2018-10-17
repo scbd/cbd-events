@@ -102,7 +102,7 @@
   vertical-align:middle;
 }
 .page-view{
-  margin-top:70px;
+  margin-top:85px;
 }
 .file{
   min-height: 50px;

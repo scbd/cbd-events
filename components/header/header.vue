@@ -143,6 +143,8 @@
   }
   .sub-con{
     background-color:rgba(0,0,0,0.40);
+    height: 45px;
+    padding: .6em 0 .6em 0;
   }
   .sub{
        color:white;
