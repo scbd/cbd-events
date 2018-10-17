@@ -12,7 +12,7 @@
           <span class="eco-clock"></span> {{dateTime}}
         </div>
 
-        <div >
+        <div v-if="addToCalReady()">
           <span class="eco-calendar-empty"></span>
           <span v-bind:key="index" :class="$style.caps" v-for="(stream, index) in calEvent.stream_ss">{{stream}}<span v-if="index < calEvent.stream_ss.length-1">,</span>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -93,7 +93,8 @@
       files:files,
       itemTextArr:itemTextArr,
       goTo:goTo,
-      isInSession:isInSession
+      isInSession:isInSession,
+      addToCalReady:addToCalReady
     },
     computed:{
       calEvent:calEvent,
@@ -104,6 +105,10 @@
     }
   }
 
+  function addToCalReady(){
+    return this.conference.schedule.addToCalReady
+  }
+  
   function goTo(url){
     if(typeof window !== 'undefined')
       window.open(url,'_blank')
