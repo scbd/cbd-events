@@ -23,41 +23,81 @@ module.exports = {
   },
   head: {
     title: 'UN Biodiversity Events',
-    meta: [{
-        charset: 'utf-8'
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1'
-      },
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'UN Biodiversity Events Application'
-      },
+    meta: [{charset: 'utf-8'},
+      {name: 'viewport',  content: 'width=device-width, initial-scale=1'},
+      {  hid: 'description', name: 'description',content: 'UN Biodiversity Events Application'},
       { name: 'nativeUI', content:true },
-      { name: 'apple-mobile-web-app-capable', content: 'yes' },
-      { name: 'apple-mobile-web-app-status-bar-style', content: '#00405c' }
+      { name: 'apple-mobile-web-app-capable', content: 'yes' }
     ],
-    link: [{
-      rel: 'icon',
-      type: 'image/x-icon',
-      href: 'favicon.ico'
-    }]
+    link: [
+      {rel: 'icon',type: 'image/x-icon',href: 'favicon.ico'},
+      {rel:'apple-touch-icon', sizes:'76x76',       href:"/icons/ios/ios-appicon-76-76.png"},
+      {rel:'apple-touch-icon', sizes:'120x120',     href:"/icons/ios/ios-appicon-120-120.png"},     
+      {rel:'apple-touch-icon', sizes:'152x152',     href:"/icons/ios/ios-appicon-152-152.png"},    
+      {rel:'apple-touch-icon', sizes:'180x180',     href:"/icons/ios/ios-appicon-180-180.png"}, 
+      {rel:'apple-touch-icon', sizes:'1024x1024',   href:"/icons/ios/ios-appicon-1024-1024.png"},     
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-default-p-768x1004.png', media: 'orientation: portrait'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-default-l-1004x768.png', media: 'orientation: landscape'},  
+      
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-4-p-320x480.png', media: '(device-width: 320px) and (device-height: 480px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-4-l-480x320.png', media: '(device-width: 320px) and (device-height: 480px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)'},      
+      
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-5-p-640x960.png', media: '(device-width: 320px) and (device-height: 568px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-5-l-960x640.png', media: '(device-width: 320px) and (device-height: 568px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)'},
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-5s-se-p-640x1136.png', media: '(device-width: 320px) and (device-height: 568px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-5s-se-l-1136x640.png', media: '(device-width: 320px) and (device-height: 568px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)'},
+      
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-678-p-750x1334.png', media: '(device-width: 375px) and (device-height: 667px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-678-l-1334x750.png', media: '(device-width: 375px) and (device-height: 667px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)'},
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-678-plus-p-1242x2208.png', media: '(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-678-plus-l-2208x1242.png', media: '(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)'},
+      
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-x-xs-p-1125x2436.png', media: '(device-width: 375px) and (device-height: 812px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-x-xs-l-2436x1125.png', media: '(device-width: 375px) and (device-height: 812px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)'},        
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-xr-p-828x1792.png', media: '(device-width : 414px) and (device-height : 896px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-xr-l-1792-828.png', media: '(device-width : 414px) and (device-height : 896px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)'},    
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-xs-max-p-1142x2688.png', media: '(device-width : 414px) and (device-height : 896px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/iphone-xs-max-l-2688x1142.png', media: '(device-width : 414px) and (device-height : 896px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)'},       
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-mini-p-768x1024.png', media: '(device-width : 768px) and (device-height : 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-mini-l-1024x768.png', media: '(device-width : 768px) and (device-height : 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)'}, 
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-mini-p-768x1024.png', media: '(device-width : 768px) and (device-height : 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-mini-l-1024x768.png', media: '(device-width : 768px) and (device-height : 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)'}, 
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-mini@2-p-1536x2048.png', media: '(device-width : 768px) and (device-height : 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-mini@2-l-2048x1536.png', media: '(device-width : 768px) and (device-height : 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)'},
+      
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-10inch-p-834x1112.png', media: '(device-width: 834px) and (device-height: 1112px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-10inch-l-1112x834.png', media: '(device-width: 834px) and (device-height: 1112px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)'},  
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-10inch@2-p-1668x2224.png', media: '(device-width: 834px) and (device-height: 1112px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-10inch@2-l-2224x1668.png', media: '(device-width: 834px) and (device-height: 1112px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)'},  
+
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-12inch-p-1024x1366.png', media: '(device-width: 1024px) and (device-height: 1366px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-12inch-l-1366x1024.png', media: '(device-width: 1024px) and (device-height: 1366px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)'},  
+      
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-12inch@2-p-2048x2732.png', media: '(device-width: 1024px) and (device-height: 1366px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)'},
+      {rel: 'apple-touch-startup-image',href: '/icons/ios/splashscreens/ipad-pro-12inch@2-l-2732x2048.png', media: '(device-width: 1024px) and (device-height: 1366px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)'},             
+                                 
+    ]
   },
   manifest: {
     name: 'UN Biodiversity Events',
     short_name: 'CBD Events',
     description: 'UN Biodiversity conference app supplying documents and schedules',
-    theme_color: '#009b48',
     background_color:'#ffffff',
     display: 'standalone',
-    background_color: '#ffffff',
     scope: '/',
     start_url:'/',
     dir:'rtl',
     lang: 'en-US',
-    icons:iconsObj.icons
+    icons: iconsObj.icons
   },
   css: [{
       src: 'normalize.css'
