@@ -94,7 +94,7 @@ module.exports = {
     background_color:'#ffffff',
     display: 'standalone',
     scope: '/',
-    start_url:'/',
+    start_url:'/2018',
     dir:'rtl',
     lang: 'en-US',
     icons: iconsObj.icons
