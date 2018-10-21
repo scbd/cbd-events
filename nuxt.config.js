@@ -240,6 +240,10 @@ module.exports = {
     proxy: true
     // proxyHeaders: false
   },
+  cache: {
+    max: 1000,
+    maxAge: 900000
+  },
   workbox: {
       //dev:true,
       runtimeCaching: [
