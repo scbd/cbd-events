@@ -9,7 +9,8 @@ export default {
   methods:{
     saveFiles:saveFiles,
     getFileName:getFileName,
-    createFileObj:createFileObj
+    createFileObj:createFileObj,
+    closeDialog:closeDialog
   },
   created(){
     if(process.client && this.$nuxt.$loading.start)
@@ -56,8 +57,12 @@ async function saveFiles({data}){
   
   await this.$store.dispatch('files/LOAD')
   this.$store.commit('files/DOWNLOADING')
+  this.closeDialog()
 }
 
+function closeDialog (){
+  this.$refs.docsFrame.contentWindow.postMessage(JSON.stringify({ type : 'closeDialogRemote' }), process.env.IFRAME_HOST)
+}
 
 function createFileObj (fileData, blob){
   return {
