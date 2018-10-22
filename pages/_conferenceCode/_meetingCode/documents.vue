@@ -34,8 +34,9 @@ function offLine(){
   .docs-frame{
     width:100%;
     height:95vh;
-    margin-top:2.8em;
+    padding-top:5.8em;
     border: none;
+    margin: -3em 0 0 0;
   }
   .subtitle {
     font-weight: 300;
