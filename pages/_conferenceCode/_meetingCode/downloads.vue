@@ -2,18 +2,18 @@
   <div class="page-view container-fluid" >
     
     <section v-for="(file, $index) in files" :key="file.name">
-      <div class="file" v-on:click="openFile(file)">
-        <div class="col-xs-1 paddingless">
+      <div class="file" >
+        <div class="col-xs-1 paddingless" v-on:click="openFile(file)">
           <svg v-if="!isPDF(file.type)" class="icon x2 word"><use xlink:href="#icon-file-word-o"></use></svg>
           <svg v-if="isPDF(file.type)" class="icon x2 pdf"><use xlink:href="#icon-file-pdf-o"></use></svg>
         </div>
-        <div class="col-xs-11">
+        <div :class="{'col-xs-10':(isIOS && !isIpad), 'col-xs-11':(!isIOS || isIpad)}" v-on:click="openFile(file)">
           {{file.baseName | trimName}}<br>
           {{timeDisplay(file.lastModified)}} <span class="point">●</span> {{formatBytes(file.size,2)}}
         </div>
-        <!-- <div class="col-xs-1 paddingless text-center">
-          <svg class="icon x1-5"><use xlink:href="#icon-ellipsis-v"></use></svg>
-        </div> -->
+        <div v-if="isIOS && !isIpad" class="col-xs-1 paddingless text-center" v-on:click="shareFile(file)">
+          <svg class="icon x2"><use xlink:href="#icon-share-alternitive"></use></svg>
+        </div>
       </div>
       <hr class="hr" v-if="$index != files.length-1">
     </section>
@@ -27,27 +27,36 @@
 </template>
 
 <script>
-  import {DateTime} from 'luxon'
-  import Header from '~/components/header/header-bottom-screen'
-  import {formatBytes} from '~/modules/helpers'
+  import {DateTime}     from 'luxon'
+  import Header         from '~/components/header/header-bottom-screen'
+  import {formatBytes}  from '~/modules/helpers'
+  import localFiles    from '~/modules/localFileSystem.js'
+  
   export default {
     name:"downloads",
     async asyncData ({store,params}) {
       store.commit('routes/SET_SHOW_MEETING_NAV',true)
       return {
           conferenceCode:params.conferenceCode,
-          meetingCode:params.meetingCode
+          meetingCode:params.meetingCode,
+          isIOS:false
         }
+    },
+    created(){
+      this.isIOS = !!this.$cordova
     },
     methods:{
       isPDF:isPDF,
       timeDisplay:timeDisplay,
       formatBytes:formatBytes,
-      openFile:openFile
+      openFile:openFile,
+      shareFile:shareFile,
+      saveIOSFile:saveIOSFile
     },
     computed:{
       files:files,
-      meeting:meeting 
+      meeting:meeting,
+      isIpad:isIpad
     },
     filters: {
       trimName: function (name) {
@@ -59,13 +68,51 @@
       }
     }
   }
-
+  
+  function isIpad () {
+    if(process.server) return false
+    return !!window.navigator.userAgent.match(/iPad/i)
+  }
+  
+  async function shareFile(file){
+    
+    let fileURL = await this.saveIOSFile(file)
+    var rect =  [0, 0, innerWidth / 2, 0];
+    this.$cordova.fileOpener2.showOpenWithDialog(
+      decodeURIComponent(fileURL), 
+      file.type, 
+      { 
+        error : function(e) { 
+            console.log('Error status: ' + e.status + ' - Error message: ' + e.message);
+        },
+        rect:rect
+      }
+    )
+  }
+  
+  async function saveIOSFile(file){
+    try{
+       let dirEntry = await localFiles.resolveLocalFileSystemURL(this.$cordova.file.tempDirectory)
+       let fileEntry = await localFiles.getFile(dirEntry,file.baseName, { create: true, exclusive: false })
+       let localUrl = await localFiles.write(fileEntry,file.blob)
+       return fileEntry.toURL()
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
+  }
+  
   function meeting(){
     return this.$store.state.conferences.selectedMeeting
   }
+  
   function openFile(file){
     // IE doesn't allow using a blob object directly as link href
      // instead it is necessary to use msSaveOrOpenBlob
+
+     if(this.$cordova)
+       this.$cordova.inAppBrowser.open(window.URL.createObjectURL(file.blob),'_blank','toolbartranslucent=yes,enableViewportScale=yes,hidenavigationbuttons=yes,hidespinner=yes,location=no')
+     
      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
        window.navigator.msSaveOrOpenBlob(file.blob);
        return;
