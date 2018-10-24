@@ -1,18 +1,36 @@
 const path = require('path')
 
-require('dotenv').config({path: path.resolve(process.cwd(), '.env.local')})
-require('dotenv').config({path: path.resolve(process.cwd(), '.env')})
-console.log('process.env.NODE_ENVprocess.env.NODE_ENV',process.env.NODE_ENV)
+let dotFile = '.env'
+
+if (['local','dev','stg','ios','iosdev'].includes(process.env.NODE_ENV))
+  dotFile = `${dotFile}.${process.env.NODE_ENV}`
+else 
+  process.env.NODE_ENV = 'production'
+  
+console.info(`##### Building for NODE_ENV: ${process.env.NODE_ENV}`)  
+console.info(`##### Reading dotenv file: ${dotFile}`)
+
+require('dotenv').config({path: path.resolve(process.cwd(), dotFile)})
+
 module.exports = {
-  dev: true,//(process.env.NODE_ENV !== 'production'),
+  dev: (process.env.NODE_ENV !== 'production'),
   mode:'spa',
   env: {
+    API: process.env.API,
     BASE_URL: process.env.BASE_URL,
-    IFRAME_HOST: process.env.IFRAME_HOST
+    IFRAME_HOST: process.env.IFRAME_HOST,
+    ATTACHMENTS: process.env.ATTACHMENTS,
+    DOCS_API:process.env.DOCS_API,
+    PROXY_ENABLED:process.env.PROXY_ENABLED||false
   },
   head: {
+    title: 'UN Biodiversity Events',
     meta: [
+      {charset: 'utf-8'},
       { name: 'viewport', content: 'viewport', content: 'width=device-width, initial-scale=1, minimal-ui, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' },
+      { name: 'nativeUI', content:true },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { hid: 'description', name: 'description', content: 'UN Biodiversity Events Application' }
     ],
     script: [
         { src : 'cordova.js'}
@@ -32,16 +50,20 @@ module.exports = {
   modules: [
     '@nuxtjs/proxy',
     '@nuxtjs/axios',
-    // '@nuxtjs/auth',
+    ['~/modules/nuxtModules/localForage.js', {
+      name: 'cbd-events',
+      version: 1.0,
+      size: 4980736, // Size of database, in bytes. WebSQL-only for now.
+      storeName: 'files', // Should be alphanumeric, with underscores.
+      description: 'Main file store'
+    }],
     ['nuxt-i18n', {
-      locales: ['en', 'fr'],
       defaultLocale: 'en',
-        detectBrowserLanguage: {
-          cookieKey: 'localePref',
-          useCookie: true,
+      detectBrowserLanguage: {
+        cookieKey: 'localePref',
+        useCookie: true,
       },
-      locales: [
-        {
+      locales: [{
           code: 'en',
           file: 'en.js',
           iso: 'en-US'
@@ -55,7 +77,9 @@ module.exports = {
       strategy: 'prefix_except_default',
       lazy: true,
       langDir: 'locales/',
-      vueI18n: {fallbackLocale: 'en',},
+      vueI18n: {
+        fallbackLocale: 'en'
+      },
       seo: false,
       vuex: {
         // Module namespace
@@ -64,21 +88,22 @@ module.exports = {
         // Mutations config
         mutations: {
           // Mutation to commit to store current locale, set to false to disable
-          setLocale: 'I18N_SET_LOCALE',//'I18N_SET_LOCALE',
+          setLocale: 'I18N_SET_LOCALE', //'I18N_SET_LOCALE',
 
           // Mutation to commit to store current message, set to false to disable
           setMessages: 'I18N_SET_MESSAGES'
         }
-      },
-
+      }
     }]
 
   ],
   plugins: [
+    '~/plugins/cordova.js',
     '~/plugins/axios.js',
     '~/plugins/i18n.js',
     '~/plugins/router.js',
-    '~/plugins/filters.js'
+    '~/plugins/filters.js',
+    '~/plugins/vue-notifications'
   ],
   /*
   ** Customize the progress bar color
@@ -97,7 +122,7 @@ module.exports = {
       middleware: ['redirects']
   },
   build: {
-        publicPath : '/nuxt/',
+    publicPath : '/nuxt/',
     /*
     ** Run ESLint on save
     */
@@ -112,35 +137,8 @@ module.exports = {
       }
     }
   },
-  //module configs
-  // proxy: {
-  //   '/api': {
-  //     target: process.env.API,
-  //     // ws: true,
-  //     changeOrigin: true
-  //   }
-  // },
   axios: {
-    //proxy:true,
-    // debug:true,
-    // browserBaseURL:'/',
-    baseURL:process.env.API
-  // proxyHeaders: false
-  },
-  // auth: {
-  //   strategies: {
-  //       local: {
-  //         endpoints: {
-  //           login:false,
-  //           logout: false,
-  //           user: { url: '/api/v2013/authentication/user', method: 'get', propertyName: ''}
-  //         },
-  //         tokenRequired: true,
-  //         // tokenType: 'Ticket'
-  //       }
-  //     },
-  //   plugins: [
-  //     '~/plugins/auth.js'
-  //   ]
-  // }
+    browserBaseURL: '/',
+    baseURL: process.env.API
+  }
 }

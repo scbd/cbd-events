@@ -3,7 +3,7 @@ import {iconsObj} from './static/icons/icons.js'
 
 let dotFile = '.env'
 
-if (['local','dev','stg'].includes(process.env.NODE_ENV))
+if (['local','dev','stg','ios','iosdev'].includes(process.env.NODE_ENV))
   dotFile = `${dotFile}.${process.env.NODE_ENV}`
 else 
   process.env.NODE_ENV = 'production'
@@ -14,12 +14,14 @@ console.info(`##### Reading dotenv file: ${dotFile}`)
 require('dotenv').config({path: path.resolve(process.cwd(), dotFile)})
 
 module.exports = {
+  dev: (process.env.NODE_ENV !== 'production'),
   env: {
     API: process.env.API,
     BASE_URL: process.env.BASE_URL,
     IFRAME_HOST: process.env.IFRAME_HOST,
     ATTACHMENTS: process.env.ATTACHMENTS,
-    DOCS_API:process.env.DOCS_API
+    DOCS_API:process.env.DOCS_API,
+    PROXY_ENABLED:process.env.PROXY_ENABLED
   },
   head: {
     title: 'UN Biodiversity Events',
@@ -99,37 +101,21 @@ module.exports = {
     lang: 'en-US',
     icons: iconsObj.icons
   },
-  css: [{
-      src: 'normalize.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/layouts/base/build.min.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/layouts/container/build.min.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/elements/typography/headings/build.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/modifiers/helpers/build.min.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/modifiers/text/build.min.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/layouts/grid/build.min.css'
-    },
-    {
-      src: '@scbd/ecosystem-style/modifiers/responsive/build.min.css'
-    },
-    {
-      src: '~assets/app.css'
-    },
+  css: [
+    { src: 'normalize.css' },
+    { src: '@scbd/ecosystem-style/layouts/base/build.min.css' },
+    { src: '@scbd/ecosystem-style/layouts/container/build.min.css' },
+    { src: '@scbd/ecosystem-style/elements/typography/headings/build.css' },
+    { src: '@scbd/ecosystem-style/modifiers/helpers/build.min.css' },
+    { src: '@scbd/ecosystem-style/modifiers/text/build.min.css' },
+    { src: '@scbd/ecosystem-style/layouts/grid/build.min.css' },
+    { src: '@scbd/ecosystem-style/modifiers/responsive/build.min.css' },
+    { src: '~assets/app.css' }
   ],
   modules: [
     '@nuxtjs/proxy',
     '@nuxtjs/axios',
+    '@nuxtjs/onesignal', 
     ['@nuxtjs/pwa',{icon:false}], 
     ['~/modules/nuxtModules/localForage.js', {
       name: 'cbd-events',
@@ -207,12 +193,12 @@ module.exports = {
       isClient
     }) {
       if (isDev && isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
+        // config.module.rules.push({
+        //   enforce: 'pre',
+        //   test: /\.(js|vue)$/,
+        //   loader: 'eslint-loader',
+        //   exclude: /(node_modules)/
+        // })
       }
     }
   },
@@ -234,18 +220,15 @@ module.exports = {
   },
   axios: {
     proxy: true,
-    //    debug:true,
     browserBaseURL: '/',
-    baseURL: process.env.API,
-    proxy: true
-    // proxyHeaders: false
+    baseURL: process.env.API
   },
   cache: {
     max: 1000,
     maxAge: 900000
   },
   workbox: {
-      //dev:true,
+      dev: (process.env.NODE_ENV !== 'production'),
       runtimeCaching: [
         {
           // Should be a regex string. Compiles into new RegExp('https://my-cdn.com/.*')
@@ -266,6 +249,14 @@ module.exports = {
           statuses: [0, 200]
         }
     ]
+  },
+  oneSignal: {
+    init: {
+      cdn: true,
+      appId: '4dee4bb3-4b08-4f8d-b942-431f8ac1cab2',
+      allowLocalhostAsSecureOrigin: true,
+      persistNotification:true
+    }
   },
   render: {
     http2: {

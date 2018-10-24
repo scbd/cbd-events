@@ -10,15 +10,18 @@
     "build": " rm -rf .nuxt && NODE_ENV=production nuxt build",
     "build:dev": " rm -rf .nuxt && NODE_ENV=dev nuxt build",
     "build:stg": " rm -rf .nuxt && NODE_ENV=stg nuxt build",
-    "build:ci": " rm -rf .nuxt && NODE_ENV=$NODE_ENV nuxt build",
-    "build:ios:dev": "rm -rf .nuxt && NODE_ENV=dev nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
-    "build:ios": "rm -rf .nuxt && NODE_ENV=production nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build",
+    "build:ci": " rm -rf .nuxt && NODE_ENV=$NODE_ENV nuxt build", 
+    "build:ios:dev": "rm -rf .nuxt && NODE_ENV=iosdev nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build --buildFlag='-UseModernBuildSystem=0'",
+    "build:ios": "rm -rf .nuxt && NODE_ENV=ios nuxt generate -c cordova.nuxt.config.js && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build --buildFlag='-UseModernBuildSystem=0'",
     "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
     "start": "nuxt start",
-    "start:dev": "NODE_ENV=dev nuxt start"
+    "start:dev": "NODE_ENV=dev nuxt start",
+    "start:stg": "NODE_ENV=stg nuxt start",
+    "start:ci": "NODE_ENV=ci nuxt start"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.1",
+    "@nuxtjs/onesignal": "^2.6.0",
     "@nuxtjs/pwa": "^2.5.0",
     "@scbd/ecosystem-style": "0.0.5",
     "camelcase-keys": "^4.2.0",
