@@ -1,0 +1,7 @@
+{
+  "title":"Ajouter au calendrier",
+  "selectStream": "Sélectionnez un flux à ajouter",
+  "calendarClient":"Calendrier Client",
+  "subscribeManually" : "S'abonner manuellement",
+  "subscribeManuallyDescription" :"Utilisez votre client de calendrier pour abonnez-vous à ce lien."
+}
