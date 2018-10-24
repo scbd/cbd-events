@@ -13,7 +13,7 @@ async function getConferences({state,dispatch,commit,rootState},data){
                             s: {"StartDate":-1}
                           }
 
-    response = await this.$axios.$get('/api/v2016/conferences', {'params': queryParameters})
+    response = await this.$axios.$get(`${process.env.PROXY_ENABLED? '' : process.env.API}/api/v2016/conferences`, {'params': queryParameters})
 
     // if(response.status != 200)
     //   responseHandeler (commit, response)
@@ -39,7 +39,7 @@ async function getAgenda({state,commit,rootState}){
                           q: {'_id':{$oid:state.selectedMeeting.id}}
                         }
                   
-  response = await this.$axios.$get('/api/v2016/meetings', {'params': queryParameters})
+  response = await this.$axios.$get(`${process.env.PROXY_ENABLED? '' : process.env.API}/api/v2016/meetings`, {'params': queryParameters})
 
   Vue.set(state.selectedMeeting,'agenda', response[0].agenda)
 }
@@ -61,7 +61,7 @@ async function getMeetings({state,commit,rootState}){
                             q: {'_id':{$oid:meeting.id}},
                             fo:1
                           }
-    agendaPromises[index]= this.$axios.$get('/api/v2016/meetings', {'params': queryParameters})
+    agendaPromises[index]= this.$axios.$get(`${process.env.PROXY_ENABLED? '' : process.env.API}/api/v2016/meetings`, {'params': queryParameters})
   })
   
   agendaPromises = await Promise.all(agendaPromises)
