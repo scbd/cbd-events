@@ -16,7 +16,6 @@
           <span class="eco-calendar-empty"></span>
           <span v-bind:key="index" :class="$style.caps" v-for="(stream, index) in calEvent.stream_ss">{{stream}}<span v-if="index < calEvent.stream_ss.length-1">,</span>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <!-- <button class="btn btn-default btn-xs"><span :class="$style.pointer" class="text-primary"><small><a v-on:click.stop="goTo(`webcal://localhost:8000/api/v2018/iCal/${calEvent.conference}/${stream}`)">Subscribe to {{stream}}</a></small></span></button> -->
           </span>
 
           <AddToCalendar :options="{baseUrl:api}" :event="calEvent" style="display:inline-block;" v-on:click.stop=""/>
