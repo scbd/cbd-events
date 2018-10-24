@@ -23,7 +23,7 @@ RUN cd components/conference-cal && npm install --production
 RUN yarn build:ci
 RUN rm -rf node_modules
 RUN npm install --production
-RUN echo $NODE_ENV
+
 
 EXPOSE 3000
 

@@ -16,8 +16,8 @@
     "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
     "start": "nuxt start",
     "start:dev": "NODE_ENV=dev nuxt start",
-    "start:stg": "NODE_ENV=dev nuxt start",
-    "start:ci": "NODE_ENV=dev nuxt start"
+    "start:stg": "NODE_ENV=stg nuxt start",
+    "start:ci": "NODE_ENV=$NODE_ENV nuxt start"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.1",
