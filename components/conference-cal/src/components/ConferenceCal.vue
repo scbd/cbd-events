@@ -86,7 +86,7 @@ function loadEvents(events){
 }
 
 async function getConference(){
-  let path = `/api/v2016/event-groups/`
+  let path = `${process.env.API}/api/v2016/event-groups/`
 
   let r = await axios.get(path,{params:{q:{code:this.code}}})
 

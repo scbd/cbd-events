@@ -52,7 +52,7 @@ function genMeetingFromSymbol(){
   return `${symbolArr[1]}-${symbolArr[2]}`
 }
 function genFilePath(){
-  return  `/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
+  return  `${process.env.API}/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
 }
 
 </script>

@@ -1,4 +1,5 @@
 <template>
+
     <Calendar class="cal" :options="{queryFn:getEvents,conference:conference,locale:$i18n.locale,height:'100vh'}"/>
 </template>
 <style>
@@ -40,9 +41,11 @@
       }
 
       let events = {}
-      let endPoint = `/api/v2013/index/select`
+      let endPoint = `${process.env.API}/api/v2013/index/select`
       let path = `${endPoint}?fl=${genFields(query)}&q=${this.genQuery(query)}&sort=start_dt+DESC&start=0&wt=json&rows=300`
-      let response = await this.$axios.get(path)
+      let response
+
+      response = await this.$axios.get(path)
 
       events.raw  = sanitizeIndexResult(response.data.response.docs)
       events.days = mapByDay(events.raw)

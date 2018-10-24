@@ -6,7 +6,7 @@
       <div class="container-fluid ">
 
         <span class="pull-left">
-          <img  :src="'/images/cbd-leaf-green.svg'" class="header-nav-img" :alt="$t('scbdLeafLogo')"/>
+          <img  :src="`${attachments}/cbd-leaf-green.svg`" class="header-nav-img" :alt="$t('scbdLeafLogo')"/>
         </span>
 
         <span class="pull-right">
@@ -45,7 +45,7 @@
         showLinks: showLinks,
         lastScrollTop: 0,
         show: true,
-        attachments:process.env.ATTACHMENTS
+        attachments:process.env.PROXY_ENABLED? '/images/' : process.env.ATTACHMENTS
       }
     },
     computed: {

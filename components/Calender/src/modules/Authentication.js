@@ -102,6 +102,6 @@ function getUser(token) {
   if(!token)
     return anonymous();
 
-  return axios.get('/api/v2013/authentication/user', { headers: { Authorization: "Ticket " + token } })
+  return axios.get(`${process.env.API}/api/v2013/authentication/user`, { headers: { Authorization: "Ticket " + token } })
          .then((r) => {return r.data})
 }

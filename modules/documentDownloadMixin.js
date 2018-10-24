@@ -13,8 +13,11 @@ export default {
     closeDialog:closeDialog
   },
   created(){
-    if(process.client && this.$nuxt.$loading.start)
+    if(process.server) return 
+    
+    if(this.$nuxt.$loading.start)
       this.$nuxt.$loading.start()
+
   },
   mounted:function(){
     if (process.client && this.$refs.docsFrame){
@@ -39,13 +42,18 @@ async function saveFiles({data}){
   this.$store.commit('files/DOWNLOADING')
   let blobs = []
   let fileObjs = []
-    
-  for (let i = 0; i < msg.data.length; i++) 
-    blobs[i] = axios({method:'get', url:msg.data[i].replace('https://www.cbd.int',''),responseType:'blob'}).then((res)=>{
+
+  for (let i = 0; i < msg.data.length; i++) {
+    let downloadUri = msg.data[i]
+    if(process.env.PROXY_ENABLED)
+      downloadUri = downloadUri.replace('https://www.cbd.int','')
+
+    blobs[i] = axios({method:'get', url:downloadUri,responseType:'blob'}).then((res)=>{
       msg.data[i] = { name:msg.data[i] }
       msg.data[i].type = res.headers['content-type']
       return res.data
     })
+  }
   
   blobs =  await Promise.all(blobs)
   

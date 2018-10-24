@@ -107,7 +107,7 @@
   }
 
   function getPrograms(){
-    let endPoint = `/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
+    let endPoint = `${process.env.API}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
     return axios.get(endPoint)
   }
 

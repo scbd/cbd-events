@@ -99,7 +99,7 @@ export default {
   }
 
   function genFilePath(){
-    return  `/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
+    return  `${process.env.API}/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
   }
 
   function genFilesParams(){
