@@ -33,11 +33,13 @@
   
   function getHeroImage(){
     if(!this.conference || !this.conference.heroImage) return false
-    return this.conference.heroImage.replace(process.env.ATTACHMENTS,'/images')
+    if(process.env.PROXY_ENABLED)
+      return this.conference.heroImage.replace(process.env.ATTACHMENTS,'/images')
+    return this.conference.heroImage
   }
 
   function loadArticle($axios,code){
-    return $axios.$get('/api/v2017/articles', { params: getQuery(code)})
+    return $axios.$get(`${process.env.API}/api/v2017/articles`, { params: getQuery(code)})
   }
 
   function getQuery(code){
