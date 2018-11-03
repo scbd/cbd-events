@@ -1,76 +1,57 @@
 import Vue from 'vue'
+
 //read from local storage and update state
 async function loadAction({state, commit,  rootState}){
   if(state.data.length)return
   let data = []
   let names = []
-  let count = await this.$localForage.files.length()
-
-  for (let i = 0; i < count; i++) 
-    names[i] =this.$localForage.files.key(i)
-  names = await Promise.all(names)
-
-  for (let i = 0; i < count; i++) 
-    data[i] =this.$localForage.files.getItem(names[i])  
-  data = await Promise.all(data)
+  let count
   
-  await this.$localForage.files.iterate((value, key, iterationNumber)=>data.push(value))
+  try{
+
+    await this.$localForage.files.iterate((value, key, iterationNumber)=>{
+      data.push(value)
+    })
+    await this.$localForage.blobs.iterate((value, key, iterationNumber)=>{
+      data[iterationNumber-1].blob = value
+    })
+    console.log('data',data)
+  }catch(e){
+    console.error(`Error:`,e)
+  }
+
 
   if(data.length) 
     commit('SET',data)
 }
 
 // save to localstorage and update state
-async function saveAction({commit,dispatch}, files){
-
-    
-  if(Array.isArray(files)){
-    for (let i = 0; i < files.length; i++) {
-      commit('SAVE',files[i])
-      this.$localForage.files.setItem(files[i].name,files[i])
+async function saveAction({commit,dispatch}, {files,blobs}){
+console.log('files',files)
+console.log('blobs',blobs)
+  try{  
+    if(Array.isArray(files)){
+      for (let i = 0; i < files.length; i++) {
+        let clone =  Object.assign({}, files[i])
+        clone.blob = blobs[i]
+        commit('SAVE',clone)
+  
+        this.$localForage.files.setItem(files[i].name,files[i])
+        this.$localForage.blobs.setItem(files[i].name,blobs[i])
+      }
+    }else{
+      let clone = Object.assign({}, files)
+      clone.blob = blobs
+      commit('SAVE',clone)
+      this.$localForage.files.setItem(files.name,files)
+      this.$localForage.blobs.setItem(files.name,blobs)
     }
-  }else{
-    commit('SAVE',files)
-    return this.$localForage.files.setItem(files.name,files)
+  }catch(e){
+    console.log(`Error:`,e)
   }
 }
 
-// async function saveIOSAction({commit}, files){
-//   let dirEntry = await window.resolveLocalFileSystemURL(cordova.file.dataDirectory)
-//   if(Array.isArray(files)){
-//     let localPaths =[]
-//     for (let i = 0; i < files.length; i++) 
-//       localPaths[i] = saveFile(dirEntry, files[i].blob, files[i].name)
-// 
-//     localPaths =  await Promise.all(localPaths)  
-// 
-//     for (let i = 0; i < files.length; i++) {
-//       files[i].localPath = 
-//       this.$localForage.files.setItem(files[i].name,files[i])
-//     }
-// 
-//   }else{
-// 
-//     return this.$localForage.files.setItem(files.name,files)
-//   }
-// }
-// async function saveFile(dirEntry, fileData, fileName) {
-// 
-//     let fileEntry = await dirEntry.getFile(fileName, { create: true, exclusive: false })
-// 
-//     let fileWriter = await fileEntry.createWriter()
-// 
-//     return fileWriter.write(dataObj);
-// 
-// }
 
-// function saveIOSFile(){
-//   window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
-//     console.log('file system open: ' + dirEntry.name);
-//     var isAppend = true;
-//     createFile(dirEntry, "fileToAppend.txt", isAppend);
-//   }, onErrorLoadFs);
-// }
 async function deleteAction({commit,state}, files){
   
   if(Array.isArray(files)){
@@ -113,6 +94,9 @@ function deleteMutation(state,fileName){
 function deleteAllMutation(state){
   state.data = []
 }
+function fileToOpenMutation(state,payLoad =false){
+  state.fileToOpen = payLoad
+}
 //save a file 
 function save(state,payLoad){
   if(state.data.find(({name})=>name===payLoad.name)) return
@@ -137,11 +121,13 @@ export const getters = {
 
 export const state  = () =>({
  data:[],
- downloading:false
+ downloading:false,
+ fileToOpen:false
 })
 
 export const mutations = {
   SET:setMutation,
+  SET_FILE_TO_OPEN:fileToOpenMutation,
   SAVE:save,
   DELETE:deleteMutation,
   DOWNLOADING:downloading,
