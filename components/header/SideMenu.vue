@@ -1,16 +1,12 @@
 <template>
   <section>
-      <svg class="icon-clock-o" :class="{'active':isOpen}"  v-on:click="toggle()"><use xlink:href="#icon-cog"></use></svg>
+      <svg class="icon-clock-o" :class="{'active':isOpen}"  ><use xlink:href="#icon-cog"></use></svg>
       <transition name="test" >
-        <div class="side-menu" v-if="isOpen" v-on:click="toggle()">
+        <div class="side-menu" v-if="isOpen">
           <div class="row">
             <div class="col-xs-12">
               <br>
-
               <h4>{{$t('settings')}}</h4>
-              <!-- <div class="list-group">
-                <nuxt-link :to="$i18n.path({name:'conferenceCode-languages', params: { conferenceCode: conferenceCode } })"><button type="button" class="list-group-item"><svg class="icon-language"><use xlink:href="#icon-language"></use></svg> {{language}}</button></nuxt-link>
-              </div> -->
               <div class="list-group">
                 <nuxt-link :to="$i18n.path({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })"><button type="button" class="list-group-item"><svg class="icon"><use xlink:href="#icon-transfer"></use></svg> {{switchConference}}</button></nuxt-link>
               </div>
@@ -43,9 +39,9 @@
   import '@scbd/ecosystem-style/patterns/list-groups/build.min.css'
   export default {
     name:"mainMenu",
+    props:{isOpen: { type: Boolean, default:false }},
     data ({$route}) {
       return {
-        isOpen:false,
         conferenceCode:$route.params.conferenceCode,
         deleteing:false
       }
@@ -65,7 +61,6 @@
       },
     },
     methods:{
-      toggle:toggle,
       deleteAll:deleteAll
     }
   }
@@ -74,11 +69,7 @@
     await this.$store.dispatch('files/DELETE',this.$store.state.files.data)
     this.$store.commit('files/DOWNLOADING')
   }
-  function toggle(){
-    this.isOpen = !this.isOpen
-    console.log('window.cordova',window.cordova)
-    console.log('device.model',device.model)
-  }
+
 </script>
 <style scoped>
 .email{

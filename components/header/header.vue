@@ -1,7 +1,7 @@
 <template>
 <section>
   <transition name="slide-fade">
-    <nav v-if="showNavs" class="mainn navbar  navbar-default">
+    <nav v-if="showNavs" class="mainn navbar  navbar-default" v-on:click="toggleSideMenu()">
 
       <div class="container-fluid ">
 
@@ -10,8 +10,9 @@
         </span>
 
         <span class="pull-right">
-          <SideMenu/>
+          <SideMenu :is-open="isSideMenuOpen"/>
         </span>
+        
         <div class="title"><b>{{conference.title | lstring}}</b></div>
       </div>
       <div class="row sub" v-if="showMeetingNav">
@@ -23,6 +24,7 @@
           <b v-else>
             {{meeting.subTitle}}
           </b>
+
           <svg class="icon-clock-o"  ><use xlink:href="#icon-select-arrows"></use></svg>
         </div>
       </div>
@@ -45,6 +47,7 @@
         showLinks: showLinks,
         lastScrollTop: 0,
         show: true,
+        isSideMenuOpen:false,
         attachments:process.env.PROXY_ENABLED? '/images/' : process.env.ATTACHMENTS
       }
     },
@@ -63,6 +66,7 @@
     methods: {
       offlineNotice:offlineNotice,
       onlineNotice:onlineNotice,
+      toggleSideMenu:toggleSideMenu,
       toggle(){
         let locale = this.$store.state.i18n.locale
         this.$router.push({name:`conferenceCode-meetingCode-meetings___${locale}`,params: this.$route.params })
@@ -110,7 +114,9 @@
       window.removeEventListener('offline', this.offlineNotice )
     }
   }
-  
+  function toggleSideMenu(){
+    this.isSideMenuOpen=!this.isSideMenuOpen
+  }  
   function offlineNotice(){
     this.$swal({
         title: this.$i18n.t('internetConnectionLost'),
