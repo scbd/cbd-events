@@ -1,6 +1,11 @@
 # CBD-Events PWA
 
+android/project.properties 
+change to: cordova.system.library.1=com.android.support:support-v4:27.1.0
 
+gradle.build
+defaultTargetSdkVersion=28 //Integer - We ALWAYS target the latest by default
+defaultCompileSdkVersion=28 //Integer - We ALWAYS compile with the latest by default
 
 ## Build Setup
 
