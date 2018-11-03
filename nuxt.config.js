@@ -1,19 +1,10 @@
-import  path from 'path'
-import {iconsObj} from './static/icons/icons.js'
+import {iconsObj} from './static/icons/icons'
+import {dotEnvReader,cordovaNuxtConfig} from './modules/appEnvironmentsManager'
+import localforage from 'localforage'
 
-let dotFile = '.env'
+dotEnvReader() // read env related vars and set them to nodejs.env
 
-if (['local','dev','stg','ios','iosdev'].includes(process.env.NODE_ENV))
-  dotFile = `${dotFile}.${process.env.NODE_ENV}`
-else 
-  process.env.NODE_ENV = 'production'
-  
-console.info(`##### Building for NODE_ENV: ${process.env.NODE_ENV}`)  
-console.info(`##### Reading dotenv file: ${dotFile}`)
-
-require('dotenv').config({path: path.resolve(process.cwd(), dotFile)})
-
-module.exports = {
+let config = {
   dev: (process.env.NODE_ENV !== 'production'),
   env: {
     API: process.env.API,
@@ -24,10 +15,10 @@ module.exports = {
     PROXY_ENABLED:process.env.PROXY_ENABLED
   },
   head: {
-    title: 'UN Biodiversity Events',
+    title: 'CBD Events - UN Biodiversity Confrence App',
     meta: [{charset: 'utf-8'},
       {name: 'viewport',  content: 'width=device-width, initial-scale=1'},
-      {  hid: 'description', name: 'description',content: 'UN Biodiversity Events Application'},
+      {  hid: 'description', name: 'description',content: 'CBD/UN Biodiversity Events Application. Information on CBD/UN Biodiversity conferences and related events is available to you at the touch of your finger. Access important information including agendas,  descriptions, in-session documents and activity dates and times. You can create a custom schedule to help you manage your time while at the event or download documents to read on the go or offline.'},
       { name: 'nativeUI', content:true },
       { name: 'apple-mobile-web-app-capable', content: 'yes' }
     ],
@@ -90,9 +81,9 @@ module.exports = {
     ]
   },
   manifest: {
-    name: 'UN Biodiversity Events',
+    name: 'CBD Events - UN Biodiversity Confrence App',
     short_name: 'CBD Events',
-    description: 'UN Biodiversity conference app supplying documents and schedules',
+    description: 'CBD/UN Biodiversity Events Application. Information on CBD/UN Biodiversity conferences and related events is available to you at the touch of your finger. Access important information including agendas,  descriptions, in-session documents and activity dates and times. You can create a custom schedule to help you manage your time while at the event or download documents to read on the go or offline.',
     background_color:'#000000',
     display: 'standalone',
     // scope: '/',
@@ -119,10 +110,19 @@ module.exports = {
     ['@nuxtjs/pwa',{icon:false}], 
     ['~/modules/nuxtModules/localForage.js', {
       name: 'cbd-events',
+     // driver      : [localforage.WEBSQL,localforage.LOCALSTORAGE],
       version: 1.0,
       size: 4980736, // Size of database, in bytes. WebSQL-only for now.
       storeName: 'files', // Should be alphanumeric, with underscores.
-      description: 'Main file store'
+      description: 'Main file store',
+      instances:[{
+        name: 'cbd-events',
+       // driver      : [localforage.WEBSQL,localforage.LOCALSTORAGE],
+        version: 1.0,
+        size: 4980736, // Size of database, in bytes. WebSQL-only for now.
+        storeName: 'blobs', // Should be alphanumeric, with underscores.
+        description: 'file blobs'
+      }]
     }],
     ['nuxt-i18n', {
       defaultLocale: 'en',
@@ -202,7 +202,6 @@ module.exports = {
       }
     }
   },
-  //module configs
   proxy: {
     '/api': {
       target: process.env.API,
@@ -272,3 +271,9 @@ module.exports = {
     }
   }
 }
+
+config = cordovaNuxtConfig(config) // if cordova modify config
+//config = cordovaAndroidNuxtConfig(config)// if android cordova modify config
+
+
+module.exports = config
