@@ -28,4 +28,4 @@ RUN npm install --production
 EXPOSE 3000
 
 # start command
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "start:ci" ]
