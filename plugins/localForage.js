@@ -79,19 +79,7 @@ const createVueIntance = function (options){
           })
         })
       },
-      iterate () {
-        return new Promise((resolve, reject) => {
-          lf.iterate((value, key, iterationNumber) => {
-            resolve([value, key, iterationNumber])
-          }).then((result) => {
-            resolve(result)
-          }).catch((err) => {
-            // This code runs if there were any errors
-            console.log(err);
-            reject(err)
-          })
-        })
-      },
+      iterate:lf.iterate,
       setDriver (drivreName) {
         return new Promise((resolve, reject) => {
           resolve(lf.setDriver(driverName))
@@ -111,7 +99,7 @@ const createVueIntance = function (options){
   })
 } 
 
-export default  async function (ctx, inject) {
+export default function (ctx, inject) {
 
   let $localForage = createVueIntance (OPTS)
   $localForage[OPTS.storeName] = createVueIntance (OPTS)
