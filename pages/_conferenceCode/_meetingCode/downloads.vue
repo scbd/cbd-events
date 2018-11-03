@@ -51,7 +51,8 @@
       formatBytes:formatBytes,
       openFile:openFile,
       shareFile:shareFile,
-      saveIOSFile:saveIOSFile
+      saveCordovaFile:saveCordovaFile,
+      openSafariPWA:openSafariPWA
     },
     computed:{
       files:files,
@@ -76,23 +77,22 @@
   
   async function shareFile(file){
     
-    let fileURL = await this.saveIOSFile(file)
+    let fileURL = await this.saveCordovaFile(file)
+
     var rect =  [0, 0, innerWidth / 2, 0];
     this.$cordova.fileOpener2.showOpenWithDialog(
       decodeURIComponent(fileURL), 
       file.type, 
       { 
-        error : function(e) { 
-            console.log('Error status: ' + e.status + ' - Error message: ' + e.message);
-        },
+        error : (e) =>{ console.log('Error: ',e); },
         rect:rect
       }
     )
   }
   
-  async function saveIOSFile(file){
+  async function saveCordovaFile(file){
     try{
-       let dirEntry = await localFiles.resolveLocalFileSystemURL(this.$cordova.file.tempDirectory)
+       let dirEntry = await localFiles.resolveLocalFileSystemURL(this.$cordova.file.tempDirectory || this.$cordova.file.cacheDirectory)
        let fileEntry = await localFiles.getFile(dirEntry,file.baseName, { create: true, exclusive: false })
        let localUrl = await localFiles.write(fileEntry,file.blob)
        return fileEntry.toURL()
@@ -106,18 +106,39 @@
     return this.$store.state.conferences.selectedMeeting
   }
   
-  function openFile(file){
-    // IE doesn't allow using a blob object directly as link href
-     // instead it is necessary to use msSaveOrOpenBlob
+  async function openFile(file){
 
      if(this.$cordova)
-       this.$cordova.inAppBrowser.open(window.URL.createObjectURL(file.blob),'_blank','toolbartranslucent=yes,enableViewportScale=yes,hidenavigationbuttons=yes,hidespinner=yes,location=no')
-     
+      if(this.$cordova.device.platform === 'iOS')
+          this.$cordova.inAppBrowser.open(window.URL.createObjectURL(file.blob),'_blank','toolbartranslucent=yes,enableViewportScale=yes,hidenavigationbuttons=yes,hidespinner=yes,location=no')
+       else{
+
+          let fileURL = await this.saveCordovaFile(file)
+
+          this.$cordova.plugins.fileOpener2.open(
+              fileURL, // You can also use a Cordova-style file uri: cdvfile://localhost/persistent/Download/starwars.pdf
+              'application/pdf', 
+              { 
+                  error : function(e) { 
+                      console.log('Error status: ' + e.status + ' - Error message: ' + e.message);
+                  },
+                  success : function () {
+                      console.log('file opened successfully'); 				
+                  }
+              }
+          )
+               
+          return
+        }
+       
+
+       
      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
        window.navigator.msSaveOrOpenBlob(file.blob);
        return;
      } 
-    
+  
+    return this.openSafariPWA (file)
      // For other browsers: 
      // Create a link pointing to the ObjectURL containing the blob.
      let data = window.URL.createObjectURL(file.blob);
@@ -128,6 +149,14 @@
      
      // For Firefox it is necessary to delay revoking the ObjectURL
      setTimeout(()=>window.URL.revokeObjectURL(data), 100)
+  }
+  
+  async function openSafariPWA (fileObject) {
+
+
+    this.$store.commit('files/SET_FILE_TO_OPEN',window.URL.createObjectURL(fileObject.blob))
+
+    this.$router.push(this.$i18n.path({name:'conferenceCode-fileView', params: { conferenceCode: this.conferenceCode } }))
   }
   
   function timeDisplay (isoDate) {
@@ -165,3 +194,4 @@
   margin: 0 -15px 1em -15px;
 }
 </style>
+
