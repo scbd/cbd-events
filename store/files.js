@@ -57,8 +57,10 @@ async function deleteAction({commit,state}, files){
   if(Array.isArray(files)){
     let length = files.length
     if(files.length === state.data.length){
-      for (let i = 0; i < length; i++) 
+      for (let i = 0; i < length; i++) {
         this.$localForage.files.removeItem(files[i].name)
+        this.$localForage.blobs.removeItem(files[i].name)
+      }
       commit('DELALL')
     }
       
@@ -70,10 +72,16 @@ async function deleteAction({commit,state}, files){
       }
       commit('DELETE',files[i])
       await this.$localForage.files.removeItem(files[i].name)
+      await this.$localForage.blobs.removeItem(files[i].name)
     }
-  }else{
+  } else if(files)  {
     commit('DELETE',files)
     await this.$localForage.files.removeItem(files.name)
+    await this.$localForage.blobs.removeItem(files.name)
+  } else {
+    commit('DELALL')
+    await this.$localForage.files.clear()
+    await this.$localForage.blobs.clear()
   }
 }
 //set the entire file system
