@@ -8,27 +8,22 @@ async function loadAction({state, commit,  rootState}){
   let count
   
   try{
-
     await this.$localForage.files.iterate((value, key, iterationNumber)=>{
       data.push(value)
     })
     await this.$localForage.blobs.iterate((value, key, iterationNumber)=>{
       data[iterationNumber-1].blob = value
     })
-    console.log('data',data)
   }catch(e){
     console.error(`Error:`,e)
   }
-
-
   if(data.length) 
     commit('SET',data)
 }
 
 // save to localstorage and update state
 async function saveAction({commit,dispatch}, {files,blobs}){
-console.log('files',files)
-console.log('blobs',blobs)
+
   try{  
     if(Array.isArray(files)){
       for (let i = 0; i < files.length; i++) {
