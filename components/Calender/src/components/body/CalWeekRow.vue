@@ -34,8 +34,6 @@
 
 <script>
 import CalEvent     from '../event/CalEvent'
-import '@scbd/ecosystem-icons/right-circled/icon.min.css'
-import '@scbd/ecosystem-icons/left-circled/icon.min.css'
 
 export default {
   name: 'CalWeekRow',

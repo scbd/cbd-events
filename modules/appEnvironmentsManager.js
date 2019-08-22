@@ -1,5 +1,5 @@
 const path = require('path')
-const localforage = require("localforage")
+
 export const pwaEnvironments = ['local','dev','stg']
 export const cordovaEnvironments = ['ios','iosdev','iosstg','android','androiddev','androidstg']
 export const environments = pwaEnvironments.concat(cordovaEnvironments)
@@ -57,6 +57,8 @@ export const cordovaNuxtConfig = (nuxtConfig)=>{
   delete(nuxtConfig.axios.proxy)
   return nuxtConfig
 }
+
+//dotEnvReader()
 // export const cordovaAndroidNuxtConfig = (nuxtConfig)=>{
 //   console.log('isAndroidEnv()',isAndroidEnv())
 //   if(!isAndroidEnv()) return nuxtConfig

@@ -22,10 +22,10 @@ $RECYCLE.BIN/
 *.lnk
 
 # iOS Platform
-platforms/ios/build/
-platforms/ios/www/
-platforms/ios/cordova/console.log
-*.xcuserdatad
+cordova/platforms/ios/build/
+cordova/platforms/ios/www/
+cordova/platforms/ios/cordova/console.log
+cordova/.xcuserdatad
 
 # Android Platform
 platforms/android/.gradle

@@ -48,11 +48,6 @@
 
 <script>
 
-  import "@scbd/ecosystem-style/patterns/forms/build.min.css"
-  import "@scbd/ecosystem-style/patterns/input-groups/build.min.css"
-  import "@scbd/ecosystem-style/patterns/button-groups/build.css"
-  import "@scbd/ecosystem-style/elements/buttons/build.min.css"
-  import "@scbd/ecosystem-style/patterns/dropdowns/build.min.css"
 
   import events from '../../modules/Bus'
   import axios from 'axios'

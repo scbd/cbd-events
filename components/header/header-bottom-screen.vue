@@ -7,9 +7,7 @@
 </template>
 
 <script>
-//  this.$root.$on('bottom-screen-cancel',close)
-// this.$root.$on('bottom-screen-done',close
-  import '@scbd/ecosystem-style/patterns/navs/build.min.css'
+
   let showLinks = false
 
   export default {

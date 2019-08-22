@@ -18,9 +18,6 @@
 <script>
 import {DateTime}   from 'luxon'
 
-import '@scbd/ecosystem-style/patterns/navs/build.min.css'
-import '@scbd/ecosystem-style/patterns/navbar/build.min.css'
-
 export default {
   name:'Navigation',
   data ({$route,$store}) {

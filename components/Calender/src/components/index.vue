@@ -29,13 +29,6 @@
 
 <script>
 
-  import 'normalize.css/normalize.css'
-  import "@scbd/ecosystem-style/layouts/base/build.min.css"
-  import "@scbd/ecosystem-style/layouts/container/build.min.css"
-  import "@scbd/ecosystem-style/layouts/grid/build.min.css"
-
-
-
   import {DateTime}         from 'luxon'
   import events             from '../modules/Bus'
   import CalBody            from './body/CalBody'

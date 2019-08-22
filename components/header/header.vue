@@ -36,7 +36,6 @@
 
 <script>
   import SideMenu from './SideMenu.vue'
-  import '@scbd/ecosystem-style/patterns/navs/build.min.css'
   let showLinks = false
 
   export default {

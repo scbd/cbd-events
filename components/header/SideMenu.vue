@@ -36,7 +36,6 @@
 </template>
 
 <script>
-  import '@scbd/ecosystem-style/patterns/list-groups/build.min.css'
   export default {
     name:"mainMenu",
     props:{isOpen: { type: Boolean, default:false }},

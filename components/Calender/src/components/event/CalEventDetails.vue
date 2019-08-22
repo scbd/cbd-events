@@ -18,7 +18,6 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </span>
 
-          <AddToCalendar :options="{baseUrl:api}" :event="calEvent" style="display:inline-block;" v-on:click.stop=""/>
         </div>
 
         <div v-if="isInSession()"><span class="eco-location"></span> {{location}}</div>
@@ -68,16 +67,11 @@
 
 <script>
 
-  import AddToCalendar        from '~/components/AddToCalendar/src/components/index.vue'
   import events               from '../../modules/Bus'
   import AgendaItem           from './AgendaItem'
   import FileStatus           from './CalEventDetailsFileStatus'
   import {DateTime}           from 'luxon'
   import CalEventDetailsFile  from './CalEventDetailsFile'
-
-  import '@scbd/ecosystem-style/modifiers/helpers/build.min.css'
-  import '@scbd/ecosystem-style/modifiers/states/build.min.css'
-  import '@scbd/ecosystem-style/patterns/button-groups/build.css'
 
   export default {
     name: 'Details',
@@ -86,7 +80,7 @@
       return{
         api:process.env.API
     }},
-    components:{AgendaItem,CalEventDetailsFile,FileStatus,AddToCalendar},
+    components:{AgendaItem,CalEventDetailsFile,FileStatus},
     methods:{
       showDetails:showDetails,
       files:files,
@@ -181,7 +175,7 @@
   }
 </script>
 <style>
-/* @import url('@scbd/eco-molecule-add-to-calendar/dist/vue/AddToCalendar.css') */
+
   .slide-details-leave-active, .slide-details-enter-active  {
     transition: all .4s ease;
   }

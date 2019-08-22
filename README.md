@@ -13,11 +13,9 @@ defaultCompileSdkVersion=28 //Integer - We ALWAYS compile with the latest by def
 # install dependencies
 $ yarn install
 
-# hack for children components that are stand alone
-# until team decision is made design system, mono repo, bitsrc.io, yarn work spaces, versioning, lerna
-$ cd components/AddToCalendar/src && yarn
-$ cd components/Calender && yarn
-$ cd components/conference-cal && yarn
+
+
+
 
 # serve with hot reload at localhost:3000
 $ yarn dev
