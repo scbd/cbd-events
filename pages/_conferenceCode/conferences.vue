@@ -3,7 +3,7 @@
     <Header :title="title"/>
     <div class="page container-fluid" >
       <div class="row">
-        <div  v-on:click="changeConference(conference)" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" v-for="conference in conferences" v-if="conference.hasMeetings" v-bind:key="conference._id">
+        <div  v-on:click="changeConference(conference)" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" v-for="conference in conferencesWithMeetings"  v-bind:key="conference._id">
 
           <img crossorigin="anonymous" v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${conference.title} logo`">
           <img crossorigin="anonymous" v-if="!getHeroImage(conference)" :src="getImage(conference) || defaultImage" :alt="`${conference.title} logo`">
@@ -26,6 +26,7 @@
     layout    : ' bottom-screen',
     components: { Header },
     methods   : { done, getImage, getHeroImage, changeConference },
+    computed  : { conferencesWithMeetings },
     asyncData,
     mounted
   }
@@ -36,6 +37,15 @@
       conferences : store.state.conferences.docs,
       defaultImage: '/images/cbd-logo-en.svg'
     }
+  }
+
+  function conferencesWithMeetings () {
+    let { conferences } = this
+
+    if(!conferences) return []
+
+    return conferences.filter( c => c.hasMeetings)
+    
   }
 
   function mounted(){ this.$root.$on('bottom-screen-done',done) }

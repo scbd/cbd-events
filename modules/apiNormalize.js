@@ -1,8 +1,7 @@
-import camelcasekeys from 'camelcase-keys'
+import camelCaseKeys from 'camelcase-keys'
 
-export const toCamelCase = (item) => {
-  return camelcasekeys(item, {deep: true});
-}
+export const toCamelCase = (item) => camelCaseKeys(item, { deep:true });
+
 
 
 export const normalizeSolrResponse = (docs, locale='en') => {
@@ -18,7 +17,7 @@ export const normalizeSolrResponse = (docs, locale='en') => {
         docs[i][sanitizedPropName] = normalizeLString(docs[i][sanitizedPropName],locale)
     }
 
-    docs[i] = camelcasekeys(docs[i],{deep: true})
+    docs[i] = camelCaseKeys(docs[i],{deep: true})
 
   }
   return docs
@@ -26,7 +25,7 @@ export const normalizeSolrResponse = (docs, locale='en') => {
 
 export const normalizeApiResponse = (docs, locale='en') => {
 
-  for (var i = 0; i < docs.length; i++) {
+  // for (var i = 0; i < docs.length; i++) {
     // 
     // for (let variable in docs[i]){
     //   if(isLString(docs[i][variable]))
@@ -34,10 +33,10 @@ export const normalizeApiResponse = (docs, locale='en') => {
     //
     // }
 
-    docs[i] = camelcasekeys(docs[i],{deep: true})
-  }
+  //   docs[i] = camelCaseKeys(docs[i],{ deep: true })
+  // }
 
-  return docs
+  return camelCaseKeys(docs, { deep: true })
 }
 
 export const isLString = (prop) => {

@@ -11,26 +11,23 @@
   import overview from '~/components/conference-cal/src/components/ConferenceCal.vue'
 
   export default {
-    components: {overview},
-    async asyncData ({app , store, params}) {
-      store.commit('routes/SET_SHOW_MEETING_NAV',false)
-      let article = (await loadArticle(app.$axios,store.state.conferences.selected.code))[0]
-      let conference = store.state.conferences.selected.conference.cbdMeet
-      return {
-        conferenceCode:params.conferenceCode,
-        conference:conference,
-        article:article,
-        title:article.title
-      }
-    },
-    methods: {
-      getHeroImage:getHeroImage,
-      loadArticle:loadArticle,
-      getQuery:getQuery,
-      languageInit:languageInit
-    }
+    components: { overview },
+    methods   : { getHeroImage, loadArticle, getQuery, languageInit },
+    asyncData
   }
   
+  async function asyncData ({ app ,store, params }) {
+    store.commit('routes/SET_SHOW_MEETING_NAV',false)
+    let article = (await loadArticle(app.$axios,store.state.conferences.selected.code))[0]
+    let conference = store.state.conferences.selected.conference.cbdMeet
+    return {
+      conferenceCode:params.conferenceCode,
+      conference:conference,
+      article:article,
+      title:article.title
+    }
+  }
+
   function getHeroImage(){
     if(!this.conference || !this.conference.heroImage) return false
     if(process.env.PROXY_ENABLED)

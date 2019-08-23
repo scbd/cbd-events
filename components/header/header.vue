@@ -39,15 +39,15 @@
   let showLinks = false
 
   export default {
-    name:'Header',
-    components:{SideMenu},
+    name: 'Header',
+    components: { SideMenu },
     data () {
       return {
-        showLinks: showLinks,
-        lastScrollTop: 0,
-        show: true,
-        isSideMenuOpen:false,
-        attachments:process.env.PROXY_ENABLED? '/images/' : process.env.ATTACHMENTS
+        showLinks     : showLinks,
+        lastScrollTop : 0,
+        show          : true,
+        isSideMenuOpen: false,
+        attachments   : process.env.ATTACHMENTS
       }
     },
     computed: {
@@ -55,7 +55,10 @@
         return this.$store.state.routes.showMeetingNav
       },
       conference: function () {
-        return this.$store.state.conferences.selected.conference.cbdMeet || {}
+        let { conference } = this.$store.state.conferences.selected
+        if(!conference) return {}
+        let { cbdMeet } = conference
+        return cbdMeet || {}
       },
       meeting: function () {
         return this.$store.state.conferences.selectedMeeting || {}

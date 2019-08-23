@@ -27,7 +27,7 @@
       <div  :class="[$style.filterRow]" v-if="false">
         <select  v-model="selectedProgramme" class="form-control input-sm" v-on:click.stop="">
           <option :value="$t('programme')" selected>{{$t('programme')}}</option>
-          <optgroup v-if="programme" :label="programme.title" v-for="programme in programmes" :key="programme.identifier" >
+          <optgroup :label="programme.title" v-for="programme in programmes" :key="programme.identifier" >
             <option :value="child.identifier" v-for="child in programme.children" :key="child.identifier" >{{child.title}}</option>
           </optgroup>
         </select>
@@ -71,7 +71,7 @@
        let locale = this.$i18n.locale
        getPrograms(locale ).then((progs)=>{
          progs = mapPrograms(sanitizeResult(progs.data,locale ))
-         this.$set(this,'programmes',progs)
+         this.$set(this,'programmes',progs.filter(p => p))
        })
      },
     props:['event'],
