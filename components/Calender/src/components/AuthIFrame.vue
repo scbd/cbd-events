@@ -12,7 +12,7 @@ let baseUrl = 'https://accounts.cbddev.xyz'
 
 export default {
   name : 'AuthIFrame',
-  props: ['env'],
+  props: [ 'env' ],
   data(){
     return{
       token: ''
@@ -46,12 +46,13 @@ function loaded(){
 }
 
 function loadedTimeout(resolve, reject){
-  let timeout, timer =null
+  let timer =null
 
-  timeout = setTimeout(() => {
+  const timeout = setTimeout(() => {
     clearInterval(timer)
     return reject('Error: timeout - cannot read token from cookie after 1 second')
   }, 1000)
+
   timer = setInterval(() => {
     if(token){
       resolve(token)

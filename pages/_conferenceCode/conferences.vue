@@ -1,29 +1,28 @@
 <template>
   <section>
-    <Header :title="title" />
+    <Header :title="screenTitle" />
     <div class="page container-fluid">
-      <div class="row">
+      <div class="row" v-for="conference in conferencesWithMeetings" :key="conference._id">
         <div
           @click="changeConference(conference)"
+          class="col"
           :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}"
-          v-for="conference in conferencesWithMeetings"
-          :key="conference._id"
         >
+
           <img
             crossorigin="anonymous"
             v-if="getHeroImage(conference)"
             :src="getHeroImage(conference) || defaultImage"
-            :alt="`${conference.title} logo`"
+            :alt="`${title(conference)} logo`"
           >
           <img
             crossorigin="anonymous"
             v-if="!getHeroImage(conference)"
             :src="getImage(conference) || defaultImage"
-            :alt="`${conference.title} logo`"
+            :alt="`${title(conference)} logo`"
           >
-          <div v-if="!getHeroImage(conference)">
-            <h4>{{ conference.title | lstring }}</h4>
-            <p>{{ conference.description | lstring }}</p>
+          <div v-if="!getHeroImage(conference)" class="container d-flex">
+            <h4 class="justify-content-center align-self-center">{{ title(conference) }}</h4>
           </div>
         </div>
       </div>
@@ -38,7 +37,7 @@ export default {
   name      : 'Conferences',
   layout    : ' bottom-screen',
   components: { Header },
-  methods   : { done, getImage, getHeroImage, changeConference },
+  methods   : { done, getImage, getHeroImage, changeConference, title, description },
   computed  : { conferencesWithMeetings },
   asyncData,
   mounted
@@ -46,10 +45,22 @@ export default {
 
 function asyncData ({ app, store }){
   return {
-    title       : app.i18n.t('conferences'),
+    screenTitle : app.i18n.t('conferences'),
     conferences : store.state.conferences.docs,
-    defaultImage: '/images/cbd-logo-en.svg'
+    defaultImage: 'https://attachments.cbd.int/cbd-logo-en.svg'
   }
+}
+
+function title (conference){
+  const { lstring } = this.$options.filters
+
+  return lstring(conference.apps.cbdEvents.title)
+}
+
+function description (conference){
+  const { lstring } = this.$options.filters
+
+  return lstring(conference.apps.cbdEvents.description)
 }
 
 function conferencesWithMeetings (){
@@ -74,21 +85,25 @@ function changeConference(conference){
   this.$router.replace({ name, params })
 }
 
-function getImage(conference){
-  if(!conference.conference || !conference.conference.image) return false
-  return conference.conference.image
+function getImage({ apps }){
+  const { cbdEvents } = apps
+
+  if(!cbdEvents || !cbdEvents.image) return false
+  return cbdEvents.image
 }
 
-function getHeroImage(conference){
-  if(!conference.conference || !conference.conference.heroImage) return false
-  return conference.conference.heroImage
+function getHeroImage({ apps }){
+  const { cbdEvents } = apps
+
+  if(!cbdEvents || !cbdEvents.heroImage) return false
+  return cbdEvents.heroImage
 }
 </script>
 
 <style scoped>
   .page         { margin-top:50px; height:100vh; }
-  .hero > img   { align-self: start; width:95vw; }
-  .block > img  { align-self: center; width: 100%; }
+  .hero > img   { align-self: start; max-width:92vw; }
+  .block > img  { align-self: center; max-width: 100%; }
   .block > div  { vertical-align: top; }
   .block h5     { font-weight: 500; }
   .hero         { cursor: pointer;

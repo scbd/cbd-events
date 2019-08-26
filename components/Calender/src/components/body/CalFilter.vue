@@ -1,41 +1,21 @@
 <template>
   <transition name="slide-filter">
-    <div
-      :class="[$style.main]"
-      @click.stop="showFilter"
-    >
+    <div :class="[$style.main]" @click.stop="showFilter" >
       <div :class="$style.title">
         {{ $t('filterEventsTitle') }}
-        <span class="pull-right"><a
-          href="#"
-          @click.stop="done"
-        >Done</a></span>
+        <span class="pull-right">
+          <a href="#" @click.stop="done" >Done</a>
+        </span>
       </div>
       <div :class="[$style.filterRow]">
-        <div
-          :class="[$style.formGroup]"
-          class="form-group form-group-sm"
-        >
-          <input
-            :placeholder="$t('keyWord')"
-            type="input"
-            class="form-control input-sm"
-            v-model="keyWordFilter"
-            @click.stop=""
-          >
+        <div :class="[$style.formGroup]" class="form-group form-group-sm" >
+          <input :placeholder="$t('keyWord')" type="input" class="form-control input-sm" v-model="keyWordFilter" @click.stop="" >
         </div>
       </div>
       <hr style="margin-top:0;">
       <div :class="[$style.filterRow]">
-        <select
-          v-model="selectedStream"
-          class="form-control input-sm"
-          @click.stop=""
-        >
-          <option
-            :value="$t('stream')"
-            selected
-          >
+        <select v-model="selectedStream" class="form-control input-sm" @click.stop="" >
+          <option :value="$t('stream')" selected >
             {{ $t('stream') }}
           </option>
           <option value="official">
@@ -62,65 +42,30 @@
         </select>
       </div>
       <hr style="margin-top:0;">
-      <div
-        :class="[$style.filterRow]"
-        v-if="false"
-      >
-        <select
-          v-model="selectedProgramme"
-          class="form-control input-sm"
-          @click.stop=""
-        >
-          <option
-            :value="$t('programme')"
-            selected
-          >
+      <div :class="[$style.filterRow]" v-if="false" >
+        <select v-model="selectedProgramme" class="form-control input-sm" @click.stop="" >
+          <option :value="$t('programme')" selected >
             {{ $t('programme') }}
           </option>
-          <optgroup
-            :label="programme.title"
-            v-for="programme in programmes"
-            :key="programme.identifier"
-          >
-            <option
-              :value="child.identifier"
-              v-for="child in programme.children"
-              :key="child.identifier"
-            >
+          <optgroup :label="programme.title" v-for="programme in programmes" :key="programme.identifier" >
+            <option :value="child.identifier" v-for="child in programme.children" :key="child.identifier" >
               {{ child.title }}
             </option>
           </optgroup>
         </select>
       </div>
       <hr style="margin-top:0;">
-      <div
-        :class="[$style.filterRow]"
-        v-if="false"
-      >
-        <select
-          v-model="selectedAgendaItem"
-          class="form-control input-sm"
-          @click.stop=""
-        >
-          <option
-            :value="$t('agendaItem')"
-            selected
-          >
+      <div :class="[$style.filterRow]" v-if="false" >
+        <select v-model="selectedAgendaItem" class="form-control input-sm" @click.stop="" >
+          <option :value="$t('agendaItem')" selected >
             {{ $t('agendaItem') }}
           </option>
-          <option
-            :key="agenda"
-            v-for="agenda in agendaItems"
-            :value="agenda"
-          >
+          <option :key="agenda" v-for="agenda in agendaItems" :value="agenda" >
             {{ agenda }}
           </option>
         </select>
       </div>
-      <hr
-        style="margin-top:0;"
-        v-if="false"
-      >
+      <hr style="margin-top:0;" v-if="false" >
     </div>
   </transition>
 </template>
@@ -155,7 +100,7 @@ export default {
       this.$set(this, 'programmes', progs.filter(p => p))
     })
   },
-  props  : ['event'],
+  props  : [ 'event' ],
   methods: {
     showFilter,
     toggleStream,
@@ -208,8 +153,9 @@ function mapPrograms (programmes){
 
 function sanitizeResult(docs, locale='en'){
   for (let i = 0; i < docs.length; i++)
+    //eslint-disable-next-line
     for (const variable in docs[i])
-      if(['title'].includes(variable))
+      if([ 'title' ].includes(variable))
         docs[i][variable]=docs[i][variable][locale]
   return docs
 }

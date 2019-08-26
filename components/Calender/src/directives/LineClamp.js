@@ -17,11 +17,12 @@ function defaultFallbackFunc(el, bindings, lines){
     el.style.lineHeight = lineHeight+'px' // to ensure consistency
   }
   else {
+    //eslint-disable-next-line
     el.style.maxHeight = el.style.overflowX = ''
   }
 }
 
-const truncateText = function (el, bindings, useFallbackFunc){
+function truncateText(el, bindings, useFallbackFunc){
   const lines = parseInt(bindings.value)
 
   if (isNaN(lines)){ return }

@@ -1,24 +1,12 @@
 <template>
-  <div
-    :class="{'not-in-session':!isInSession}"
-    class="main"
-  >
-    <h4
-      v-if="!isInSession"
-      class="text-center"
-    >
+  <div :class="{'not-in-session':!isInSession}" class="main" >
+    <h4 v-if="!isInSession" class="text-center" >
       Provisional Agenda
     </h4>
     <hr>
-    <section
-      v-for=" (item, index) in inSessionAgendaItems"
-      :key="index"
-    >
+    <section v-for=" (item, index) in inSessionAgendaItems" :key="index" >
       <div class="agenda item ">
-        <span
-          class="label agenda"
-          :class="{[agenda.prefix]:agenda.prefix}"
-        >
+        <span class="label agenda" :class="{[agenda.prefix]:agenda.prefix}" >
           {{ agenda.prefix }} {{ item.item }}
         </span>
         <span>{{ item.shortTitle || item.title }}</span>
@@ -41,7 +29,7 @@ import   Offline                 from '~/components/Offline'
 import { DateTime              } from 'luxon'
   
 export default {
-  mixins    : [documentDownloadMixin],
+  mixins    : [ documentDownloadMixin ],
   components: { Offline },
   computed  : { isInSession, forceDate, offLine, inSessionAgendaItems },
   created, asyncData
@@ -80,7 +68,9 @@ function isInSessionServer(store, { datetime }){
   const start = DateTime.fromISO(conference.schedule.start)
   const end = DateTime.fromISO(conference.schedule.start)
   const now = DateTime.local().setZone(conference.timezone)
-
+  //eslint-disable-next-line
+  console.log(conference)
+  
   if((start <= now && now <= end) || isValidDate(datetime)){
     store.commit('routes/SET_SHOW_MEETING_NAV', false)
     return true

@@ -5,6 +5,7 @@ export const toCamelCase = (item) => camelCaseKeys(item, { deep: true });
 
 export const normalizeSolrResponse = (docs, locale='en') => {
   for (let i = 0; i < docs.length; i++){
+    // eslint-disable-next-line
     for (const variable in docs[i]){
       let sanitizedPropName
 
@@ -22,21 +23,7 @@ export const normalizeSolrResponse = (docs, locale='en') => {
   return docs
 }
 
-export const normalizeApiResponse = (docs, locale='en') =>
-
-// for (var i = 0; i < docs.length; i++) {
-//
-// for (let variable in docs[i]){
-//   if(isLString(docs[i][variable]))
-//     docs[i][variable] = normalizeLString(docs[i][variable],locale)
-//
-// }
-
-//   docs[i] = camelCaseKeys(docs[i],{ deep: true })
-// }
-
-  camelCaseKeys(docs, { deep: true })
-
+export const normalizeApiResponse = (docs) => camelCaseKeys(docs, { deep: true })
 
 export const isLString = (prop) => prop && (!isUndefined(prop.ar) || !isUndefined(prop.en) || !isUndefined(prop.zh) || !isUndefined(prop.ru) || !isUndefined(prop.fr) || !isUndefined(prop.es))
 

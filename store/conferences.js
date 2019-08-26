@@ -2,8 +2,8 @@ import { normalizeApiResponse } from '~/modules/apiNormalize'
 
 function queryConferences($axios, { locale='en' }){
   const queryParameters = {
-    // title:1, timezone: 1, Description: 1,
-    f: { code: 1,  MajorEventIDs: 1, StartDate: 1, EndDate: 1,  'apps.cbdEvents': 1, conference: 1 },
+    //title: 1, timezone: 1, Description: 1,
+    f: {  code: 1,  MajorEventIDs: 1, StartDate: 1, EndDate: 1,  'apps.cbdEvents': 1, conference: 1, schedule: 1 },
     q: { 'apps.cbdEvents': { $exists: true } },
     s: { StartDate: -1 }
   }
@@ -63,7 +63,7 @@ function queryMeetings ($axios, selected, locale='en'){
 
   return $axios.$get(`${ process.env.API }/api/v2016/meetings`, { params: queryParameters })
     .then(response => {
-      if(!Array.isArray(response)) response = [response]
+      if(!Array.isArray(response)) response = [ response ]
       return normalizeApiResponse(response, locale)
     })
     .then(response => {
@@ -174,7 +174,6 @@ function setSelected (state, payLoad){
 function setConferences     (state, payLoad){ state.docs = payLoad }
 function setSelectedMeeting (state, payLoad){ state.selectedMeeting = payLoad }
 function setMeetings        (state, payLoad){ state.meetings = payLoad }
-
 
 export const state     = () => ({ docs: [], selected: false, selectedMeeting: false, meetings: [] })
 export const actions   = { get: getConferences, getMeetings }

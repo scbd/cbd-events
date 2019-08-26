@@ -1,18 +1,8 @@
 <template>
   <div :class="[$style.main]">
-    <Details
-      v-if="detailsData"
-      :conference="conference"
-      :event="detailsData"
-    />
-    <CalFilter
-      v-if="showFilter"
-      @filter="filter"
-    />
-    <transition
-      name="slide-week"
-      @leave="leave"
-    >
+    <Details v-if="detailsData" :conference="conference" :event="detailsData" />
+    <CalFilter v-if="showFilter" @filter="filter" />
+    <transition name="slide-week" @leave="leave" >
       <CalWeekBody
         v-if="isWeek && !selectedIteration.loading"
         :week="selectedIteration"
@@ -60,6 +50,7 @@ export default {
 }
 
 function filter (e){
+  //eslint-disable-next-line
   if(e && e.hasOwnProperty('data'))return this.showFilter = e.data.show
 
   this.showFilter=!this.showFilter
@@ -98,6 +89,8 @@ function leave(){
   // let num = Math.abs(this.selectedIteration.changeNum )
   // let time = 750
   // if(num>1) time = 1600
+
+  //eslint-disable-next-line
   for (const ref in this.$children[0].$refs)
     this.$children[0].$refs[ref].style.display='block'
 

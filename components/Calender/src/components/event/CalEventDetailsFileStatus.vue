@@ -43,7 +43,7 @@ import querystring from 'querystring'
 
 export default {
   name : 'CalEventDetailsFileStatus',
-  props: ['file'],
+  props: [ 'file' ],
   data(){
     return{
       symbol  : this.file.symbol,

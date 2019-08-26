@@ -27,6 +27,7 @@ export default {
         return vm.me
       },
       set (value){
+        //eslint-disable-next-line
         for (const prop in value)
           Vue.set(vm.me, prop, value[prop])
         return this

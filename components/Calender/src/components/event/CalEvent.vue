@@ -25,7 +25,7 @@ import debounce     from 'lodash.debounce'
 
 export default {
   name : 'CalEvent',
-  props: ['event'],
+  props: [ 'event' ],
   data(){
     return {
       numLines : 1,

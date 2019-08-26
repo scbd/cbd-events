@@ -11,21 +11,19 @@
 </template>
 
 <script>
-const showLinks = false
-
 export default {
   name   : 'HeaderBottomScreen',
-  props  : [ { name: 'title', type: String }, { name: 'options', type: Object } ],
+  props  : { title: { type: String }, options: { type: Object } },
   methods: { close, done }
 }
 
 function close(){
   this.$root.$emit('bottom-screen-cancel', { something: 'yes' })
 }
+
 function done(){
   this.$root.$emit('bottom-screen-done', { something: 'yes' })
 }
-// this.$root.$emit('removeposition', { something: 'yes' })
 </script>
 
 <style scoped>

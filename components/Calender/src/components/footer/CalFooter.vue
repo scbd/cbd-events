@@ -1,18 +1,7 @@
 <template>
-  <div
-    class="container-fluid"
-    :class="[$style.slideContainer]"
-  >
-    <div
-      class="row"
-      :class="[$style.bg]"
-    >
-      <transition
-        name="slide"
-        v-for="(item, index) in iterations"
-        :key="item.weekNumber"
-        @leave="leave"
-      >
+  <div class="container-fluid" :class="[$style.slideContainer]" >
+    <div class="row" :class="[$style.bg]" >
+      <transition name="slide" v-for="(item, index) in iterations" :key="item.weekNumber" @leave="leave" >
         <div
           v-if="inBounds(item,index)"
           @click="changeDate(index)"
@@ -32,8 +21,9 @@ let Velocity = {}
 
 export default {
   name : 'CalFooter',
-  props: ['iterations'],
+  props: [ 'iterations' ],
   mounted(){
+    //eslint-disable-next-line
     Velocity = require('velocity-animate')
   },
   methods: {

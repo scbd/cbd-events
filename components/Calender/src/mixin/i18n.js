@@ -17,6 +17,7 @@ export default {
     }
 
     if(this.$i18n)
+      //eslint-disable-next-line
       for (const locale in messages){
         const msgs = this.$i18n.getLocaleMessage(locale)
 

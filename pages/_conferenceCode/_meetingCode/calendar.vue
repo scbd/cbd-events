@@ -1,7 +1,7 @@
 <template>
   <Calendar
     class="cal"
-    :options="{queryFn:getEvents,conference:conference,locale:$i18n.locale,height:'100vh'}"
+    :options="{ queryFn:getEvents, conference:conference, locale:$i18n.locale,height:'100vh' }"
   />
 </template>
 
@@ -12,7 +12,7 @@ import Calendar     from '~/components/Calender/src/components/index.vue'
 
 export default {
   name      : 'Calender',
-  mixins    : [pageMixin],
+  mixins    : [ pageMixin ],
   components: { Calendar },
   methods   : { getEvents, genQuery, getConference, getQueryUrl },
   asyncData
@@ -21,9 +21,7 @@ export default {
 function asyncData ({ store }){
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
-  return {
-    conference: store.state.conferences.selected
-  }
+  return { conference: store.state.conferences.selected }
 }
 
 function getConference (){ return this.$store.state.conferences.selected }
@@ -65,14 +63,13 @@ function getQueryUrl(query){
 
 function sanitizeIndexResult(docs){
   for (let i = 0; i < docs.length; i++)
-    for (const j in docs[i]){
-      // eslint-disable-next-line no-use-before-define
-      if(!(~j.indexOf('_'))) continue 
-
+    // eslint-disable-next-line
+    for (const j in docs[i]) {
+      const skip              = !~j.indexOf('_')
       const sanitizedPropName = j.slice(0, j.indexOf('_'))
 
+      if(!skip) continue
       docs[i][sanitizedPropName] = docs[i][j]
-      
     }
     
   return docs
@@ -86,6 +83,7 @@ function mapByDay(docs){
     const dayEnd = DateTime.fromISO(docs[i].start).endOf('day')
     const start = DateTime.fromISO(docs[i].start)
 
+    // eslint-disable-next-line
     if(!days.hasOwnProperty(dayStart.toUTC().toISODate())) days[dayStart.toUTC().toISODate()]=[]
 
     if(start>=dayStart && start<=dayEnd)
@@ -96,10 +94,11 @@ function mapByDay(docs){
 
 function mapByWeek(days){
   const weeks = {}
-
+  // eslint-disable-next-line
   for (const day in days){
     const week  = DateTime.fromISO(day).toUTC().year+'-'+DateTime.fromISO(day).toUTC().weekNumber
 
+    // eslint-disable-next-line
     if(!weeks.hasOwnProperty(week)) weeks[week]={}
     weeks[week][day]=days[day]
   }

@@ -17,7 +17,7 @@ import Offline                  from '~/components/Offline'
   
 export default {
   name      : 'DocumentsPage',
-  mixins    : [documentDownloadMixin],
+  mixins    : [ documentDownloadMixin ],
   components: { Offline },
   computed  : { offLine },
   asyncData

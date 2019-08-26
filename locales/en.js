@@ -13,7 +13,6 @@ export default () => new Promise(((resolve) => {
     meetings                         : 'Meetings',
     settings                         : 'Settings',
     switchConference                 : 'Switch Conference',
-    language                         : 'Language',
     deleteAllDownloads               : 'Delete all downloaded files',
     scbdLeafLogo                     : 'The Secretariat of the Convention on Biological Diversity\'s Leaf Logo',
     internetConnectionRestored       : 'Internet Connection Restored',

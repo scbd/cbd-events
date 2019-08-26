@@ -34,7 +34,7 @@ import events from '../../modules/Bus'
 
 export default {
   name : 'CalHeader',
-  props: ['selectedIteration'],
+  props: [ 'selectedIteration' ],
   data(){
     return{
       showFilter: false

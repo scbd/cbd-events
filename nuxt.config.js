@@ -16,11 +16,10 @@ let config = {
       { name: 'viewport',  content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'CBD/UN Biodiversity Events Application. Information on CBD/UN Biodiversity conferences and related events is available to you at the touch of your finger. Access important information including agendas,  descriptions, in-session documents and activity dates and times. You can create a custom schedule to help you manage your time while at the event or download documents to read on the go or offline.' }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }]
+    link: [ { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' } ]
   },
   css: [
-    { src: 'bootstrap/dist/css/bootstrap-reboot.min.css' },
-    { src: 'bootstrap/dist/css/bootstrap-grid.min.css' },
+    { src: '~assets/app.scss'  },
     { src: '~assets/app.css' }
   ],
   modules: [  '@nuxtjs/axios',
@@ -30,7 +29,7 @@ let config = {
       size       : 4980736, // Size of database, in bytes. WebSQL-only for now.
       storeName  : 'files', // Should be alphanumeric, with underscores.
       description: 'Main file store',
-      instances  : [{ name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' }]
+      instances  : [ { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' } ]
     } ],
     [ 'nuxt-i18n', {
       defaultLocale        : 'en',
@@ -59,7 +58,7 @@ let config = {
     '~/plugins/vue-notifications'
   ],
   loading: { color: '#009b48' },
-  router : { linkActiveClass: 'active-link', middleware: ['redirects'] },
+  router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },
   build  : { extend },
   axios  : { browserBaseURL: '/', baseURL: process.env.API },
   cache  : { max: 1000, maxAge: 900000 },
@@ -84,6 +83,7 @@ function extend(config, { isDev, isClient }){
       enforce: 'pre',
       test   : /\.(js|vue)$/,
       loader : 'eslint-loader',
-      exclude: /(node_modules)/
+      exclude: /(node_modules)/,
+      options: { fix: true }
     })
 }

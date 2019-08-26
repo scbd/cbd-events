@@ -7,7 +7,7 @@ import axios from 'axios'
 
 export default {
   name : 'CalEventDetailsFile',
-  props: ['file'],
+  props: [ 'file' ],
   data(){
     return{
       symbol  : this.file.symbol,

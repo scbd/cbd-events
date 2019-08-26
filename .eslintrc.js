@@ -43,7 +43,7 @@ module.exports = {
       'error',
       'always',
       {
-        singleValue: false
+        singleValue: true
       }
     ],
     'comma-style': [

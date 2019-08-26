@@ -1,8 +1,9 @@
-
 import { DateTime } from 'luxon'
-import Vue        from 'vue'
-// import VueI18n    from 'vue-i18n'
-// Vue.use(VueI18n)
+import   Vue        from 'vue'
+
+const en = require('../locales/en.json')
+const fr = require('../locales/fr.json')
+
 
 export default class {
   constructor($i18n, weekDateTime, locale='en'){
@@ -25,12 +26,9 @@ export default class {
     //     fr: require(`../locales/fr.json`)
     //   }
     // }
-    const messages = {
-      en: require('../locales/en.json'),
-      fr: require('../locales/fr.json')
-    }
+    const messages = { en, fr }
 
-    // this.$i18n = new VueI18n(options)
+    //eslint-disable-next-line
     for (const locale in messages)
       this.$i18n.mergeLocaleMessage(locale, messages[locale])
   }

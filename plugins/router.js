@@ -4,7 +4,8 @@ export default  ({ app, store }) => {
 
   app.router.afterEach((to) => {
     // eslint-disable-next-line
-    const route = { name, path, params, fullPath, query } = to
+    const { name, path, params, fullPath, query } = to
+    const route = { name, path, params, fullPath, query }
     
     if(!prevRoute){
       store.commit('routes/SET_ROUTE', route)

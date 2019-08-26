@@ -2,37 +2,12 @@
   <section ref="main">
     <div :class="[$style.calComponent]">
       <CalHeader :selected-iteration="selectedIteration" />
-      <CalBody
-        :selected-iteration="selectedIteration"
-        :conference="conference"
-        :events="events"
-      />
-      <CalFooter
-        :iterations="iterations"
-        @action="changeDateTime"
-      />
+      <CalBody :selected-iteration="selectedIteration" :conference="conference" :events="events" />
+      <CalFooter :iterations="iterations" @action="changeDateTime" />
     </div>
   </section>
 </template>
-<style>
-  a {
-    color: #337ab7;
-    text-decoration: none;
-  }
-  a:hover,
-  a:focus {
-    color: #23527c;
-    text-decoration: underline;
-  }
-</style>
-<style module>
-  .calComponent{
-    position: relative;
-    height: 100vh;
-    width: 100vw;
-    padding-bottom:5.3em;
-  }
-</style>
+
 
 <script>
 
@@ -43,14 +18,11 @@ import CalHeader          from './header/CalHeader'
 import CalFooter          from './footer/CalFooter'
 import CalWeeks           from '../modules/CalWeeksService'
 import messages           from '../locales'
-import VueAuthentication  from '../modules/Authentication'
-import Vue from 'vue'
-Vue.use(VueAuthentication, { env: process.env.NODE_ENV })
 
 
 export default {
   name : 'Calendar',
-  props: ['options'],
+  props: [ 'options' ],
   data(){
     return{
       events           : {},
@@ -98,6 +70,7 @@ export default {
       throw new Error('$i18n must be installed')
 
     if(this.$i18n)
+      //eslint-disable-next-line
       for (const locale in messages){
         const msgs = this.$i18n.getLocaleMessage(locale)
 
@@ -123,6 +96,7 @@ function applyFilter (e){
 
 
 function queryObject (){
+  //eslint-disable-next-line
   let { locale, conference } = this.options
 
   if(conference)
@@ -176,3 +150,11 @@ function setIterationsService($i18n, date, type='week'){
     return new CalWeeks($i18n, date, locale)
 }
 </script>
+<style>
+  a { color: #337ab7; text-decoration: none; }
+  a:hover,
+  a:focus { color: #23527c; text-decoration: underline; }
+</style>
+<style module>
+  .calComponent{ position: relative; height: 100vh; width: 100vw; padding-bottom:5.3em; }
+</style>

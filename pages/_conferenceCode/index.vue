@@ -8,7 +8,7 @@
       :alt="`${conference.title[$i18n.locale]} logo`"
     >
     <span v-html="this.$options.filters.lstring(article.content)" />
-    <h3>Overview</h3>
+    <h3 >Overview</h3>
     {{ conferenceCode }}
     <overview
       :code="conferenceCode"
@@ -21,6 +21,7 @@
 import overview from '@scbd/conference-cal/dist/src/index'
 
 export default {
+  name      : 'index',
   components: { overview },
   methods   : { getHeroImage, loadArticle, getQuery, languageInit, getLanguageInitParams, isLanguageInitilized },
   asyncData
