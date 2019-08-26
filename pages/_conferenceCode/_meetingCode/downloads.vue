@@ -1,176 +1,207 @@
 <template>
-  <div class="page-view container-fluid" >
-    
-    <section v-for="(file, $index) in files" :key="file.name">
-      <div class="file" >
-        <div class="col-xs-1 paddingless" v-on:click="openFile(file)">
-          <svg v-if="!isPDF(file.type)" class="icon x2 word"><use xlink:href="#icon-file-word-o"></use></svg>
-          <svg v-if="isPDF(file.type)" class="icon x2 pdf"><use xlink:href="#icon-file-pdf-o"></use></svg>
+  <div class="page-view container-fluid">
+    <section v-for="(file, $index) in files" :key="file.name" >
+      <div class="file">
+        <div class="col-xs-1 paddingless" @click="openFile(file)" >
+          <svg v-if="!isPDF(file.type)" class="icon x2 word" >
+            <use xlink:href="#icon-file-word-o" />
+          </svg>
+          <svg v-if="isPDF(file.type)" class="icon x2 pdf" >
+            <use xlink:href="#icon-file-pdf-o" />
+          </svg>
         </div>
-        <div :class="{'col-xs-10':(isIOS && !isIpad), 'col-xs-11':(!isIOS || isIpad)}" v-on:click="openFile(file)">
-          {{file.baseName | trimName}}<br>
-          {{timeDisplay(file.lastModified)}} <span class="point">●</span> {{formatBytes(file.size,2)}}
+        <div
+          :class="{'col-xs-10':(isIOS && !isIpad), 'col-xs-11':(!isIOS || isIpad)}"
+          @click="openFile(file)"
+        >
+          {{ file.baseName | trimName }}<br>
+          {{ timeDisplay(file.lastModified) }}
+          <span class="point">●</span> {{ formatBytes(file.size,2) }}
         </div>
-        <div v-if="isIOS && !isIpad" class="col-xs-1 paddingless text-center" v-on:click="shareFile(file)">
-          <svg class="icon x2"><use xlink:href="#icon-share-alternitive"></use></svg>
+        <div v-if="isIOS && !isIpad" class="col-xs-1 paddingless text-center" @click="shareFile(file)" >
+          <svg class="icon x2"><use xlink:href="#icon-share-alternitive" /></svg>
         </div>
       </div>
-      <hr class="hr" v-if="$index != files.length-1">
+      <hr class="hr" v-if="$index != files.length-1" >
     </section>
+
     <section v-if="!files.length">
       <div class="text-center">
         <br><br><br><br>
-        <span>No files downloaded for the <br><b>{{meeting.title}}</b></span>
+        <span>No files downloaded for the <br><b>{{ meeting.title }}</b></span>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-  import {DateTime}     from 'luxon'
-  import Header         from '~/components/header/header-bottom-screen'
-  import {formatBytes}  from '~/modules/helpers'
-  import localFiles    from '~/modules/localFileSystem.js'
+import { DateTime    } from 'luxon'
+import { formatBytes } from '~/modules/helpers'
+import   localFiles    from '~/modules/localFileSystem.js'
   
-  export default {
-    name:"downloads",
-    async asyncData ({store,params}) {
-      store.commit('routes/SET_SHOW_MEETING_NAV',true)
-      return {
-          conferenceCode:params.conferenceCode,
-          meetingCode:params.meetingCode,
-          isIOS:false
-        }
-    },
-    created(){
-      this.isIOS = !!this.$cordova
-    },
-    methods:{
-      isPDF:isPDF,
-      timeDisplay:timeDisplay,
-      formatBytes:formatBytes,
-      openFile:openFile,
-      shareFile:shareFile,
-      saveCordovaFile:saveCordovaFile,
-      openSafariPWA:openSafariPWA
-    },
-    computed:{
-      files:files,
-      meeting:meeting,
-      isIpad:isIpad
-    },
-    filters: {
-      trimName: function (name) {
-        let value = name.replace(/\.[^/.]+$/, "")
-        if (!value) return ''
-        if (value.length<30) return value
+export default {
+  name: 'Downloads',
 
-        return `${value.substr(0,13)}...${value.substr(value.length-13,value.length-1)}`
-      }
+  methods : { isPDF, timeDisplay, formatBytes, openFile, shareFile, saveCordovaFileLocally, openSafariPWA },
+  computed: { files, meeting, isIpad },
+  filters : { trimName },
+  asyncData,
+  created
+}
+
+function asyncData ({ store, params }){
+  store.commit('routes/SET_SHOW_MEETING_NAV', true)
+  return {
+    conferenceCode: params.conferenceCode,
+    meetingCode   : params.meetingCode,
+    isIOS         : false
+  }
+}
+
+function   created(){ this.isIOS = !!this.$cordova }
+
+function trimName (name){
+  const value = name.replace(/\.[^/.]+$/, '')
+
+  if (!value) return ''
+  if (value.length<30) return value
+
+  return `${value.substr(0, 13)}...${value.substr(value.length-13, value.length-1)}`
+}
+
+function isIpad (){
+  if(process.server) return false
+  return !!window.navigator.userAgent.match(/iPad/i)
+}
+  
+async function shareFile(file){
+  const fileURL = await this.saveCordovaFileLocally(file)
+
+  const rect =  [ 0, 0, innerWidth / 2, 0 ];
+
+  this.$cordova.fileOpener2.showOpenWithDialog(
+    decodeURIComponent(fileURL),
+    file.type,
+    {
+      error: (e) => { console.log('Error: ', e); },
+      rect
     }
-  }
+  )
+}
   
-  function isIpad () {
-    if(process.server) return false
-    return !!window.navigator.userAgent.match(/iPad/i)
-  }
-  
-  async function shareFile(file){
-    
-    let fileURL = await this.saveCordovaFile(file)
+async function saveCordovaFileLocally(file){
+  try{
+    const { tempDirectory, cacheDirectory } = this.$cordova.file
+    const { baseName, blob }                = file
+    const fileSyatemUrl                     = tempDirectory || cacheDirectory
+ 
 
-    var rect =  [0, 0, innerWidth / 2, 0];
-    this.$cordova.fileOpener2.showOpenWithDialog(
-      decodeURIComponent(fileURL), 
-      file.type, 
-      { 
-        error : (e) =>{ console.log('Error: ',e); },
-        rect:rect
-      }
-    )
-  }
-  
-  async function saveCordovaFile(file){
-    try{
-       let dirEntry = await localFiles.resolveLocalFileSystemURL(this.$cordova.file.tempDirectory || this.$cordova.file.cacheDirectory)
-       let fileEntry = await localFiles.getFile(dirEntry,file.baseName, { create: true, exclusive: false })
-       let localUrl = await localFiles.write(fileEntry,file.blob)
-       return fileEntry.toURL()
-    } catch(e) {
-      console.error(e)
-      throw e
-    }
-  }
-  
-  function meeting(){
-    return this.$store.state.conferences.selectedMeeting
-  }
-  
-  async function openFile(file){
+    const dirEntry  = await localFiles.resolveLocalFileSystemURL(fileSyatemUrl)
+    const fileEntry = await localFiles.getFile(dirEntry, baseName, { create: true, exclusive: false })
 
-     if(this.$cordova)
-      if(this.$cordova.device.platform === 'iOS')
-          this.$cordova.inAppBrowser.open(window.URL.createObjectURL(file.blob),'_blank','toolbartranslucent=yes,enableViewportScale=yes,hidenavigationbuttons=yes,hidespinner=yes,location=no')
-       else{
+    await localFiles.write(fileEntry, blob)
 
-          let fileURL = await this.saveCordovaFile(file)
-
-          this.$cordova.plugins.fileOpener2.open(
-              fileURL, // You can also use a Cordova-style file uri: cdvfile://localhost/persistent/Download/starwars.pdf
-              'application/pdf', 
-              { 
-                  error : function(e) { 
-                      console.log('Error status: ' + e.status + ' - Error message: ' + e.message);
-                  },
-                  success : function () {
-                      console.log('file opened successfully'); 				
-                  }
-              }
-          )
-               
-          return
-        }
-       
-
-       
-     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-       window.navigator.msSaveOrOpenBlob(file.blob);
-       return;
-     } 
-  
-    return this.openSafariPWA (file)
-     // For other browsers: 
-     // Create a link pointing to the ObjectURL containing the blob.
-     let data = window.URL.createObjectURL(file.blob);
-     let link = document.createElement('a');
-     link.href = data;
-     link.download=file.baseName;
-     link.click();
-     
-     // For Firefox it is necessary to delay revoking the ObjectURL
-     setTimeout(()=>window.URL.revokeObjectURL(data), 100)
+    return fileEntry.toURL()
   }
-  
-  async function openSafariPWA (fileObject) {
-
-
-    this.$store.commit('files/SET_FILE_TO_OPEN',window.URL.createObjectURL(fileObject.blob))
-
-    this.$router.push(this.$i18n.path({name:'conferenceCode-fileView', params: { conferenceCode: this.conferenceCode } }))
+  catch(e){
+    console.error(e)
+    throw e
   }
+}
   
-  function timeDisplay (isoDate) {
-    let format = 'LLL d'
-    return DateTime.fromISO(isoDate).toFormat(format)
-  }  
+function meeting(){ return this.$store.state.conferences.selectedMeeting }
   
-  function isPDF (contentType) {
-    return !!~contentType.indexOf('application/pdf')
-  }
+function openFile(file){
+  const { $cordova } = this
+
+  if ($cordova)             return openFileFromCordova($cordova, file)
+  if (isInternetExplorer()) return window.navigator.msSaveOrOpenBlob(file.blob)
+  if (isSafari())           return this.openSafariPWA(file)
   
-  function files () {
-    return this.$store.state.files.data.filter((file)=> ~file.baseName.indexOf(this.meetingCode))
-  }
+  return openFileDefault(file)
+}
+
+function isInternetExplorer (){
+  return (window && window.navigator && window.navigator.msSaveOrOpenBlob)
+}
+
+function createBlobUrl({ blob }){
+  const opts = 'toolbartranslucent=yes,enableViewportScale=yes,hidenavigationbuttons=yes,hidespinner=yes,location=no'
+
+  return window.URL.createObjectURL(blob, '_blank', opts)
+}
+
+function isSafari(){
+  const userAgentHasSafari = ~navigator.userAgent.search('Safari')
+  const userAgentHasChrome = ~navigator.userAgent.search('Chrome')
+
+  return userAgentHasSafari && userAgentHasChrome
+}
+
+function isIOS({ platform }){ return platform === 'iOS' }
+
+function openFileDefault({ blob, baseName }){
+  const data = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href     = data
+  link.download = baseName
+  link.click()
+
+  // For Firefox it is necessary to delay revoking the ObjectURL
+  return setTimeout(() => window.URL.revokeObjectURL(data), 100)
+}
+
+async function openFileFromCordova($cordova, file){
+  const { fileOpener2, device } = $cordova
+
+  if(isIOS(device)) return openFileFromIOS($cordova, file)
+
+  const fileURL = await this.saveCordovaFileLocally(file)
+  const error   = fileOpener2Error
+  const success = fileOpener2Success
+      
+  return fileOpener2.open(fileURL, 'application/pdf', { error, success })
+}
+
+function fileOpener2Error(e){
+  console.log('Error status: ' + e.status + ' - Error message: ' + e.message)
+  throw e
+}
+
+function fileOpener2Success(){
+  console.log('file opened successfully')
+}
+
+function openFileFromIOS({ inAppBrowser }, file){
+  const blobUrl = createBlobUrl(file)
+
+  return inAppBrowser.open(blobUrl)
+}
+
+function openSafariPWA (fileObject){
+  const name       = 'conferenceCode-fileView'
+  const params     = { conferenceCode: this.conferenceCode }
+  const routerPath = this.$i18n.path({ name, params })
+  const blobUrl    = window.URL.createObjectURL(fileObject.blob)
+
+  this.$store.commit('files/SET_FILE_TO_OPEN', blobUrl)
+  this.$router.push(routerPath)
+}
+  
+function timeDisplay (isoDate){
+  const format = 'LLL d'
+
+  return DateTime.fromISO(isoDate).toFormat(format)
+}
+  
+function isPDF (contentType){
+  return !!~contentType.indexOf('application/pdf')
+}
+  
+function files (){
+  return this.$store.state.files.data.filter((file) => ~file.baseName.indexOf(this.meetingCode))
+}
 </script>
 <style scoped>
 .point{

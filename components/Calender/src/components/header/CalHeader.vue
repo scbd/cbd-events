@@ -1,12 +1,28 @@
 <template>
-  <div  class="container-fluid" :class="[$style.bg,$style.gradient]">
-    <div class="row" :class="[$style.row]">
-      <div class="col-xs-9" :class="[$style.left]">
-        <span :class="[$style.title]">{{selectedIteration.title}} </span>
-        <small><span>{{selectedIteration.subTitle}}</span></small>
+  <div
+    class="container-fluid"
+    :class="[$style.bg,$style.gradient]"
+  >
+    <div
+      class="row"
+      :class="[$style.row]"
+    >
+      <div
+        class="col-xs-9"
+        :class="[$style.left]"
+      >
+        <span :class="[$style.title]">{{ selectedIteration.title }} </span>
+        <small><span>{{ selectedIteration.subTitle }}</span></small>
       </div>
-      <div class="col-xs-3" :class="[$style.right]">
-        <span  v-on:click="filter" :class="[$style.pointer]" class="eco-filter"></span>
+      <div
+        class="col-xs-3"
+        :class="[$style.right]"
+      >
+        <span
+          @click="filter"
+          :class="[$style.pointer]"
+          class="eco-filter"
+        />
       </div>
     </div>
   </div>
@@ -17,14 +33,15 @@
 import events from '../../modules/Bus'
 
 export default {
-  name: 'CalHeader',
-  props:['selectedIteration'],
-  data:function(){
+  name : 'CalHeader',
+  props: ['selectedIteration'],
+  data(){
     return{
-      showFilter:false
-  }},
-  methods:{
-    filter:filter
+      showFilter: false
+    }
+  },
+  methods: {
+    filter
   }
 }
 

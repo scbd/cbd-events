@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     cal meeting row
   </div>
 </template>

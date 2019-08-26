@@ -1,73 +1,101 @@
 <template>
   <section>
-      <svg class="icon-clock-o" :class="{'active':isOpen}"  ><use xlink:href="#icon-cog"></use></svg>
-      <transition name="test" >
-        <div class="side-menu" v-if="isOpen">
-          <div class="row">
-            <div class="col-xs-12">
-              <br>
-              <h4>{{$t('settings')}}</h4>
-              <div class="list-group">
-                <nuxt-link :to="$i18n.path({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })"><button type="button" class="list-group-item"><svg class="icon"><use xlink:href="#icon-transfer"></use></svg> {{switchConference}}</button></nuxt-link>
-              </div>
-              <div class="list-group" v-on:click="deleteAll()">
-                <button type="button" class="list-group-item"><svg class="icon"><use xlink:href="#icon-trash-o"></use></svg> {{deleteAllDownloads}}</button>
-              </div>
+    <svg
+      class="icon-clock-o"
+      :class="{'active':isOpen}"
+    ><use xlink:href="#icon-cog" /></svg>
+    <transition name="test">
+      <div
+        class="side-menu"
+        v-if="isOpen"
+      >
+        <div class="row">
+          <div class="col-xs-12">
+            <br>
+            <h4>{{ $t('settings') }}</h4>
+            <div class="list-group">
+              <nuxt-link :to="$i18n.path({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
+                <button
+                  type="button"
+                  class="list-group-item"
+                >
+                  <svg class="icon"><use xlink:href="#icon-transfer" /></svg> {{ switchConference }}
+                </button>
+              </nuxt-link>
+            </div>
+            <div
+              class="list-group"
+              @click="deleteAll()"
+            >
+              <button
+                type="button"
+                class="list-group-item"
+              >
+                <svg class="icon"><use xlink:href="#icon-trash-o" /></svg> {{ deleteAllDownloads }}
+              </button>
+            </div>
               
-              <h4>{{$t('contactUs')}}</h4>
-              <div class="list-group">
-                <a href="tel:1-514-288-2220"> 
-                  <button type="button" href="tel:1-514-288-2220" class="list-group-item"><svg class="icon"><use xlink:href="#icon-phone"></use></svg>{{$t('callThe')}} {{$t('scbd')}} <span class="email">1.514.288.2220</span></button>
-                </a>
-              </div>
-              <div class="list-group">
-                <a href="mailto:secretariat@cbd.int">
-                  <button type="button"  class="list-group-item"><svg class="icon"><use xlink:href="#icon-envelope"></use></svg> 
-                  {{$t('emailThe')}} {{$t('scbd')}}
+            <h4>{{ $t('contactUs') }}</h4>
+            <div class="list-group">
+              <a href="tel:1-514-288-2220">
+                <button
+                  type="button"
+                  href="tel:1-514-288-2220"
+                  class="list-group-item"
+                ><svg class="icon"><use xlink:href="#icon-phone" /></svg>{{ $t('callThe') }} {{ $t('scbd') }} <span class="email">1.514.288.2220</span></button>
+              </a>
+            </div>
+            <div class="list-group">
+              <a href="mailto:secretariat@cbd.int">
+                <button
+                  type="button"
+                  class="list-group-item"
+                ><svg class="icon"><use xlink:href="#icon-envelope" /></svg>
+                  {{ $t('emailThe') }} {{ $t('scbd') }}
                   <span class="email">secretariat@cbd.int</span>
-                  </button>
-                </a>
-              </div>            
+                </button>
+              </a>
             </div>
           </div>
         </div>
-      </transition>
+      </div>
+    </transition>
   </section>
 </template>
 
 <script>
-  export default {
-    name:"mainMenu",
-    props:{isOpen: { type: Boolean, default:false }},
-    data ({$route}) {
-      return {
-        conferenceCode:$route.params.conferenceCode,
-        deleteing:false
-      }
-    },
-    computed: {
-      conference: function () {
-        return this.$store.state.conferences.selected || {}
-      },
-      language: function () {
-        return this.$i18n.t('language')
-      },
-      deleteAllDownloads: function () {
-        return this.$i18n.t('deleteAllDownloads')
-      },
-      switchConference: function () {
-        return this.$i18n.t('switchConference')
-      },
-    },
-    methods:{
-      deleteAll:deleteAll
+export default {
+  name : 'MainMenu',
+  props: { isOpen: { type: Boolean, default: false } },
+  data ({ $route }){
+    return {
+      conferenceCode: $route.params.conferenceCode,
+      deleteing     : false
     }
+  },
+  computed: {
+    conference (){
+      return this.$store.state.conferences.selected || {}
+    },
+    language (){
+      return this.$i18n.t('language')
+    },
+    deleteAllDownloads (){
+      return this.$i18n.t('deleteAllDownloads')
+    },
+    switchConference (){
+      return this.$i18n.t('switchConference')
+    }
+  },
+  methods: {
+    deleteAll
   }
-  async function deleteAll(){
-    this.$store.commit('files/DOWNLOADING')
-    await this.$store.dispatch('files/DELETE',this.$store.state.files.data)
-    this.$store.commit('files/DOWNLOADING')
-  }
+}
+async function deleteAll(){
+  this.$store.commit('files/DOWNLOADING')
+  await this.$store.dispatch('files/DELETE', this.$store.state.files.data)
+  this.$store.commit('files/DOWNLOADING')
+}
 
 </script>
 <style scoped>

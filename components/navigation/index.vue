@@ -2,26 +2,51 @@
   <transition name="slide-up">
     <nav class="navbar navbar-default menu-gradient">
       <ul class="nav nav-pills nav-justified">
-        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode',params: { conferenceCode: conferenceCode } })"><svg class="icon-clock-o"><use xlink:href="#icon-info-circle"></use></svg></nuxt-link></li>
-        <li><nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon"><use xlink:href="#icon-clock-o"></use></svg></nuxt-link></li>
-        <li v-if="filesExist || downloading">
-          <div v-if="downloading" class="lds-ring"><div></div><div></div><div></div><div></div></div>
-          <nuxt-link v-if="!downloading" :to="$i18n.path({ name:'conferenceCode-meetingCode-downloads',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"><svg class="icon"><use xlink:href="#icon-document-download"></use></svg></nuxt-link>
+        <li>
+          <nuxt-link :to="$i18n.path({ name: 'conferenceCode',params: { conferenceCode: conferenceCode } })">
+            <svg class="icon-clock-o"><use xlink:href="#icon-info-circle" /></svg>
+          </nuxt-link>
         </li>
-        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }  })"><svg class="icon"><use xlink:href="#icon-docs"></use></svg></nuxt-link></li>      
-        <li><nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }, query: { selected: getCalStartDate() } })"><svg class="icon-clock-o"><use xlink:href="#icon-calendar-o"></use></svg></nuxt-link></li>
+        <li>
+          <nuxt-link :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })">
+            <svg class="icon"><use xlink:href="#icon-clock-o" /></svg>
+          </nuxt-link>
+        </li>
+        <li v-if="filesExist || downloading">
+          <div
+            v-if="downloading"
+            class="lds-ring"
+          >
+            <div /><div /><div /><div />
+          </div>
+          <nuxt-link
+            v-if="!downloading"
+            :to="$i18n.path({ name:'conferenceCode-meetingCode-downloads',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })"
+          >
+            <svg class="icon"><use xlink:href="#icon-document-download" /></svg>
+          </nuxt-link>
+        </li>
+        <li>
+          <nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode: conferenceCode, meetingCode:meetingCode } })">
+            <svg class="icon"><use xlink:href="#icon-docs" /></svg>
+          </nuxt-link>
+        </li>
+        <li>
+          <nuxt-link :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode: conferenceCode, meetingCode:meetingCode }, query: { selected: getCalStartDate() } })">
+            <svg class="icon-clock-o"><use xlink:href="#icon-calendar-o" /></svg>
+          </nuxt-link>
+        </li>
       </ul>
     </nav>
   </transition>
 </template>
 
 <script>
-import {DateTime}   from 'luxon'
+import { DateTime }   from 'luxon'
 
 export default {
-  name:'Navigation',
-  data ({$route,$store}) {
-    
+  name: 'Navigation',
+  data ({ $route, $store }){
     let meetingCode = $route.params.meetingCode
     let conferenceCode = $route.params.conferenceCode
 
@@ -32,69 +57,69 @@ export default {
       conferenceCode = $store.state.conferences.selected.code
 
     return {
-      conferenceCode:conferenceCode,
-      meetingCode:meetingCode,
+      conferenceCode,
+      meetingCode,
       lastScrollTop: 0,
-      show: true
+      show         : true
     }
   },
-  computed:{
-    filesExist:filesExist,
-    downloading:downloading,
-    showNavs:showNavs
+  computed: {
+    filesExist,
+    downloading,
+    showNavs
   },
   methods: {
-    onScroll (e) {
-      if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0) {
+    onScroll (e){
+      if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0){
         this.scrolled = false
         this.show = true
         e.preventDefault()
-        e.stopPropagation() 
+        e.stopPropagation()
         if(this.$store)
-          this.$store.commit('routes/SET_SHOW_NAVS',true)    
+          this.$store.commit('routes/SET_SHOW_NAVS', true)
         return
       }
       this.scrolled = true
     },
-    hasScrolled () {
-      let doc = document.documentElement
-      let top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
-      let diff = Math.abs(top - this.lastScrollTop)
+    hasScrolled (){
+      const doc = document.documentElement
+      const top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+      const diff = Math.abs(top - this.lastScrollTop)
 
       if (top < this.lastScrollTop && diff > 25){
         this.show = true
         
         if(this.$store)
-          this.$store.commit('routes/SET_SHOW_NAVS',true)
+          this.$store.commit('routes/SET_SHOW_NAVS', true)
       }
       if (top > this.lastScrollTop && diff > 25){
         this.show = false
         if(this.$store)
-          this.$store.commit('routes/SET_SHOW_NAVS',false)
+          this.$store.commit('routes/SET_SHOW_NAVS', false)
       }
       if (diff > 25) this.lastScrollTop = top
-
     },
 
     getCalStartDate(){
-      let start = DateTime.fromISO(this.$store.state.conferences.selected.startDate).startOf('day')
-      let now = DateTime.local().startOf('day')
+      const start = DateTime.fromISO(this.$store.state.conferences.selected.startDate).startOf('day')
+      const now = DateTime.local().startOf('day')
+
       if(now<start)
         return start.toISODate()
       return now.toUTC().toISODate()
     }
   },
-  async beforeMount () {
+  async beforeMount (){
     await this.$store.dispatch('files/LOAD')
     window.addEventListener('scroll', this.onScroll)
-    setInterval(function () {
-      if (this.scrolled) {
+    setInterval(() => {
+      if (this.scrolled){
         this.hasScrolled()
         this.scrolled = false
       }
-    }.bind(this), 250)
+    }, 250)
   },
-  beforeDestroy () {
+  beforeDestroy (){
     window.removeEventListener('scroll', this.onScroll)
   }
 

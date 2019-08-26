@@ -1,9 +1,11 @@
 import Vue from 'vue'
 
 
-export default async ({ store }) => {
-  Vue.filter('lstring',  function(val){
+export default ({ store }) => {
+  const { locale } = store.state.i18n
+  
+  Vue.filter('lstring', (val) => {
     if(!val) return
-    return val[store.state.i18n.locale] || val['en']
+    return val[locale] || val['en']
   })
 }

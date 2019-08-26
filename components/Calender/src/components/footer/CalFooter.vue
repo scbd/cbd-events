@@ -1,13 +1,25 @@
 <template>
-  <div class="container-fluid" :class="[$style.slideContainer]">
-    <div class="row" :class="[$style.bg]">
-      <transition name="slide"
-                  v-for="(item, index) in iterations"
-                  v-bind:key="item.weekNumber"
-                  v-on:leave="leave">
-        <div v-if="inBounds(item,index)" v-on:click="changeDate(index)"  :class="[$style.bg,(index===7 && iterations.length===15)?$style.selected:'',$style.colXs5ths]">
-          <span >{{item.startMon}}<br>
-          {{item.startDay}}-{{item.endDay}}
+  <div
+    class="container-fluid"
+    :class="[$style.slideContainer]"
+  >
+    <div
+      class="row"
+      :class="[$style.bg]"
+    >
+      <transition
+        name="slide"
+        v-for="(item, index) in iterations"
+        :key="item.weekNumber"
+        @leave="leave"
+      >
+        <div
+          v-if="inBounds(item,index)"
+          @click="changeDate(index)"
+          :class="[$style.bg,(index===7 && iterations.length===15)?$style.selected:'',$style.colXs5ths]"
+        >
+          <span>{{ item.startMon }}<br>
+            {{ item.startDay }}-{{ item.endDay }}
           </span>
         </div>
       </transition>
@@ -17,34 +29,36 @@
 
 <script>
 let Velocity = {}
+
 export default {
-  name: 'CalFooter',
-  props:['iterations'],
-  mounted() {
+  name : 'CalFooter',
+  props: ['iterations'],
+  mounted(){
     Velocity = require('velocity-animate')
   },
-  methods:{
-    changeDate:changeDate,
-    handlers: function(){return{left:this.left,right:this.right}},
-    inBounds:function(iteration,index){
-        if(this.iterations && this.iterations.length !== 15) return false
-        if(index > 4 && index < 10) return true
-        return false
+  methods: {
+    changeDate,
+    handlers(){ return{ left: this.left, right: this.right } },
+    inBounds(iteration, index){
+      if(this.iterations && this.iterations.length !== 15) return false
+      if(index > 4 && index < 10) return true
+      return false
     },
-    leave:leave
+    leave
   }
 }// export
 
 function changeDate(index){
   if(Number(index) === 7) return
   this.change = ((7 - Number(index)) >0)
-  return  this.$emit('action',7 - Number(index) )
+  return  this.$emit('action', 7 - Number(index))
 }
 
 function leave(el){
   if(this.iterations && this.iterations.length === 15) return false
-  let change = this.change ? '' : '-'
-  Velocity(el,{ translateX: `${change}100%`,'background-color':'#eeeeee',color:'inherit' }, { duration: 20 })
+  const change = this.change ? '' : '-'
+
+  Velocity(el, { translateX: `${change}100%`, 'background-color': '#eeeeee', color: 'inherit' }, { duration: 20 })
 }
 
 

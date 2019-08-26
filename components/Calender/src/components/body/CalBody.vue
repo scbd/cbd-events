@@ -1,8 +1,18 @@
 <template>
-  <div  :class="[$style.main]">
-    <Details v-if="detailsData" :conference="conference" :event="detailsData"/>
-    <CalFilter v-if="showFilter" @filter="filter"/>
-    <transition name="slide-week" v-on:leave="leave">
+  <div :class="[$style.main]">
+    <Details
+      v-if="detailsData"
+      :conference="conference"
+      :event="detailsData"
+    />
+    <CalFilter
+      v-if="showFilter"
+      @filter="filter"
+    />
+    <transition
+      name="slide-week"
+      @leave="leave"
+    >
       <CalWeekBody
         v-if="isWeek && !selectedIteration.loading"
         :week="selectedIteration"
@@ -15,88 +25,88 @@
 </template>
 
 <script>
-  import CalWeekBody  from './CalWeekBody'
-  import Details      from '../event/CalEventDetails'
-  import events       from '../../modules/Bus'
-  import CalFilter    from './CalFilter'
+import CalWeekBody  from './CalWeekBody'
+import Details      from '../event/CalEventDetails'
+import events       from '../../modules/Bus'
+import CalFilter    from './CalFilter'
 
 
-
-  export default {
-    name: 'CalBody',
-    props:['selected-iteration','events','conference'],
-    data:function(){
-      return{
-        detailsData:false,
-        showFilter:false
-    }},
-    components:{CalWeekBody,Details,CalFilter},//,Details CalFilter
-    mounted() {
-      events.$on('EventDetails', this.showDetails)
-      events.$on('showFilter', this.filter)
-    },
-    methods:{
-      leave:leave,
-      // selectEvents:selectEvents,
-      showDetails:showDetails,
-      filter:filter
-    },
-    computed:{
-      isWeek:isWeek,
-      isMeeting:isMeeting,
-      isDay:isDay,
-      selectedEvents:selectEvents
+export default {
+  name : 'CalBody',
+  props: [ 'selectedIteration', 'events', 'conference' ],
+  data(){
+    return{
+      detailsData: false,
+      showFilter : false
     }
+  },
+  components: { CalWeekBody, Details, CalFilter }, //,Details CalFilter
+  mounted(){
+    events.$on('EventDetails', this.showDetails)
+    events.$on('showFilter', this.filter)
+  },
+  methods: {
+    leave,
+    // selectEvents:selectEvents,
+    showDetails,
+    filter
+  },
+  computed: {
+    isWeek,
+    isMeeting,
+    isDay,
+    selectedEvents: selectEvents
   }
+}
 
-  function filter (e){
+function filter (e){
+  if(e && e.hasOwnProperty('data'))return this.showFilter = e.data.show
 
-    if(e && e.hasOwnProperty('data'))return this.showFilter = e.data.show
+  this.showFilter=!this.showFilter
+}
 
-    this.showFilter=!this.showFilter
-  }
+function showDetails (e){
+  const { data } = e
 
-  function showDetails (e){
-    let {data} = e
-    this.detailsData = this.detailsData? false : data
-  }
+  this.detailsData = this.detailsData? false : data
+}
 
-  function selectEvents(){
-    if(!this.selectedIteration) return {}
-    let events = this.events
-    // if(!events) return {}
-    let week = this.selectedIteration.aDateTime.toFormat('yyyy-W')
-    let day = this.selectedIteration.aDateTime.toFormat('yyyy-MM-dd')
-    if(this.isWeek && events.weeks)
-      return events.weeks[week]
+function selectEvents(){
+  if(!this.selectedIteration) return {}
+  const events = this.events
+  // if(!events) return {}
+  const week = this.selectedIteration.aDateTime.toFormat('yyyy-W')
+  const day = this.selectedIteration.aDateTime.toFormat('yyyy-MM-dd')
 
-    if(this.isDay && events.days)
-      return events.days[day]
-  }
-  function isWeek(){
+  if(this.isWeek && events.weeks)
+    return events.weeks[week]
 
-    return (this.selectedIteration.type==='week')
-  }
-  function isDay(){
-    return (this.selectedIteration.type==='day')
-  }
-  function isMeeting(){
-    return (this.selectedIteration.type==='meeting')
-  }
-  function leave(){
-    // let change = this.selectedIteration.change ? '' : '-'
-    // let num = Math.abs(this.selectedIteration.changeNum )
-    // let time = 750
-    // if(num>1) time = 1600
-    for (let ref in this.$children[0].$refs)
-      this.$children[0].$refs[ref].style.display='block'
+  if(this.isDay && events.days)
+    return events.days[day]
+}
+function isWeek(){
+  return (this.selectedIteration.type==='week')
+}
+function isDay(){
+  return (this.selectedIteration.type==='day')
+}
+function isMeeting(){
+  return (this.selectedIteration.type==='meeting')
+}
+function leave(){
+  // let change = this.selectedIteration.change ? '' : '-'
+  // let num = Math.abs(this.selectedIteration.changeNum )
+  // let time = 750
+  // if(num>1) time = 1600
+  for (const ref in this.$children[0].$refs)
+    this.$children[0].$refs[ref].style.display='block'
 
-    // Velocity(el,{ translateX: `${change}${num}00%`,color:'inherit' })
+  // Velocity(el,{ translateX: `${change}${num}00%`,color:'inherit' })
 
-    setTimeout(() =>{
-      this.selectedIteration.loading = false
-    },400)
-  }
+  setTimeout(() => {
+    this.selectedIteration.loading = false
+  }, 400)
+}
 
 </script>
 <style>

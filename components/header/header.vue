@@ -1,143 +1,161 @@
 <template>
-<section>
-  <transition name="slide-fade">
-    <nav v-if="showNavs" class="mainn navbar  navbar-default" v-on:click="toggleSideMenu()">
+  <section>
+    <transition name="slide-fade">
+      <nav
+        v-if="showNavs"
+        class="mainn navbar  navbar-default"
+        @click="toggleSideMenu()"
+      >
+        <div class="container-fluid ">
+          <span class="pull-left">
+            <img
+              :src="`${attachments}/cbd-leaf-green.svg`"
+              class="header-nav-img"
+              :alt="$t('scbdLeafLogo')"
+            >
+          </span>
 
-      <div class="container-fluid ">
-
-        <span class="pull-left">
-          <img  :src="`${attachments}/cbd-leaf-green.svg`" class="header-nav-img" :alt="$t('scbdLeafLogo')"/>
-        </span>
-
-        <span class="pull-right">
-          <SideMenu :is-open="isSideMenuOpen"/>
-        </span>
+          <span class="pull-right">
+            <SideMenu :is-open="isSideMenuOpen" />
+          </span>
         
-        <div class="title"><b>{{conference.title | lstring}}</b></div>
-      </div>
-      <div class="row sub" v-if="showMeetingNav">
-
-        <div class="sub-con"  v-on:click="toggle()">
-          <b v-if="meeting.title">
-            {{meeting.title}} <span v-if="!~meeting.subTitle.indexOf('COPMOP')">{{meeting.subTitle}}</span>
-          </b>
-          <b v-else>
-            {{meeting.subTitle}}
-          </b>
-
-          <svg class="icon-clock-o"  ><use xlink:href="#icon-select-arrows"></use></svg>
+          <div class="title">
+            <b>{{ conference.title | lstring }}</b>
+          </div>
         </div>
-      </div>
-    </nav>
+        <div
+          class="row sub"
+          v-if="showMeetingNav"
+        >
+          <div
+            class="sub-con"
+            @click="toggle()"
+          >
+            <b v-if="meeting.title">
+              {{ meeting.title }} <span v-if="!~meeting.subTitle.indexOf('COPMOP')">{{ meeting.subTitle }}</span>
+            </b>
+            <b v-else>
+              {{ meeting.subTitle }}
+            </b>
 
-  </transition>
-</section>
+            <svg class="icon-clock-o"><use xlink:href="#icon-select-arrows" /></svg>
+          </div>
+        </div>
+      </nav>
+    </transition>
+  </section>
 </template>
 
 <script>
-  import SideMenu from './SideMenu.vue'
-  let showLinks = false
+import SideMenu from './SideMenu.vue'
 
-  export default {
-    name: 'Header',
-    components: { SideMenu },
-    data () {
-      return {
-        showLinks     : showLinks,
-        lastScrollTop : 0,
-        show          : true,
-        isSideMenuOpen: false,
-        attachments   : process.env.ATTACHMENTS
-      }
-    },
-    computed: {
-      showMeetingNav:function(){
-        return this.$store.state.routes.showMeetingNav
-      },
-      conference: function () {
-        let { conference } = this.$store.state.conferences.selected
-        if(!conference) return {}
-        let { cbdMeet } = conference
-        return cbdMeet || {}
-      },
-      meeting: function () {
-        return this.$store.state.conferences.selectedMeeting || {}
-      },
-      showNavs:showNavs
-    },
-    methods: {
-      offlineNotice:offlineNotice,
-      onlineNotice:onlineNotice,
-      toggleSideMenu:toggleSideMenu,
-      toggle(){
-        let locale = this.$store.state.i18n.locale
-        this.$router.push({name:`conferenceCode-meetingCode-meetings___${locale}`,params: this.$route.params })
-      },
-      onScroll (e) {
-        if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0) {
-          this.scrolled = false
-          this.show = true
-          e.preventDefault()
-          e.stopPropagation() 
-          return
-        }
-        this.scrolled = true
-      },
-      hasScrolled () {
-        let doc = document.documentElement
-        let top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
-        let diff = Math.abs(top - this.lastScrollTop)
-
-        if (top < this.lastScrollTop && diff > 25)
-          this.show = true
-
-        if (top > this.lastScrollTop && diff > 25)
-          this.show = false
-
-        if (diff > 25) this.lastScrollTop = top
-
-      }
-    },
-    beforeMount () {
-      if(process.server) return
-      window.addEventListener('scroll', this.onScroll)
-      setInterval(function () {
-        if (this.scrolled) {
-          this.hasScrolled()
-          this.scrolled = false
-        }
-      }.bind(this), 250)
-      window.addEventListener('online', this.onlineNotice )
-      window.addEventListener('offline', this.offlineNotice )
-    },
-    beforeDestroy () {
-      window.removeEventListener('scroll', this.onScroll)
-      window.removeEventListener('online', this.onlineNotice )
-      window.removeEventListener('offline', this.offlineNotice )
+export default {
+  name      : 'Header',
+  components: { SideMenu },
+  data (){
+    return {
+      showLinks     : false,
+      lastScrollTop : 0,
+      show          : true,
+      isSideMenuOpen: false,
+      attachments   : process.env.ATTACHMENTS
     }
+  },
+  computed: {
+    showMeetingNav(){
+      return this.$store.state.routes.showMeetingNav
+    },
+    conference (){
+      const { conference } = this.$store.state.conferences.selected
+
+      if(!conference) return {}
+      const { cbdMeet } = conference
+
+      return cbdMeet || {}
+    },
+    meeting (){
+      return this.$store.state.conferences.selectedMeeting || {}
+    },
+    showNavs
+  },
+  methods: {
+    offlineNotice,
+    onlineNotice,
+    toggleSideMenu,
+    toggle,
+
+    hasScrolled (){
+      const doc = document.documentElement
+      const top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+      const diff = Math.abs(top - this.lastScrollTop)
+
+      if (top < this.lastScrollTop && diff > 25)
+        this.show = true
+
+      if (top > this.lastScrollTop && diff > 25)
+        this.show = false
+
+      if (diff > 25) this.lastScrollTop = top
+    }
+  },
+  beforeMount (){
+    if(process.server) return
+    window.addEventListener('scroll', this.onScroll)
+    setInterval(() => {
+      if (this.scrolled){
+        this.hasScrolled()
+        this.scrolled = false
+      }
+    }, 250)
+    window.addEventListener('online', this.onlineNotice)
+    window.addEventListener('offline', this.offlineNotice)
+  },
+  beforeDestroy (){
+    window.removeEventListener('scroll', this.onScroll)
+    window.removeEventListener('online', this.onlineNotice)
+    window.removeEventListener('offline', this.offlineNotice)
   }
-  function toggleSideMenu(){
-    this.isSideMenuOpen=!this.isSideMenuOpen
-  }  
-  function offlineNotice(){
-    this.$swal({
-        title: this.$i18n.t('internetConnectionLost'),
-        text: this.$i18n.t('internetConnectionLostDescription'),
-        icon: "warning",
-      })
+}
+
+function       onScroll (e){
+  if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0){
+    this.scrolled = false
+    this.show = true
+    e.preventDefault()
+    e.stopPropagation()
+    return
   }
-  function onlineNotice(){
-    this.$swal({
-        title: this.$i18n.t('internetConnectionRestored'),
-        icon: "success",
-      })
-  }
-  function showNavs(){
-    if(this.$store)
-      return this.$store.state.routes.showNavs
-    else
-      return this.show
-  }
+  this.scrolled = true
+}
+      
+function toggle(){
+  const { locale } = this.$store.state.i18n
+
+  this.$router.push({ name: `conferenceCode-meetingCode-meetings___${locale}`, params: this.$route.params })
+}
+
+function toggleSideMenu(){
+  this.isSideMenuOpen=!this.isSideMenuOpen
+}
+function offlineNotice(){
+  this.$swal({
+    title: this.$i18n.t('internetConnectionLost'),
+    text : this.$i18n.t('internetConnectionLostDescription'),
+    icon : 'warning'
+  })
+}
+function onlineNotice(){
+  this.$swal({
+    title: this.$i18n.t('internetConnectionRestored'),
+    icon : 'success'
+  })
+}
+function showNavs(){
+  if(this.$store)
+    return this.$store.state.routes.showNavs
+  else
+    return this.show
+}
 </script>
 
 <style scoped>

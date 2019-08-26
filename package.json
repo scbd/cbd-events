@@ -18,10 +18,13 @@
     "start": "nuxt start",
     "start:dev": "NODE_ENV=dev nuxt start",
     "start:stg": "NODE_ENV=stg nuxt start",
-    "start:ci": "NODE_ENV=$NODE_ENV nuxt start"
+    "start:ci": "NODE_ENV=$NODE_ENV nuxt start",
+    "lint": "eslint --ext .js,.vue  .",
+    "lint:fix": "eslint --fix --ext .js,.vue ."
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.1",
+    "@scbd/conference-cal": "^1.0.2",
     "bootstrap": "^4.3.1",
     "camelcase-keys": "6.0.1",
     "dotenv": "8.1.0",

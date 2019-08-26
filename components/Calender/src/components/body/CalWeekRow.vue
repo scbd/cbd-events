@@ -1,34 +1,63 @@
 <template>
-  <div    :class="[$style.main]" >
+  <div :class="[$style.main]">
     <!-- {{day.dayOfWeekShort}} :ref="`weekRow${yIndex}`"
     {{day.dayNumber}} -->
-    <div :ref="`weekRowTitle${yIndex}`" class="text-center" :class="[$style.mainTitleChild,day.isToday? $style.today:'',day.isWeekend? $style.weekend:'']" >
-      <div  :class="[$style.inner]">
-        {{day.subTitle}} <br>
-        {{day.title}}
+    <div
+      :ref="`weekRowTitle${yIndex}`"
+      class="text-center"
+      :class="[$style.mainTitleChild,day.isToday? $style.today:'',day.isWeekend? $style.weekend:'']"
+    >
+      <div :class="[$style.inner]">
+        {{ day.subTitle }} <br>
+        {{ day.title }}
       </div>
     </div>
-    <transition name="fader" >
-      <div :ref="`hasMore${yIndex}`"  :class="[$style.hasMore]" v-if="hasMoreLeft">
-        <div  :class="[$style.hasMoreContainer]" v-on:click="scrollBack">
-          <div  :class="[$style.hasMoreInner]">
-            <span class="eco-left-circled"></span>
+    <transition name="fader">
+      <div
+        :ref="`hasMore${yIndex}`"
+        :class="[$style.hasMore]"
+        v-if="hasMoreLeft"
+      >
+        <div
+          :class="[$style.hasMoreContainer]"
+          @click="scrollBack"
+        >
+          <div :class="[$style.hasMoreInner]">
+            <span class="eco-left-circled" />
           </div>
         </div>
       </div>
     </transition>
-    <div :class="[$style.mainChildCont]" ref="day">
-      <CalEvent :conference:="conference" :ref="`calEvent${yIndex}`" :key="evnt.identifier" :event="evnt" :indicies="{xIndex:index,yIndex:yIndex,totalXIndex:dayEvents.length}" v-for="(evnt, index) in dayEvents" :class="[$style.mainChild]"/>
+    <div
+      :class="[$style.mainChildCont]"
+      ref="day"
+    >
+      <CalEvent
+        :conference:="conference"
+        :ref="`calEvent${yIndex}`"
+        :key="evnt.identifier"
+        :event="evnt"
+        :indicies="{xIndex:index,yIndex:yIndex,totalXIndex:dayEvents.length}"
+        v-for="(evnt, index) in dayEvents"
+        :class="[$style.mainChild]"
+      />
     </div>
-    <transition name="fader" >
-      <div :ref="`hasMore${yIndex}`"  :class="[$style.hasMoreRight]" v-if="hasMoreRight">
-        <div  :class="[$style.hasMoreContainer]" v-on:click="scrollForward">
+    <transition name="fader">
+      <div
+        :ref="`hasMore${yIndex}`"
+        :class="[$style.hasMoreRight]"
+        v-if="hasMoreRight"
+      >
+        <div
+          :class="[$style.hasMoreContainer]"
+          @click="scrollForward"
+        >
           <div :class="[$style.hasMoreInner]">
-            <span class="eco-right-circled"></span>
+            <span class="eco-right-circled" />
           </div>
         </div>
       </div>
-    </transition >
+    </transition>
   </div>
 </template>
 
@@ -37,69 +66,70 @@ import CalEvent     from '../event/CalEvent'
 
 export default {
   name: 'CalWeekRow',
-  data:function(){
+  data(){
     return{
-      scrollPosition:0,
-      hasMoreL:false
-  }},
-  props:['day','dayEvents','yIndex','conference'],
-  components:{CalEvent},
-  methods:{
-    onScroll:onScroll,
-    scrollForward:scrollForward,
-    scrollBack:scrollBack
+      scrollPosition: 0,
+      hasMoreL      : false
+    }
   },
-  computed:{
-    hasMoreRight:hasMoreRight,
-    hasMoreLeft:hasMoreLeft
+  props     : [ 'day', 'dayEvents', 'yIndex', 'conference' ],
+  components: { CalEvent },
+  methods   : {
+    onScroll,
+    scrollForward,
+    scrollBack
   },
-  mounted () {
+  computed: {
+    hasMoreRight,
+    hasMoreLeft
+  },
+  mounted (){
+    const el = this.$refs.day
 
-    let el = this.$refs.day
     if(el.addEventListener)
-       el.addEventListener('scroll', this.onScroll)
+      el.addEventListener('scroll', this.onScroll)
     else
       el.onscroll = this.onScroll
-
   }
 }
 
-  function hasMoreRight() {
-    if(!this.dayEvents) return false
-    let eventSizePercent = 100/this.dayEvents.length
+function hasMoreRight(){
+  if(!this.dayEvents) return false
+  const eventSizePercent = 100/this.dayEvents.length
 
-    if(this.scrollPosition + eventSizePercent >=100) return false
-    return ( eventSizePercent < 20)
+  if(this.scrollPosition + eventSizePercent >=100) return false
+  return (eventSizePercent < 20)
+}
+
+function hasMoreLeft(){
+  return this.hasMoreL
+}
+
+function onScroll(e){
+  if(!this.dayEvents){
+    this.hasMoreL = 0
+    return
   }
 
-  function hasMoreLeft() {
-    return this.hasMoreL
-  }
+  this.hasMoreL  = (xPercentage(e.target) >0)
+  this.scrollPosition = (xPercentage(e.target))
+}
 
-  function onScroll(e) {
+function xPercentage(el){
+  return 100 * el.scrollLeft / (el.scrollWidth-el.clientWidth)
+}
 
-    if(!this.dayEvents){
-      this.hasMoreL = 0
-      return
-    }
+function scrollForward(){
+  const el = this.$refs.day
 
-    this.hasMoreL  = (xPercentage(e.target) >0)
-    this.scrollPosition = (xPercentage(e.target))
-  }
+  el.scrollLeft += el.clientWidth
+}
 
-  function xPercentage(el) {
-    return 100 * el.scrollLeft / (el.scrollWidth-el.clientWidth)
-  }
+function scrollBack(){
+  const el = this.$refs.day
 
-  function scrollForward() {
-    let el = this.$refs.day
-    el.scrollLeft += el.clientWidth
-  }
-
-  function scrollBack() {
-    let el = this.$refs.day
-    el.scrollLeft -= el.clientWidth
-  }
+  el.scrollLeft -= el.clientWidth
+}
 </script>
 <style>
   .fader-enter-active {

@@ -1,54 +1,54 @@
 <template>
-  <span ><a :href="download">{{symbol}}</a></span>
+  <span><a :href="download">{{ symbol }}</a></span>
 </template>
 
 <script>
 import axios from 'axios'
 
 export default {
-  name: 'CalEventDetailsFile',
-  props:['file'],
-  data:function(){
+  name : 'CalEventDetailsFile',
+  props: ['file'],
+  data(){
     return{
-      symbol: this.file.symbol,
-      id: this.file._id,
-      title:this.file.title?this.file.title.en:'',
-      fullFile:{}
+      symbol  : this.file.symbol,
+      id      : this.file._id,
+      title   : this.file.title?this.file.title.en:'',
+      fullFile: {}
     }
   },
-  created: function(){
+  created(){
     this.getData(this.genFilePath(this.symbol))
-      .then((res)=>{
+      .then((res) => {
         this.fullFile = res.data
       })
   },
-  computed:{
-    download:download
+  computed: {
+    download
   },
-  methods:{
-    genFilePath:genFilePath,
-    genMeetingFromSymbol:genMeetingFromSymbol,
-    getData:getData
-  },
+  methods: {
+    genFilePath,
+    genMeetingFromSymbol,
+    getData
+  }
 }
 function getData(path, params={}){
-  let response = axios.get(path,params)
+  const response = axios.get(path, params)
+
   return response
 }
 
 function download(){
   if(!this.fullFile.files) return '#'
-  let file = this.fullFile.files.find((f)=>
-    {
-      return ((f.language === 'en' && f.type === 'application/msword') ||
+  const file = this.fullFile.files.find((f) => ((f.language === 'en' && f.type === 'application/msword') ||
               (f.language === 'en' && f.type === 'application/pdf'))
-    }
   )
+
   return file.url
 }
 function genMeetingFromSymbol(){
   if (!this.symbol) return false
-  let symbolArr = this.symbol.split('/')
+  const symbolArr = this.symbol.split('/')
+
   return `${symbolArr[1]}-${symbolArr[2]}`
 }
 function genFilePath(){
