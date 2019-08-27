@@ -1,4 +1,5 @@
 import { dotEnvReader, cordovaNuxtConfig } from './modules/appEnvironmentsManager'
+import { resolve } from 'path'
 
 dotEnvReader() // read env related vars and set them to nodejs.env
 
@@ -22,15 +23,7 @@ let config = {
     { src: '~assets/app.scss'  },
     { src: '~assets/app.css' }
   ],
-  modules: [  '@nuxtjs/axios',
-    [ '~/modules/nuxtModules/localForage.js', {
-      name       : 'cbd-events',
-      version    : 1.0,
-      size       : 4980736, // Size of database, in bytes. WebSQL-only for now.
-      storeName  : 'files', // Should be alphanumeric, with underscores.
-      description: 'Main file store',
-      instances  : [ { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' } ]
-    } ],
+  modules: [  
     [ 'nuxt-i18n', {
       defaultLocale        : 'en',
       detectBrowserLanguage: { cookieKey: 'localePref', useCookie: true },
@@ -48,21 +41,36 @@ let config = {
         mutations : { setLocale: 'I18N_SET_LOCALE',  setMessages: 'I18N_SET_MESSAGES' }
       }
     }
-    ]
+    ],
+    '@nuxtjs/axios',
+    [ '~/modules/nuxtModules/localForage.js', {
+      name       : 'cbd-events',
+      version    : 1.0,
+      size       : 4980736, // Size of database, in bytes. WebSQL-only for now.
+      storeName  : 'files', // Should be alphanumeric, with underscores.
+      description: 'Main file store',
+      instances  : [ { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' } ]
+    } ]
   ],
   plugins: [
     '~/plugins/axios.js',
-    '~/plugins/i18n.js',
+    
     '~/plugins/router.js',
     '~/plugins/filters.js',
-    '~/plugins/vue-notifications'
+    '~/plugins/vue-notifications',
+    //'~/plugins/i18n.js'
   ],
   loading: { color: '#009b48' },
   router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },
   build  : { extend },
   axios  : { browserBaseURL: '/', baseURL: process.env.API },
   cache  : { max: 1000, maxAge: 900000 },
-  render : { http2: { push: true }, static: { maxAge: '1y', setHeaders } }
+  render : { http2: { push: true }, static: { maxAge: '1y', setHeaders } },
+  // hooks: {
+  //   modules: {
+  //     done
+  //   }
+  // }
 }
 
 config = cordovaNuxtConfig(config) // if cordova modify config
@@ -87,3 +95,13 @@ function extend(config, { isDev, isClient }){
       options: { fix: true }
     })
 }
+
+// function done(moduleContainer){
+
+//   moduleContainer.addPlugin({
+//     src     : resolve(__dirname, 'plugins/i18n.js'),
+//     ssr     : false,
+//     fileName: 'i18n.js'
+//   })
+
+// } 

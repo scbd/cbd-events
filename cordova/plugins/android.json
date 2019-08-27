@@ -7,6 +7,9 @@
     "files": {}
   },
   "installed_plugins": {
+    "cordova-plugin-code-push": {
+      "PACKAGE_NAME": "io.cordova.unbioevents"
+    },
     "cordova-plugin-device": {
       "PACKAGE_NAME": "io.cordova.unbioevents"
     },
@@ -27,9 +30,6 @@
       "PACKAGE_NAME": "io.cordova.unbioevents"
     },
     "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "io.cordova.unbioevents"
-    },
-    "cordova-plugin-code-push": {
       "PACKAGE_NAME": "io.cordova.unbioevents"
     }
   },

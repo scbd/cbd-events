@@ -40,7 +40,7 @@ export const cordovaNuxtConfig = (nuxtConfig) => {
   nuxtConfig.head.link =[ { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' } ]
   nuxtConfig.head.script=  [ { src: 'cordova.js' } ]
   
-  delete(nuxtConfig.manifest.icons)
+  //delete(nuxtConfig.manifest.icons)
 
   nuxtConfig.modules.splice(nuxtConfig.modules.indexOf('@nuxtjs/proxy'), 1)
 

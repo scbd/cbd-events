@@ -3,19 +3,15 @@
     <nav class="navbar navbar-default menu-gradient">
       <ul class="nav nav-pills nav-fill">
       
-        <nuxt-link tag="li" class="nav-item" :to="$i18n.path({ name: 'conferenceCode', params: { conferenceCode } })">
-          <svg class="icon"><use xlink:href="#icon-info-circle" /></svg>
+        <nuxt-link tag="li" class="nav-item" :to="localePath({ name: 'conferenceCode', params: { conferenceCode } })">
+          <svg class="icon"><use xlink:href="#icon-home" /></svg>
         </nuxt-link>
 
-        <nuxt-link tag="li" class="nav-item" :to="$i18n.path({ name: 'conferenceCode-meetingCode-agenda', params: { conferenceCode, meetingCode } })">
+        <nuxt-link tag="li" class="nav-item" :to="localePath({ name: 'conferenceCode-meetingCode-agenda', params: { conferenceCode, meetingCode } })">
           <svg class="icon"><use xlink:href="#icon-clock-o" /></svg>
         </nuxt-link>
 
-        <nuxt-link
-            tag="li" class="nav-item"
-            v-if="filesExist && !downloading"
-            :to="$i18n.path({ name:'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })"
-          >
+        <nuxt-link tag="li" class="nav-item" v-if="filesExist && !downloading" :to="localePath({ name:'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })" >
           <svg class="icon"><use xlink:href="#icon-document-download" /></svg>
         </nuxt-link>
 
@@ -25,11 +21,11 @@
           </div>
         </li>
 
-        <nuxt-link tag="li" class="nav-item" :to="$i18n.path({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode, meetingCode } })">
+        <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode, meetingCode } })">
           <svg class="icon"><use xlink:href="#icon-docs" /></svg>
         </nuxt-link>
 
-        <nuxt-link tag="li" class="nav-item" :to="$i18n.path({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: getCalStartDate() } })">
+        <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: getCalStartDate() } })">
           <svg class="icon"><use xlink:href="#icon-calendar-o" /></svg>
         </nuxt-link>
       </ul>

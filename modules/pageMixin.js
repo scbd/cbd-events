@@ -31,9 +31,14 @@ export default {
       ],
       htmlAttrs: {
         lang: this.$i18n.locale,
-        dir : this.$i18n.getDirection(this.$i18n.locale)
+        dir : getDirection(this.$i18n.locale)
       }
     }
   }
 
+}
+
+function getDirection(lang){
+  if(lang==='ar') return 'rtl'
+  return 'ltr'
 }

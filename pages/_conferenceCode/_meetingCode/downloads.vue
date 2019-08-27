@@ -182,7 +182,7 @@ function openFileFromIOS({ inAppBrowser }, file){
 function openSafariPWA (fileObject){
   const name       = 'conferenceCode-fileView'
   const params     = { conferenceCode: this.conferenceCode }
-  const routerPath = this.$i18n.path({ name, params })
+  const routerPath = this.localePath({ name, params })
   const blobUrl    = window.URL.createObjectURL(fileObject.blob)
 
   this.$store.commit('files/SET_FILE_TO_OPEN', blobUrl)

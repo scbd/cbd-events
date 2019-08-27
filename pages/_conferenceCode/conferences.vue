@@ -3,24 +3,11 @@
     <Header :title="screenTitle" />
     <div class="page container-fluid">
       <div class="row" v-for="conference in conferencesWithMeetings" :key="conference._id">
-        <div
-          @click="changeConference(conference)"
-          class="col"
-          :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}"
-        >
+        <div @click="changeConference(conference)" class="col" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" >
 
-          <img
-            crossorigin="anonymous"
-            v-if="getHeroImage(conference)"
-            :src="getHeroImage(conference) || defaultImage"
-            :alt="`${title(conference)} logo`"
-          >
-          <img
-            crossorigin="anonymous"
-            v-if="!getHeroImage(conference)"
-            :src="getImage(conference) || defaultImage"
-            :alt="`${title(conference)} logo`"
-          >
+          <img crossorigin="anonymous" v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
+          <img crossorigin="anonymous" v-if="!getHeroImage(conference)" :src="getImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
+
           <div v-if="!getHeroImage(conference)" class="container d-flex">
             <h4 class="justify-content-center align-self-center">{{ title(conference) }}</h4>
           </div>
@@ -35,7 +22,7 @@ import Header from '~/components/header/header-bottom-screen'
 
 export default {
   name      : 'Conferences',
-  layout    : ' bottom-screen',
+  layout    : 'bottom-screen',
   components: { Header },
   methods   : { done, getImage, getHeroImage, changeConference, title, description },
   computed  : { conferencesWithMeetings },

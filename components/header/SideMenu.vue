@@ -10,7 +10,7 @@
             <br>
             <h4>{{ $t('settings') }}</h4>
             <div class="list-group debug">
-              <nuxt-link :to="$i18n.path({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
+              <nuxt-link :to="localePath({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
                 <button class="list-group-item" >
                   <svg class="icon"><use xlink:href="#icon-transfer" /></svg> {{ switchConference }}
                 </button>
