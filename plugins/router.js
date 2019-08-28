@@ -1,12 +1,23 @@
 // syncs router to store
-export default async ({ app, store }) => {
-  app.router.afterEach((to, from) => {
-    if(store.state.routes.route)
-      store.commit('routes/SET_ROUTE',{name:to.name, path:to.path, params:to.params, fullPath:to.fullPath, guery:to.query })
+export default  ({ app, store }) => {
+  const prevRoute = store.state.routes.route
+
+  
+  // app.router.beforeEach((to, from, next) => {
+  //   to.path = app.localePath(to.path).replace('#', '')
+  //   next()
+  // })
+  app.router.afterEach((to) => {
+    // eslint-disable-next-line
+    const { name, path, params, fullPath, query } = to
+    const route = { name, path, params, fullPath, query }
+    
+    if(!prevRoute){
+      store.commit('routes/SET_ROUTE', route)
+    }
     else{
-      let prev =  store.state.routes.route
-      store.commit('routes/SET_PREV_ROUTE',prev)
-      store.commit('routes/SET_ROUTE',{name:to.name, path:to.path, params:to.params, fullPath:to.fullPath, guery:to.query })
+      store.commit('routes/SET_PREV_ROUTE', prevRoute)
+      store.commit('routes/SET_ROUTE', route)
     }
   })
 }

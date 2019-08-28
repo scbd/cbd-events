@@ -1,53 +1,77 @@
 <template>
-  <transition name="slide-details" >
-    <div :class="[$style.main]" v-on:click.stop="showDetails">
-      <div  :class="$style.title">
-                <span :class="$style.pointer" class="eco-cancel pull-right"></span>
-        <span >{{calEvent.title}}</span>
-
+  <transition name="slide-details">
+    <div
+      :class="[$style.main]"
+      @click.stop="showDetails"
+    >
+      <div :class="$style.title">
+        <span
+          :class="$style.pointer"
+          class="eco-cancel pull-right"
+        />
+        <span>{{ calEvent.title }}</span>
       </div>
       <div :class="[$style.body]">
-
         <div class="text-primary">
-          <span class="eco-clock"></span> {{dateTime}}
+          <span class="eco-clock" /> {{ dateTime }}
         </div>
 
         <div v-if="addToCalReady()">
-          <span class="eco-calendar-empty"></span>
-          <span v-bind:key="index" :class="$style.caps" v-for="(stream, index) in calEvent.stream_ss">{{stream}}<span v-if="index < calEvent.stream_ss.length-1">,</span>
+          <span class="eco-calendar-empty" />
+          <span
+            :key="index"
+            :class="$style.caps"
+            v-for="(stream, index) in calEvent.stream_ss"
+          >{{ stream }}<span v-if="index < calEvent.stream_ss.length-1">,</span>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </span>
-
-          <AddToCalendar :options="{baseUrl:api}" :event="calEvent" style="display:inline-block;" v-on:click.stop=""/>
         </div>
 
-        <div v-if="isInSession()"><span class="eco-location"></span> {{location}}</div>
+        <div v-if="isInSession()">
+          <span class="eco-location" /> {{ location }}
+        </div>
         <div v-if="(organizer || organizerEmail) && $isStaff">
-          <span class="eco-address-card" ></span>
-          <a :href="`${organizerEmail}`">{{organizer || organizerEmail}}</a>
-          <div :key="i" v-for="(o, i) in calEvent.organizers">{{o}}</div>
+          <span class="eco-address-card" />
+          <a :href="`${organizerEmail}`">{{ organizer || organizerEmail }}</a>
+          <div
+            :key="i"
+            v-for="(o, i) in calEvent.organizers"
+          >
+            {{ o }}
+          </div>
         </div>
         <div v-if="calEvent.item_ss && calEvent.item_ss.length">
-          <table  >
+          <table>
             <tr>
               <td style="vertical-align:top;">
-                  <span class="eco-docs" ></span>
+                <span class="eco-docs" />
               </td>
               <td>
-                <table >
-                  <tr :key="index" v-for="(item, index) in calEvent.item_ss">
+                <table>
+                  <tr
+                    :key="index"
+                    v-for="(item, index) in calEvent.item_ss"
+                  >
                     <td>
-                      <AgendaItem :body="calEvent.itemMeeting[index]" :item="item" />
-
+                      <AgendaItem
+                        :body="calEvent.itemMeeting[index]"
+                        :item="item"
+                      />
                     </td>
                     <td>
-                      {{itemTextArr(index)}}
+                      {{ itemTextArr(index) }}
                     </td>
                     <td>
-                      <CalEventDetailsFile v-if="files(index)._id" :file="files(index)"/>
+                      <CalEventDetailsFile
+                        v-if="files(index)._id"
+                        :file="files(index)"
+                      />
                     </td>
                     <td>
-                      <FileStatus v-if="files(index)._id && $isStaff" :file="files(index)"/>
+                      <FileStatus
+                        v-if="files(index)._id && $isStaff"
+                        :file="files(index)"
+                      />
                     </td>
                   </tr>
                 </table>
@@ -55,12 +79,10 @@
             </tr>
           </table>
         </div>
-        <div>
-        
-        </div>
+        <div />
       </div>
       <div :class="$style.footer">
-        <span v-html="calEvent.description"></span>
+        <span v-html="calEvent.description" />
       </div>
     </div>
   </transition>
@@ -68,120 +90,115 @@
 
 <script>
 
-  import AddToCalendar        from '~/components/AddToCalendar/src/components/index.vue'
-  import events               from '../../modules/Bus'
-  import AgendaItem           from './AgendaItem'
-  import FileStatus           from './CalEventDetailsFileStatus'
-  import {DateTime}           from 'luxon'
-  import CalEventDetailsFile  from './CalEventDetailsFile'
+import events               from '../../modules/Bus'
+import AgendaItem           from './AgendaItem'
+import FileStatus           from './CalEventDetailsFileStatus'
+import { DateTime }           from 'luxon'
+import CalEventDetailsFile  from './CalEventDetailsFile'
 
-  import '@scbd/ecosystem-style/modifiers/helpers/build.min.css'
-  import '@scbd/ecosystem-style/modifiers/states/build.min.css'
-  import '@scbd/ecosystem-style/patterns/button-groups/build.css'
-
-  export default {
-    name: 'Details',
-    props:['event','conference'],
-    data:function(){
-      return{
-        api:process.env.API
-    }},
-    components:{AgendaItem,CalEventDetailsFile,FileStatus,AddToCalendar},
-    methods:{
-      showDetails:showDetails,
-      files:files,
-      itemTextArr:itemTextArr,
-      goTo:goTo,
-      isInSession:isInSession,
-      addToCalReady:addToCalReady
-    },
-    computed:{
-      calEvent:calEvent,
-      dateTime:dateTime,
-      location:location,
-      organizer:organizer,
-      organizerEmail:organizerEmail
+export default {
+  name : 'Details',
+  props: [ 'event', 'conference' ],
+  data(){
+    return{
+      api: process.env.API
     }
+  },
+  components: { AgendaItem, CalEventDetailsFile, FileStatus },
+  methods   : {
+    showDetails,
+    files,
+    itemTextArr,
+    goTo,
+    isInSession,
+    addToCalReady
+  },
+  computed: {
+    calEvent,
+    dateTime,
+    location,
+    organizer,
+    organizerEmail
   }
+}
 
-  function addToCalReady(){
-    return this.conference.schedule.addToCalReady
-  }
+function addToCalReady(){
+  return this.conference.schedule.addToCalReady
+}
   
-  function goTo(url){
-    if(typeof window !== 'undefined')
-      window.open(url,'_blank')
-  }
+function goTo(url){
+  if(typeof window !== 'undefined')
+    window.open(url, '_blank')
+}
 
-  function itemTextArr (i){
-      if(this.calEvent.itemText)
-        return this.calEvent.itemText[i]
-      return''
-  }
+function itemTextArr (i){
+  if(this.calEvent.itemText)
+    return this.calEvent.itemText[i]
+  return''
+}
 
-  function showDetails (e){
-    e.stopPropagation()
-    e.data ={data:true}
-    events.$emit('EventDetails',e)
-  }
-  function calEvent (){
+function showDetails (e){
+  e.stopPropagation()
+  e.data ={ data: true }
+  events.$emit('EventDetails', e)
+}
+function calEvent (){
+  if(!this.event) return {}
+  return this.event
+}
+function dateTime (){
+  const start = DateTime.fromISO(this.calEvent.start, { zone: this.calEvent.timezone }).toFormat('T')
+  const end = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toFormat('T  cccc, LLLL L ')
 
-    if(!this.event) return {}
-    return this.event
-  }
-  function dateTime () {
-    let start = DateTime.fromISO(this.calEvent.start,{ zone: this.calEvent.timezone }).toFormat('T')
-    let end = DateTime.fromISO(this.calEvent.end,{ zone: this.calEvent.timezone }).toFormat('T  cccc, LLLL L ')
-    return  `${start} - ${end}`
-  }
-  function location () {
+  return  `${start} - ${end}`
+}
+function location (){
+  const localName = this.calEvent.roomLocalName || ''
+  const location = this.calEvent.roomLocation
+  const title = this.calEvent.roomTitle
 
-    let localName = this.calEvent.roomLocalName || ''
-    let location = this.calEvent.roomLocation
-    let title = this.calEvent.roomTitle
-
-    return  `${localName}${(location&&localName) ?',':''} ${location}${title ?',':''} ${title}`
-  }
+  return  `${localName}${(location&&localName) ?',':''} ${location}${title ?',':''} ${title}`
+}
   
-  function organizer () {
-    let name = this.calEvent.organizerName || ''
-    let email = this.calEvent.organizerEmail || ''
-    if(email) email = `${name? '-':''} <${email}>`
-    if(!email && !name) return false
-    return  `${name} ${email}`
-  }
-  function organizerEmail () {
-    return  this.calEvent.organizerEmail || ''
-  }
+function organizer (){
+  const name = this.calEvent.organizerName || ''
+  let email = this.calEvent.organizerEmail || ''
+
+  if(email) email = `${name? '-':''} <${email}>`
+  if(!email && !name) return false
+  return  `${name} ${email}`
+}
+function organizerEmail (){
+  return  this.calEvent.organizerEmail || ''
+}
   
-  function files (index) {
-    if(!this.calEvent.itemText)this.calEvent.itemText=[]
-    if(!this.calEvent.item)this.calEvent.item=[]
-    if(!this.calEvent.itemFiles)this.calEvent.itemFiles=[]
-    for (var i = 0; i < this.calEvent.itemFiles.length; i++) {
-      if(typeof this.calEvent.itemFiles[i] === 'string')
-        this.calEvent.itemFiles[i] = JSON.parse(this.calEvent.itemFiles[i])
+function files (index){
+  if(!this.calEvent.itemText)this.calEvent.itemText=[]
+  if(!this.calEvent.item)this.calEvent.item=[]
+  if(!this.calEvent.itemFiles)this.calEvent.itemFiles=[]
+  for (let i = 0; i < this.calEvent.itemFiles.length; i++){
+    if(typeof this.calEvent.itemFiles[i] === 'string')
+      this.calEvent.itemFiles[i] = JSON.parse(this.calEvent.itemFiles[i])
 
-      if(this.calEvent.itemFiles[i] && this.calEvent.itemFiles[i][0])
-        this.calEvent.itemFiles[i] = this.calEvent.itemFiles[i][0]
-    }
-
-    return  this.calEvent.itemFiles[index]|| {}
+    if(this.calEvent.itemFiles[i] && this.calEvent.itemFiles[i][0])
+      this.calEvent.itemFiles[i] = this.calEvent.itemFiles[i][0]
   }
+
+  return  this.calEvent.itemFiles[index]|| {}
+}
   
-  function isInSession() {
+function isInSession(){
+  const start = DateTime.fromISO(this.conference.schedule.start)
+  const now = DateTime.local().setZone(this.conference.timezone)
 
-    let start = DateTime.fromISO(this.conference.schedule.start)
-    let now = DateTime.local().setZone(this.conference.timezone)
+  if(start <= now)
+    return true
 
-    if(start <= now )
-        return true
-
-    return false
-  }
+  return false
+}
 </script>
 <style>
-/* @import url('@scbd/eco-molecule-add-to-calendar/dist/vue/AddToCalendar.css') */
+
   .slide-details-leave-active, .slide-details-enter-active  {
     transition: all .4s ease;
   }

@@ -1,6 +1,6 @@
 
 export default {
-  components:{
-    ThisComponent:()=> import('../components/')
+  components: {
+    ThisComponent: () => import('../components/')
   }
 }// export

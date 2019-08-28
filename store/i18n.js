@@ -1,22 +1,22 @@
 
-function setLocaleMutation (state,payLoad){
-  if(state.locale !== payLoad )
+function setLocaleMutation (state, payLoad){
+  if(state.locale !== payLoad)
     state.prevLocale = state.locale || 'en'
   state.locale = payLoad
 }
 
-function setMessagesMutation (state,payLoad){
+function setMessagesMutation (state, payLoad){
   state.messages = payLoad
 }
 
-export const state  = () =>({
-  locale: 'en',
+export const state  = () => ({
+  locale    : 'en',
   prevLocale: 'en',
-  messages: {},
+  messages  : {}
 })
 
 export const mutations = {
-  'I18N_SET_LOCALE':setLocaleMutation,
-  'setLocale':setLocaleMutation,
-  'I18N_SET_MESSAGES':setMessagesMutation,
+  I18N_SET_LOCALE  : setLocaleMutation,
+  setLocale        : setLocaleMutation,
+  I18N_SET_MESSAGES: setMessagesMutation
 }

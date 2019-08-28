@@ -1,21 +1,25 @@
 {
-    "name": "UnBiodiversityEvents",
-    "displayName": "UnBiodiversityEvents",
+    "name": "UNBiodiversityEvents",
+    "displayName": "UNBiodiversityEvents",
     "version": "1.0.0",
-    "description": "A sample Apache Cordova application that responds to the deviceready event.",
-    "main": "index.js",
+    "description": "Cordova wrapper for CBD/UN Biodiversity Events",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "platform:reload": "cordova platform remove browser && cordova platform add browser &&  cordova platform remove ios && cordova platform remove android && cordova platform add ios && cordova platform add android ",
+        "clear:cache": "rm yarn.lock && rm -rf node_modules && yarn"
     },
     "author": "Apache Cordova Team",
     "license": "Apache-2.0",
     "dependencies": {
-        "cordova-android": "^7.0.0",
-        "cordova-browser": "^5.0.4",
-        "cordova-ios": "^4.5.5",
+        "code-push": "^3.0.1",
+        "cordova-android": "^8.0.0",
+        "cordova-browser": "^6.0.0",
+        "cordova-ios": "^5.0.1",
+        "cordova-plugin-code-push": "^1.12.0",
         "cordova-plugin-device": "^2.0.2",
+        "cordova-plugin-dialogs": "^2.0.2",
         "cordova-plugin-file": "^6.0.1",
         "cordova-plugin-file-opener2": "^2.0.19",
+        "cordova-plugin-file-transfer": "^1.6.3",
         "cordova-plugin-inappbrowser": "^3.0.0",
         "cordova-plugin-splashscreen": "^5.0.2",
         "cordova-plugin-statusbar": "^2.4.2",
@@ -29,12 +33,14 @@
             "cordova-plugin-file-opener2": {},
             "cordova-plugin-file": {},
             "cordova-plugin-device": {},
-            "cordova-plugin-inappbrowser": {}
+            "cordova-plugin-inappbrowser": {},
+            "cordova-plugin-code-push": {}
         },
         "platforms": [
-            "ios",
             "browser",
+            "ios",
             "android"
         ]
-    }
+    },
+    "devDependencies": {}
 }

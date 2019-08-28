@@ -1,116 +1,130 @@
 <template>
-    <div ref="eventCal" :class="[$style.main,isPast()?$style.past:'']" v-on:click="showDetails">
-      <p ref="eventCalTitle" :class="[$style.mainTitle]" v-clamp:20="numLines">{{event.title}}</p>
-      <div  :class="[$style.footer]">
-         {{getStartTime()}}
-      </div>
+  <div
+    ref="eventCal"
+    :class="[$style.main,isPast()?$style.past:'']"
+    @click="showDetails"
+  >
+    <p
+      ref="eventCalTitle"
+      :class="[$style.mainTitle]"
+      v-clamp:20="numLines"
+    >
+      {{ event.title }}
+    </p>
+    <div :class="[$style.footer]">
+      {{ getStartTime() }}
     </div>
+  </div>
 </template>
 
 <script>
-import {DateTime}   from 'luxon'
+import { DateTime }   from 'luxon'
 import lineClamp    from '../../directives/LineClamp'
 import events       from '../../modules/Bus'
 import debounce     from 'lodash.debounce'
 
 export default {
-  name: 'CalEvent',
-  props:['event'],
+  name : 'CalEvent',
+  props: [ 'event' ],
   data(){
     return {
-        numLines: 1,
-        widthFlag:false
+      numLines : 1,
+      widthFlag: false
     }
   },
-  directives:{clamp:lineClamp},
-  methods:{
-    getDuration:getDuration,
-    showDetails:showDetails,
-    getStartTime:getStartTime,
-    resize:resize,
-    oneLine:oneLine,
-    isPast:isPast
+  directives: { clamp: lineClamp },
+  methods   : {
+    getDuration,
+    showDetails,
+    getStartTime,
+    resize,
+    oneLine,
+    isPast
   },
-  mounted () {
+  mounted (){
     this.isMounted = true;
     this.resize()
-    window.addEventListener ('resize', debounce(this.resize,50))
+    window.addEventListener('resize', debounce(this.resize, 50))
   },
-  destroyed: function () {
-    this.$nextTick(() =>{
-      window.removeEventListener('resize', debounce(this.resize,50))
+  destroyed (){
+    this.$nextTick(() => {
+      window.removeEventListener('resize', debounce(this.resize, 50))
     })
   }
 }
-  function isPast(){
-    let start = DateTime.fromISO(this.event.start)
-    let today = DateTime.utc()
-    if(start<today) return true
-    return false
+function isPast(){
+  const start = DateTime.fromISO(this.event.start)
+  const today = DateTime.utc()
+
+  if(start<today) return true
+  return false
+}
+
+function resize(){
+  this.$nextTick(() => {
+    this.numLines = numLines(this.$el.clientHeight)
+    if(this.numLines===1)
+      this.oneLine()
+    else
+      this.$refs.eventCalTitle.style.margin='1em 0 1em 0'
+  })
+}
+
+function oneLine(){
+  if(!this.$refs.eventCalTitle) return
+  this.$refs.eventCalTitle.style.margin='0 0 0 0'
+  const titleWidth = this.$refs.eventCalTitle.clientWidth
+  const eventWidth = this.$el.clientWidth
+  const maxWidth = (eventWidth - 8)
+
+  if(this.$el.clientHeight<35){
+    if((titleWidth >= maxWidth))
+      this.$refs.eventCalTitle.style.width = this.$refs.eventCalTitle.clientWidth - 35+'px'
+  }
+  else {
+    this.$refs.eventCalTitle.style.width = '100%'
+  }
+}
+
+function numLines(height){
+  if(height <= 52) return 1
+  if(height > 53 && height <= 79) return 2
+  if(height > 79 && height <= 105) return 3
+  if(height > 106) return 4
+}
+
+function showDetails (e){
+  e.data =this.event
+  events.$emit('EventDetails', e)
+}
+
+function getDuration (){
+  const start = DateTime.fromISO(this.event.start)
+  const end   = DateTime.fromISO(this.event.end)
+  const diff = end.diff(start).shiftTo('hours', 'minutes').toObject()
+
+  if(diff.minutes < 60 && diff.minutes > 58){
+    diff.minutes=0
+    diff.hours++
   }
 
-  function resize(){
-      this.$nextTick(()=>{
-        this.numLines = numLines(this.$el.clientHeight)
-        if(this.numLines===1)
-          this.oneLine()
-        else
-          this.$refs.eventCalTitle.style.margin='1em 0 1em 0'
-      })
-  }
+  let minutes = `${roundMinutes(diff.minutes)}m`
 
-  function oneLine(){
-    if(!this.$refs.eventCalTitle) return
-    this.$refs.eventCalTitle.style.margin='0 0 0 0'
-    let titleWidth = this.$refs.eventCalTitle.clientWidth
-    let eventWidth = this.$el.clientWidth
-    let maxWidth = ( eventWidth - 8)
+  if(diff.minutes<59 && !diff.hours &&  diff.minutes) return minutes
+  if(!diff.minutes) minutes=''
+  return `${diff.hours}h `+minutes
+}
+function getStartTime (){
+  const start = DateTime.fromISO(this.event.start, { zone: this.event.timezone }).toFormat('T')
 
-    if(this.$el.clientHeight<35 ){
-      if((titleWidth >= maxWidth))
-        this.$refs.eventCalTitle.style.width = this.$refs.eventCalTitle.clientWidth - 35+'px'
-
-    }else {
-      this.$refs.eventCalTitle.style.width = '100%'
-    }
-  }
-
-  function numLines(height){
-    if(height <= 52) return 1
-    if(height > 53 && height <= 79) return 2
-    if(height > 79 && height <= 105) return 3
-    if(height > 106) return 4
-  }
-
-  function showDetails (e){
-    e.data =this.event
-    events.$emit('EventDetails',e)
-  }
-
-  function getDuration (){
-    let start = DateTime.fromISO(this.event.start)
-    let end   = DateTime.fromISO(this.event.end)
-    let diff = end.diff(start).shiftTo('hours','minutes').toObject()
-    if(diff.minutes < 60 && diff.minutes > 58){
-      diff.minutes=0
-      diff.hours++
-    }
-
-    let minutes = `${roundMinutes(diff.minutes)}m`
-    if(diff.minutes<59 && !diff.hours &&  diff.minutes) return minutes
-    if(!diff.minutes) minutes=''
-    return `${diff.hours}h `+minutes
-  }
-  function getStartTime (){
-    let start = DateTime.fromISO(this.event.start, { zone: this.event.timezone }).toFormat('T')
-    return start
-  }
-  function roundMinutes (m){
-    if(m>0 && m<= 15) return 15
-    if(m>15 && m<= 30) return 30
-    if(m>30 && m<= 59) return 45
-    return 0
-  }
+  return start
+}
+function roundMinutes (m){
+  if(m>0 && m<= 15) return 15
+  if(m>15 && m<= 30) return 30
+  if(m>30 && m<= 59) return 45
+  return 0
+}
 </script>
 
 <style module>

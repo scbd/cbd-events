@@ -1,5 +1,3 @@
-export default function ({ $axios, redirect }) {
-  $axios.onError(error => {
-    console.info(error)
-  })
+export default function ({ $axios }){
+  $axios.onError(error => { console.info(error) })
 }

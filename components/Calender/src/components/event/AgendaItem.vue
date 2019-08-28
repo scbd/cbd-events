@@ -1,21 +1,21 @@
 <template>
-    <span  :class="[$style.main,$style[mapBody()]]" >
-      {{mapBody()}} {{item}}
-    </span>
+  <span :class="[$style.main,$style[mapBody()]]">
+    {{ mapBody() }} {{ item }}
+  </span>
 </template>
 
 <script>
-  export default {
-    name: 'AgendaItem',
-    props:['body','item'],
-    methods:{
-      mapBody:function(){
-        if(~this.body.indexOf('COP'))
-          return 'CBD'
-        return this.body.slice(0,this.body.indexOf('-'))
-      }
+export default {
+  name   : 'AgendaItem',
+  props  : [ 'body', 'item' ],
+  methods: {
+    mapBody(){
+      if(~this.body.indexOf('COP'))
+        return 'CBD'
+      return this.body.slice(0, this.body.indexOf('-'))
     }
   }
+}
 </script>
 
 <style module>

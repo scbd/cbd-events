@@ -1,7 +1,0 @@
-{
-  "title": "Add to Calendar",
-  "selectStream": "Select a Stream to Add",
-  "calendarClient":"Calendar Client",
-  "subscribeManually":"Subscribe Manually",
-  "subscribeManuallyDescription":"Use your calendar client to subscribe to this link."
-}

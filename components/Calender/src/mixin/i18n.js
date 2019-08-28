@@ -4,25 +4,26 @@ import messages from '../locales'
 let i18n
 
 export default {
-  methods:{
-    $tr:translate
+  methods: {
+    $tr: translate
   },
-  beforeCreate: function(){
-
+  beforeCreate(){
     if(!this.$i18n){
       Vue.use(VueI18n)
       i18n = new VueI18n({
         locale: 'en', // set locale
-        messages:messages, // set locale messages
+        messages // set locale messages
       })
     }
 
     if(this.$i18n)
-      for (let locale in messages){
-        let msgs = this.$i18n.getLocaleMessage( locale )
-        this.$i18n.setLocaleMessage( locale, Object.assign(msgs,messages[locale]) )
+      //eslint-disable-next-line
+      for (const locale in messages){
+        const msgs = this.$i18n.getLocaleMessage(locale)
+
+        this.$i18n.setLocaleMessage(locale, Object.assign(msgs, messages[locale]))
       }
-  },
+  }
 }// export
 
 function translate (p){

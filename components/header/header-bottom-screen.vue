@@ -1,45 +1,35 @@
 <template>
   <nav class="mainn navbar  navbar-default">
-    <div class="col-xs-3" v-on:click="close" ><svg class="icon-clock-o" v-if="options && options.cancel"><use xlink:href="#icon-close"></use></svg></div>
-    <div class="col-xs-6 mid">{{title}}</div>
-    <div class="col-xs-3 right-side" v-on:click="done">{{$t('done')}}</div>
+    <div class="col-xs-3" @click="close" >
+      <svg class="icon-clock-o" v-if="options && options.cancel" >
+        <use xlink:href="#icon-close" />
+      </svg>
+    </div>
+    <div class="col-xs-6 mid"> {{ title }} </div>
+    <div class="col-xs-3 right-side" @click="done" > {{ $t('done') }} </div>
   </nav>
 </template>
 
 <script>
-//  this.$root.$on('bottom-screen-cancel',close)
-// this.$root.$on('bottom-screen-done',close
-  import '@scbd/ecosystem-style/patterns/navs/build.min.css'
-  let showLinks = false
+export default {
+  name   : 'HeaderBottomScreen',
+  props  : { title: { type: String }, options: { type: Object } },
+  methods: { close, done }
+}
 
-  export default {
-    name:'HeaderBottomScreen',
-    props:['title','options'],
-    methods:{
-      close:close,
-      done:done
-    }
-  }
+function close(){
+  this.$root.$emit('bottom-screen-cancel', { something: 'yes' })
+}
 
-  function close(){
-    this.$root.$emit('bottom-screen-cancel', { something: 'yes' })
-  }
-  function done(){
-    this.$root.$emit('bottom-screen-done', { something: 'yes' })
-  }
-  // this.$root.$emit('removeposition', { something: 'yes' })
+function done(){
+  this.$root.$emit('bottom-screen-done', { something: 'yes' })
+}
 </script>
 
 <style scoped>
-.left-side{
-  text-align: left;
-}
-  .right-side{
-    text-align: right;
-  }
-  .mid{
-    text-align: center;
-  }
+  .left-side{ text-align: left; }
+  .right-side{ text-align: right; }
+  .mid{ text-align: center; }
   .mainn{
     color:#333;
     padding: .2em .2em 0 .2em;
@@ -58,11 +48,7 @@
     width:100%;
   }
   @media (min-width: 0px) {
-    .nav-justified > li {
-      display: table-cell;
-      width: 1%;
-      font-size: 1.5em;
-    }
+    .nav-justified > li { display: table-cell; width: 1%; font-size: 1.5em; }
   }
 
 </style>
