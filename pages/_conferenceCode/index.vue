@@ -1,18 +1,14 @@
 <template>
   <div class="container-fluid home">
-    <img crossorigin="anonymous" class="hero" v-if="getHeroImage(conference)" :src="getHeroImage(conference)" :alt="`${conference.apps.cbdEvents | lstring} logo`" >
-
-
+    {{getHeroImage}}
+    <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
   </div>
 </template>
 
 <script>
-
-
 export default {
   name    : 'index',
-  methods : { getHeroImage },
-  computed: { conference },
+  computed: { conference, getHeroImage, getImage },
   asyncData
 }
   
@@ -25,24 +21,24 @@ function asyncData ({ store, params }){
 }
 
 function conference(){
-  try{ return this.$store.state.conferences.selected }
+  console.log(this.$store.state.conferences.selected)
+  try{ return this.$store.state.conferences.selected.app.cbdEvents }
   catch(e){ return {} }
 }
 
-function getImage({ apps }){
-  try{
-    const { cbdEvents } = apps
-
-    return cbdEvents.image
-  }
+function getImage(){
+  try{ return this.conference.apps.cbdEvents.image }
   catch(e){ return false }
 }
 
-function getHeroImage({ apps }){
-  const { cbdEvents } = apps
+function getHeroImage(){
+  console.log('rrrr', this.conference)
+  try {
+    const { cbdEvents } = this.$store.state.conferences.selected.apps
 
-  if(!cbdEvents || !cbdEvents.heroImage) return getImage({ apps })
-  return cbdEvents.heroImage
+    return cbdEvents.heroImage || this.getImage
+  }
+  catch(e){ return this.getImage }
 }
 </script>
 
