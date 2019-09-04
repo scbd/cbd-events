@@ -2,7 +2,7 @@
 //read from local storage and update state
 async function loadAction({ state, commit }){
   const { length } = state.data
-  const data       = []
+  const   data     = []
 
   try{
     if(length) return
@@ -35,9 +35,10 @@ function saveAction({ commit }, { files, blobs }){
 }
 
 
-function deleteAction({ commit, state }, files){
-  const isAll   = isDeleteAll(state.data.length, length)
-  const isArray = Array.isArray(files)
+function deleteAction({ commit, state }, files = []){
+  const isArray    = Array.isArray(files)
+  const length     = isArray? files.length : 0
+  const isAll      = isDeleteAll(state.data.length, length)
 
   if(isAll)   return deleteAllFiles(commit, this)
   if(isArray) return deleteArrayOfFiles({ commit, state }, files, this)
@@ -45,7 +46,9 @@ function deleteAction({ commit, state }, files){
   return deleteObjectOfFiles(commit, files, this)
 }
 
-function isDeleteAll(lengthOne, lengthTwo){ return lengthOne===lengthTwo }
+function deleteAllAction({ commit }){ return deleteAllFiles(commit, this) }
+
+function isDeleteAll(lengthOne, lengthTwo){ return lengthOne==lengthTwo }
 
 function setMutation(state, payLoad){ state.data = payLoad } //set the entire file system
 
@@ -117,15 +120,20 @@ function deleteArrayOfFiles(commit, files, { $localForage }){
   }
 }
 
+const getByMeeting  = (state) => (meetingCode) => state.data.filter((file) => file.baseName.includes(meetingCode))
+const isDownloading = (state) => Boolean(state.downloading)
+const hasDownloads  = (state) => Boolean(state.data.length)
+const get           = (state) => (name) => state.data.find(file => file.name === name)
+
+
 export const actions = {
-  LOAD  : loadAction,
-  SAVE  : saveAction,
-  DELETE: deleteAction
+  LOAD      : loadAction,
+  SAVE      : saveAction,
+  DELETE    : deleteAction,
+  DELETE_ALL: deleteAllAction
 }
 
-export const getters = {
-  GET: (state) => (name) => state.data.find(file => file.name === name)
-}
+export const getters = { get, hasDownloads, isDownloading, getByMeeting }
 
 export const state  = () => ({
   data       : [],

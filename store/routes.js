@@ -4,7 +4,8 @@ export const state  = () => ({
   prevRoute     : '',
   initialized   : false,
   showMeetingNav: false,
-  showNavs      : true
+  showNavs      : true,
+  showSettings  : false
 })
 
 export const mutations = {
@@ -13,7 +14,7 @@ export const mutations = {
   I18N_INIT           : setInit,
   SET_SHOW_MEETING_NAV: setShowMeetingNav,
   SET_SHOW_NAVS       : setShowNavs,
-  TOGGLE_SHOW_NAVS    : toggleShowNavs
+  TOGGLE_MEETINGS     : toggleMeetings
 }
 
 function setRouteMutation (state, payLoad){
@@ -32,6 +33,9 @@ function setShowMeetingNav(state, payLoad=true){
 function setShowNavs(state, payLoad=true){
   state.showNavs = payLoad
 }
-function toggleShowNavs(state){
-  state.showNavs = !state.showNavs
+function toggleMeetings(state){
+  state.showMeetings = !state.showMeetings
 }
+// function toggleSettings(state){
+//   state.showSettings = !state.showSettings
+// }

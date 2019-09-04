@@ -1,8 +1,5 @@
 <template>
-  <transition
-    name="bottom"
-    v-if="isMounted"
-  >
+  <transition name="bottom" v-if="isMounted" >
     <section>
       <Icons />
       <main>
@@ -13,10 +10,9 @@
 </template>
 
 <script>
-import Icons      from '~/components/icons'
+
 export default {
-  name      : 'BottomScreen',
-  components: { Icons },
+  name: 'BottomScreen',
   data (){
     return {
       isMounted: true

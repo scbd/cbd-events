@@ -40,8 +40,7 @@ import { formatBytes } from '~/modules/helpers'
 import   localFiles    from '~/modules/localFileSystem.js'
   
 export default {
-  name: 'Downloads',
-
+  name    : 'Downloads',
   methods : { isPDF, timeDisplay, formatBytes, openFile, shareFile, saveCordovaFileLocally, openSafariPWA },
   computed: { files, meeting, isIpad },
   filters : { trimName },
@@ -58,7 +57,7 @@ function asyncData ({ store, params }){
   }
 }
 
-function   created(){ this.isIOS = !!this.$cordova }
+function created(){ this.isIOS = !!this.$cordova }
 
 function trimName (name){
   const value = name.replace(/\.[^/.]+$/, '')
@@ -121,9 +120,7 @@ function openFile(file){
   return openFileDefault(file)
 }
 
-function isInternetExplorer (){
-  return (window && window.navigator && window.navigator.msSaveOrOpenBlob)
-}
+function isInternetExplorer (){ return (window && window.navigator && window.navigator.msSaveOrOpenBlob) }
 
 function createBlobUrl({ blob }){
   const opts = 'toolbartranslucent=yes,enableViewportScale=yes,hidenavigationbuttons=yes,hidespinner=yes,location=no'
@@ -169,9 +166,7 @@ function fileOpener2Error(e){
   throw e
 }
 
-function fileOpener2Success(){
-  console.log('file opened successfully')
-}
+function fileOpener2Success(){ console.log('file opened successfully') }
 
 function openFileFromIOS({ inAppBrowser }, file){
   const blobUrl = createBlobUrl(file)
@@ -195,13 +190,9 @@ function timeDisplay (isoDate){
   return DateTime.fromISO(isoDate).toFormat(format)
 }
   
-function isPDF (contentType){
-  return !!~contentType.indexOf('application/pdf')
-}
+function isPDF (contentType){ return !!~contentType.indexOf('application/pdf') }
   
-function files (){
-  return this.$store.state.files.data.filter((file) => ~file.baseName.indexOf(this.meetingCode))
-}
+function files (){ return this.$store.getters.getByMeeting(this.meetingCode) }
 </script>
 <style scoped>
 .point{

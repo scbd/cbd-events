@@ -11,7 +11,7 @@
           <svg class="icon"><use xlink:href="#icon-clock-o" /></svg>
         </nuxt-link>
 
-        <nuxt-link tag="li" class="nav-item" v-if="filesExist && !downloading" :to="localePath({ name:'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })" >
+        <nuxt-link tag="li" class="nav-item" v-if="hasDownloads && !downloading" :to="localePath({ name:'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })" >
           <svg class="icon"><use xlink:href="#icon-document-download" /></svg>
         </nuxt-link>
 
@@ -39,7 +39,7 @@ import { DateTime }   from 'luxon'
 export default {
   name    : 'Navigation',
   data,
-  computed: { filesExist, downloading, showNavs },
+  computed: { hasDownloads, downloading, showNavs },
   methods : { onScroll, hasScrolled, getCalStartDate },
   beforeMount,
   beforeDestroy
@@ -91,9 +91,7 @@ function  onScroll (e){
   this.scrolled = true
 }
 
-function   beforeDestroy (){
-  window.removeEventListener('scroll', this.onScroll)
-}
+function   beforeDestroy (){ window.removeEventListener('scroll', this.onScroll) }
   
 function showNavs(){
   if(this.$store)
@@ -102,13 +100,9 @@ function showNavs(){
     return this.show
 }
 
-function downloading(){
-  return this.$store.state.files.downloading
-}
+function downloading(){ return this.$store.getters.isDownloading }
 
-function filesExist(){
-  return !!this.$store.state.files.data.length
-}
+function hasDownloads(){ return this.$store.getters.hasDownloads }
 
 function hasScrolled (){
   const doc  = document.documentElement

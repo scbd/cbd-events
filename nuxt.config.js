@@ -4,7 +4,7 @@ import { resolve } from 'path'
 dotEnvReader() // read env related vars and set them to nodejs.env
 
 let config = {
-  mode: 'spa',
+  // mode: 'spa',
   dev : (process.env.NODE_ENV !== 'production'),
   env : {
     API        : process.env.API,
@@ -53,10 +53,12 @@ let config = {
     } ]
   ],
   plugins: [
+    '~/plugins/icons/index.js',
     '~/plugins/axios.js',
     '~/plugins/router.js',
     '~/plugins/filters.js',
-    '~/plugins/vue-notifications'
+    '~/plugins/vue-notifications',
+    
   ],
   loading: { color: '#009b48' },
   router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },

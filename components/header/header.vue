@@ -76,7 +76,7 @@ function showMeetingNav(){
 }
 
 function conference (){
-  const conference  = this.$store.state.conferences.selected
+  const conference = this.$store.state.conferences.selected
 
   if(!conference) return
   

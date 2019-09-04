@@ -256,7 +256,7 @@ cordova-android@^8.0.0:
     q "^1.4.1"
     shelljs "^0.5.3"
 
-cordova-browser@6.0.0:
+cordova-browser@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/cordova-browser/-/cordova-browser-6.0.0.tgz#26e701587076e55bf33f491f3e38fee875c32b56"
   integrity sha512-G61S7fhnVVJC98lvkGeKCVpfFtoW0a1P1Sg9TK+n03g3yupDMIM7XuecWuJ3KEMRhED4+CEc2hauruAff7oXrw==

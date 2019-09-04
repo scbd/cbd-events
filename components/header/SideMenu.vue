@@ -1,8 +1,6 @@
 <template>
   <section>
-    <svg class="icon-cog" :class="{'active':isOpen}" >
-      <use xlink:href="#icon-cog" />
-    </svg>
+    <Icon name="cog" is-text="true"/>
     <transition name="test">
       <div class="container-fluid side-menu " v-if="isOpen" >
         <div class="row">
@@ -47,40 +45,35 @@
 
 <script>
 export default {
-  name : 'MainMenu',
-  props: { isOpen: { type: Boolean, default: false } },
-  data ({ $route }){
-    return {
-      conferenceCode: $route.params.conferenceCode,
-      deleteing     : false
-    }
-  },
-  computed: {
-    conference (){
-      return this.$store.state.conferences.selected || {}
-    },
-    language (){
-      return this.$i18n.t('language')
-    },
-    deleteAllDownloads (){
-      return this.$i18n.t('deleteAllDownloads')
-    },
-    switchConference (){
-      return this.$i18n.t('switchConference')
-    }
-  },
-  methods: {
-    deleteAll
-  }
+  name    : 'MainMenu',
+  props   : { isOpen: { type: Boolean, default: false } },
+  computed: { conference, language, deleteAllDownloads, switchConference },
+  methods : { deleteAll },
+  data
 }
+
+function data ({ $route }){
+  const { conferenceCode } = $route.params
+  const  deleteing         = false
+
+  return { conferenceCode, deleteing }
+}
+
 async function deleteAll(){
   this.$store.commit('files/DOWNLOADING')
-  await this.$store.dispatch('files/DELETE', this.$store.state.files.data)
+  await this.$store.dispatch('files/DELETE_ALL')
   this.$store.commit('files/DOWNLOADING')
 }
+
+function switchConference   (){ return this.$i18n.t('switchConference') }
+function deleteAllDownloads (){ return this.$i18n.t('deleteAllDownloads') }
+function language           (){ return this.$i18n.t('language') }
+function conference         (){ return this.$store.state.conferences.selected || {} }
+
 </script>
 
 <style scoped>
+section{display:inline-block;}
 .icon{margin-bottom:7px; margin-right:7px;}
 .icon-cog{margin-bottom:7px;}
 .email{ color:#337ab7; float:right; }

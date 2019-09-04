@@ -10,13 +10,12 @@
 </template>
 
 <script>
-import Icons  from '~/components/icons'
 import Header from '~/components/header/header'
 import Nav    from '~/components/navigation/index'
 
 export default {
   name      : 'Default',
-  components: { Header, Nav, Icons },
+  components: { Header, Nav },
   methods   : { toggleConnection },
   beforeMount
 }

@@ -1,3 +1,20 @@
+#TODO
+- home screen menu
+  - info overview todays agenda Downloads Documents Calendar 
+  - test links, before and after conf/meeting change
+- create info page
+- fix agenda
+  - provisional before
+  - in session during
+- test documents after conference change
+  - have blaise fix download dialog and view only
+- test calendar
+  - missing day bug
+- test no cover and just standard image
+- install codepush - test
+- test ios
+    - deploy on ios
+
 # CBD-Events PWA
 
 android/project.properties 

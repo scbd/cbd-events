@@ -7,12 +7,10 @@
 
 <script>
 import { DateTime } from 'luxon'
-import pageMixin    from '~/modules/pageMixin'
 import Calendar     from '~/components/Calender/src/components/index.vue'
 
 export default {
   name      : 'Calender',
-  mixins    : [ pageMixin ],
   components: { Calendar },
   methods   : { getEvents, genQuery, getConference, getQueryUrl },
   asyncData
