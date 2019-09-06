@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid home">
+  <div class="container-fluid pb-5">
     <h3 >Overview Calendar</h3>
     <overview :code="conferenceCode" :options="{ target:'_blank' }" />
   </div>

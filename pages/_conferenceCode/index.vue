@@ -5,12 +5,12 @@
         <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${title | lstring} logo`" >
       </div>
       <div class="col-6" >
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-info', params: { conferenceCode } })">
-          <Icon name="info-circle"  in-text="true"/> Info
+        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-about', params: { conferenceCode } })">
+          <Icon name="info-circle"  in-text="true"/> About
         </nuxt-link>
       </div>
       <div class="col-6">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-info', params: { conferenceCode } })">
+        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-overview', params: { conferenceCode } })">
           <Icon name="calendar"  in-text="true"/> Overview
         </nuxt-link>
       </div>
@@ -44,15 +44,15 @@
 </template>
 
 <script>
-import   CoverImageMixin   from '~/modules/CoverImageMixin'
+
 import { DateTime        } from 'luxon'
 import { lstring         } from '~/plugins/filters'
 
 export default {
-  name    : 'index',
-  mixins  : [ CoverImageMixin ],
+  name: 'index',
+
   methods : { lstring, getCalStartDate },
-  computed: { hasDownloads },
+  computed: { hasDownloads, conference, getHeroImage },
   asyncData
 }
   
@@ -65,9 +65,7 @@ function asyncData ({ store, params }){
   return { conferenceCode, meetingCode  }
 }
 
-function hasDownloads(){
-  return this.$store.getters.hasDownloads
-}
+function hasDownloads(){ return this.$store.getters.hasDownloads }
 
 function getCalStartDate(){
   const { startDate } = this.$store.state.conferences.selected
@@ -77,6 +75,22 @@ function getCalStartDate(){
   if(now<start) return start.toISODate()
 
   return now.toUTC().toISODate()
+}
+
+function getHeroImage(){
+  console.log(this.conference.coverImageBlob)
+  try{ return  this.conference.coverImageBlob || this.conference.imageBlob || false }
+  catch(e){ return {} }
+}
+
+function conference(){
+  try{
+    const { imageBlob, coverImageBlob } = this.$store.state.conferences.selected
+    const { title } = this.$store.state.conferences.selected.app.cbdEvents
+
+    return  { title, imageBlob, coverImageBlob }
+  }
+  catch(e){ return {} }
 }
 </script>
 

@@ -3,6 +3,7 @@
   - info overview todays agenda Downloads Documents Calendar 
   - test links, before and after conf/meeting change
 - create info page
+ -   - not internet first load, save cache, refresh after load if can
 - fix agenda
   - provisional before
   - in session during

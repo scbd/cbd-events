@@ -13,24 +13,41 @@ function queryConferences($axios, { locale='en' }){
     .then(response => hasMeetings(response))
 }
 
-function initSelectedConference({ state, commit }, { conference }, response){
-  if(!state.selected)
-    if(conference)
-      commit('setSelected', byCode(state)(conference))
-    else
-      commit('setSelected', getActive(response))
+async function loadBlobs($axios, conference){
+  const { coverImage, image } = conference
+  const   coverImageBlob      = await getBlob($axios, coverImage)
+  const   imageBlob           = await getBlob($axios, image)
+
+  return { coverImageBlob, imageBlob, ...conference }
+}
+
+
+async function initSelectedConference({ $axios, state, commit }, { conferenceCode, response }){
+  if(state.selected) return
+  let conference
+
+  if(conferenceCode)
+    conference = byCode(state)(conferenceCode)
+  else
+    conference = getActive(response)
+
+  conference = await loadBlobs($axios, conference)
+
+  commit('setSelected', conference)
 }
 
 async function getConferences({ state, dispatch, commit, rootState }){
   if(state.selected) return state.docs
 
-  const response = await queryConferences(this.$axios, rootState.i18n)
+  const { $axios         } = this
+  const { conferenceCode } = this.$router.currentRoute.params
+  const   response         = await queryConferences(this.$axios, rootState.i18n)
 
   commit('setConferences', response)
+  
+  await initSelectedConference({ $axios, state, commit }, { conferenceCode, response })
 
-  initSelectedConference({ state, commit }, this.$router.currentRoute.params, response)
-
-  await dispatch('getMeetings', state.selected)
+  await dispatch('getMeetings')
 
   return response
 }
@@ -46,16 +63,16 @@ async function getMeetings({ state, commit, rootState }){
 }
 
 function initSelectedMeeting({ state, commit }, meetingCode){
-  if(!state.selectedMeeting && Array.isArray(state.meetings)){
-    const selected = state.meetings.find(meeting => meeting.code===meetingCode)
+  if(state.selectedMeeting || Array.isArray(state.meetings)) return
 
-    commit('setSelectedMeeting', selected || state.meetings[0])
-  }
+  const selected = state.meetings.find(meeting => meeting.code===meetingCode)
+
+  commit('setSelectedMeeting', selected || state.meetings[0])
 }
 
 function queryMeetings ($axios, selected, locale='en'){
   const { conference, majorEventIDs, apps } = selected
-  const { useMenus } = apps.cbdEvents
+  const { useMenus }                        = apps.cbdEvents
 
   if(!dataExists(selected, useMenus)) return []
 
@@ -70,7 +87,7 @@ function queryMeetings ($axios, selected, locale='en'){
       if(!useMenus) return response
             
       for (let i = 0; i < response.length; i++){
-        const { code } = response[i]
+        const { code }  = response[i]
         const menuMatch = conference.menus.find(menu => menu.code === code)
 
         if(menuMatch)
@@ -86,10 +103,11 @@ function dataExists({ conference, majorEventIDs }, useMenus){
 
   return true
 }
+
 const MEETING_QUERY_PARAMS = {
   f : { EVT_CD: 1, title: 1, EVT_UN_CD: 1, links: 1, EVT_INFO_PART_URL: 1, insession: 1, agenda: 1 },
   fo: 1
-};
+}
 
 function generateParamsById(majorEventIDs){
   const oids = []
@@ -174,6 +192,17 @@ function setSelected (state, payLoad){
 function setConferences     (state, payLoad){ state.docs = payLoad }
 function setSelectedMeeting (state, payLoad){ state.selectedMeeting = payLoad }
 function setMeetings        (state, payLoad){ state.meetings = payLoad }
+
+function getBlob($axios, url){
+  if(!url) return undefined
+
+  const restParams = { method: 'get', url, responseType: 'blob' }
+
+  return $axios(restParams).then((res) => {
+    console.log(`${url}---`, res.data)
+    return res.data
+  })
+}
 
 export const state     = () => ({ docs: [], selected: false, selectedMeeting: false, meetings: [] })
 export const actions   = { get: getConferences, getMeetings }

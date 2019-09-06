@@ -10,7 +10,6 @@
     "build": " rm -rf .nuxt && NODE_ENV=production nuxt generate",
     "build:dev": " rm -rf .nuxt && NODE_ENV=dev nuxt build",
     "build:stg": " rm -rf .nuxt && NODE_ENV=stg nuxt build",
-    "build:ci": " rm -rf .nuxt && NODE_ENV=$NODE_ENV nuxt build",
     "build:ios:dev": "rm -rf .nuxt && NODE_ENV=iosdev nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
     "build:ios": "rm -rf .nuxt && NODE_ENV=ios nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
     "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
@@ -19,7 +18,6 @@
     "start": "nuxt start",
     "start:dev": "NODE_ENV=dev nuxt start",
     "start:stg": "NODE_ENV=stg nuxt start",
-    "start:ci": "NODE_ENV=$NODE_ENV nuxt start",
     "lint": "eslint --ext .js,.vue  .",
     "lint:fix": "eslint --fix --ext .js,.vue .",
     "clear:cache": "rm yarn.lock && rm -rf node_modules && yarn "

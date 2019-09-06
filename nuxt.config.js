@@ -4,7 +4,7 @@ import { resolve } from 'path'
 dotEnvReader() // read env related vars and set them to nodejs.env
 
 let config = {
-  // mode: 'spa',
+  mode: 'spa',
   dev : (process.env.NODE_ENV !== 'production'),
   env : {
     API        : process.env.API,
@@ -49,7 +49,10 @@ let config = {
       size       : 4980736, // Size of database, in bytes. WebSQL-only for now.
       storeName  : 'files', // Should be alphanumeric, with underscores.
       description: 'Main file store',
-      instances  : [ { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' } ]
+      instances  : [ 
+                      { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' },
+                      { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'about', description: 'file blobs' }
+                    ]
     } ]
   ],
   plugins: [
@@ -57,7 +60,7 @@ let config = {
     '~/plugins/axios.js',
     '~/plugins/router.js',
     '~/plugins/filters.js',
-    '~/plugins/vue-notifications',
+    '~/plugins/vue-notifications'
     
   ],
   loading: { color: '#009b48' },
