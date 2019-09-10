@@ -1,9 +1,60 @@
 import { normalizeApiResponse } from '~/modules/apiNormalize'
+import { DateTime             } from 'luxon'
+
+function conference (state){
+  try{ return state.selected }
+  catch(e){ return {} }
+}
+
+function meeting (state){
+  try{ return state.selectedMeeting }
+  catch(e){ return {} }
+}
+
+function agendaItems (state){
+  try{ return state.selectedMeeting.agenda.items }
+  catch(e){ return [] }
+}
+
+function agendaPrefix (state){
+  try{ return state.selectedMeeting.agenda.prefix }
+  catch(e){ return {} }
+}
+
+function agenda (state){
+  try{ return state.selectedMeeting.agenda }
+  catch(e){ return {} }
+}
+
+const forceDate = () => (datetime) => {
+  if(isValidDate(datetime)) return `&datetime=${datetime}`
+  return ''
+}
+
+function isInSession(state){
+  return function(datetime){
+    try{
+      const { startDate, endDate, timezone }  = state.selected
+
+      
+      const cStart          = DateTime.fromISO(startDate)
+      const cEnd            = DateTime.fromISO(endDate)
+      const now             = DateTime.local().setZone(timezone)
+
+      console.log(datetime)
+      if((cStart <= now && now <= cEnd) || isValidDate(datetime))
+        return true
+    
+      return false
+    }
+    catch(e){ return false }
+  }
+}
 
 function queryConferences($axios, { locale='en' }){
   const queryParameters = {
     //title: 1, timezone: 1, Description: 1,
-    f: {  code: 1,  MajorEventIDs: 1, StartDate: 1, EndDate: 1,  'apps.cbdEvents': 1, conference: 1, schedule: 1 },
+    f: {  code: 1,  MajorEventIDs: 1, StartDate: 1, EndDate: 1,  'apps.cbdEvents': 1, conference: 1, schedule: 1, timezone: 1  },
     q: { 'apps.cbdEvents': { $exists: true } },
     s: { StartDate: -1 }
   }
@@ -14,11 +65,13 @@ function queryConferences($axios, { locale='en' }){
 }
 
 async function loadBlobs($axios, conference){
-  const { coverImage, image } = conference
-  const   coverImageBlob      = await getBlob($axios, coverImage)
-  const   imageBlob           = await getBlob($axios, image)
+  const { cbdEvents }             = conference.apps
+  const { heroImage, image }      = cbdEvents
 
-  return { coverImageBlob, imageBlob, ...conference }
+  cbdEvents.heroImageBlob = await getBlob($axios, heroImage)
+  cbdEvents.imageBlob     = await getBlob($axios, image)
+
+  return conference
 }
 
 
@@ -53,7 +106,9 @@ async function getConferences({ state, dispatch, commit, rootState }){
 }
 
 async function getMeetings({ state, commit, rootState }){
-  commit('setMeetings', await queryMeetings(this.$axios, state.selected, rootState.i18n))
+  const meetings = await queryMeetings(this.$axios, state.selected, rootState.i18n)
+
+  commit('setMeetings', meetings)
 
   const { meetingCode } = rootState.routes.route.params
 
@@ -63,7 +118,7 @@ async function getMeetings({ state, commit, rootState }){
 }
 
 function initSelectedMeeting({ state, commit }, meetingCode){
-  if(state.selectedMeeting || Array.isArray(state.meetings)) return
+  if(state.selectedMeeting) return
 
   const selected = state.meetings.find(meeting => meeting.code===meetingCode)
 
@@ -74,12 +129,15 @@ function queryMeetings ($axios, selected, locale='en'){
   const { conference, majorEventIDs, apps } = selected
   const { useMenus }                        = apps.cbdEvents
 
+
   if(!dataExists(selected, useMenus)) return []
 
   const queryParameters = useMenus? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIDs)
 
+ 
   return $axios.$get(`${ process.env.API }/api/v2016/meetings`, { params: queryParameters })
     .then(response => {
+      console.log('~~~~response', response)
       if(!Array.isArray(response)) response = [ response ]
       return normalizeApiResponse(response, locale)
     })
@@ -97,7 +155,7 @@ function queryMeetings ($axios, selected, locale='en'){
     })
 }
 
-function dataExists({ conference, majorEventIDs }, useMenus){
+function dataExists({ conference, majorEventIDs }, useMenus=false){
   if(useMenus && !conference.menus) return false
   if(!useMenus && !majorEventIDs)   return false
 
@@ -105,8 +163,7 @@ function dataExists({ conference, majorEventIDs }, useMenus){
 }
 
 const MEETING_QUERY_PARAMS = {
-  f : { EVT_CD: 1, title: 1, EVT_UN_CD: 1, links: 1, EVT_INFO_PART_URL: 1, insession: 1, agenda: 1 },
-  fo: 1
+  f: { EVT_CD: 1, title: 1, EVT_UN_CD: 1, links: 1, EVT_INFO_PART_URL: 1, insession: 1, agenda: 1 }
 }
 
 function generateParamsById(majorEventIDs){
@@ -145,6 +202,27 @@ function flattenMenus(items){
 const byCode = (state) => (code) => {
   if(!state.docs || !state.docs.length) return false
   return state.docs.find(conf => conf.code===code)
+}
+
+//this.$store.state.conferences.selected.apps.cbdEvents
+const selectedApp = (state) => {
+  try{ return state.selected.apps.cbdEvents }
+  catch(e){ return {} }
+}
+
+const meetingCode = (state) => {
+  try{ return state.selectedMeeting.evtCd }
+  catch(e){ return {} }
+}
+
+const startDate = (state) => {
+  const { startDate } = state.selected
+  const start         = DateTime.fromISO(startDate).startOf('day')
+  const now           = DateTime.local().startOf('day')
+
+  if(now<start) return start.toISODate()
+
+  return now.toUTC().toISODate()
 }
 
 //checks is conference has major meetings defined by  majorEventIDs by default or conference.menus
@@ -186,25 +264,24 @@ function getActive (conferences){ return conferences.find((c) => c.active) || co
 function setSelected (state, payLoad){
   state.selectedMeeting = false
   state.meetings = []
-  state.selected = payLoad
+  state.selected = { ...{}, ...payLoad }
 }
 
-function setConferences     (state, payLoad){ state.docs = payLoad }
-function setSelectedMeeting (state, payLoad){ state.selectedMeeting = payLoad }
-function setMeetings        (state, payLoad){ state.meetings = payLoad }
+function setConferences     (state, payLoad = []){ state.docs = payLoad }
+function setSelectedMeeting (state, payLoad = {}){ state.selectedMeeting = payLoad }
+function setMeetings        (state, payLoad = {}){ state.meetings = payLoad }
 
 function getBlob($axios, url){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return $axios(restParams).then((res) => {
-    console.log(`${url}---`, res.data)
-    return res.data
-  })
+  return $axios(restParams).then((res) => res.data)
 }
 
 export const state     = () => ({ docs: [], selected: false, selectedMeeting: false, meetings: [] })
 export const actions   = { get: getConferences, getMeetings }
-export const getters   = { byCode }
+export const getters   = { conference, meeting, byCode, selectedApp, meetingCode, startDate, isInSession, forceDate, agendaItems, agenda, agendaPrefix }
 export const mutations = { setSelected, setSelectedMeeting, setConferences, setMeetings }
+
+function isValidDate(date){ return !isNaN(new Date(date).getTime()) }

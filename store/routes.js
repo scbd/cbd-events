@@ -17,6 +17,16 @@ export const mutations = {
   TOGGLE_MEETINGS     : toggleMeetings
 }
 
+export const getters = { showMeetingNav, showNavs }
+
+function showMeetingNav (state){
+  return state.showMeetingNav
+}
+
+function showNavs(state){
+  return state.showNavs
+}
+
 function setRouteMutation (state, payLoad){
   state.prevRoute = state.route || state.prevRoute
   state.route = payLoad

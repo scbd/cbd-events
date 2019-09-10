@@ -25,7 +25,7 @@
           <svg class="icon"><use xlink:href="#icon-docs" /></svg>
         </nuxt-link>
 
-        <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: getCalStartDate() } })">
+        <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
           <svg class="icon"><use xlink:href="#icon-calendar-o" /></svg>
         </nuxt-link>
       </ul>
@@ -34,38 +34,30 @@
 </template>
 
 <script>
-import { DateTime }   from 'luxon'
+import { mapGetters } from 'vuex'
 
 export default {
   name    : 'Navigation',
   data,
-  computed: { hasDownloads, downloading, showNavs },
-  methods : { onScroll, hasScrolled, getCalStartDate },
+  computed: { showNavs, ...gettersMap() },
+  methods : { onScroll, hasScrolled },
   beforeMount,
   beforeDestroy
 }
 
-function data ({ $route, $store }){
-  const { selectedMeeting, selected }   = $store.state.conferences
-  let   { meetingCode, conferenceCode } = $route.params
+function data ({ $route }){
+  const   { conferenceCode } = $route.params
 
-  if(!meetingCode && selectedMeeting)
-    meetingCode = selectedMeeting.code
-
-  if(!conferenceCode && selected)
-    conferenceCode = selected.code
-
-  return { conferenceCode, meetingCode, lastScrollTop: 0, show: true }
+  return { conferenceCode, lastScrollTop: 0, show: true }
 }
 
-function getCalStartDate(){
-  const { startDate } = this.$store.state.conferences.selected
-  const start         = DateTime.fromISO(startDate).startOf('day')
-  const now           = DateTime.local().startOf('day')
-
-  if(now<start) return start.toISODate()
-
-  return now.toUTC().toISODate()
+function gettersMap(){
+  return mapGetters({
+    meetingCode : 'conferences/meetingCode',
+    hasDownloads: 'files/hasDownloads',
+    startDate   : 'conferences/startDate',
+    downloading : 'files/isDownloading'
+  })
 }
 
 async function  beforeMount (){
@@ -91,7 +83,7 @@ function  onScroll (e){
   this.scrolled = true
 }
 
-function   beforeDestroy (){ window.removeEventListener('scroll', this.onScroll) }
+function beforeDestroy (){ window.removeEventListener('scroll', this.onScroll) }
   
 function showNavs(){
   if(this.$store)
@@ -99,10 +91,6 @@ function showNavs(){
   else
     return this.show
 }
-
-function downloading(){ return this.$store.getters.isDownloading }
-
-function hasDownloads(){ return this.$store.getters.hasDownloads }
 
 function hasScrolled (){
   const doc  = document.documentElement

@@ -1,24 +1,24 @@
 <template>
   <div :class="{'not-in-session':!isInSession}" class="main" >
-    <h4 v-if="!isInSession" class="text-center" >
+    <h4 v-if="!isInSession" class="text-center mt-3" >
       Provisional Agenda
     </h4>
-    <hr>
-    <section v-for=" (item, index) in inSessionAgendaItems" :key="index" >
-      <div class="agenda item ">
-        <span class="label agenda" :class="{[agenda.prefix]:agenda.prefix}" >
-          {{ agenda.prefix }} {{ item.item }}
+    <hr v-if="!isInSession(datetime)">
+    <section  v-if="!isInSession(datetime)">
+      <div class="agenda item " v-for=" (item, index) in agendaItems" :key="index">
+        <span class="label agenda" :class="{[agendaPrefix]:agendaPrefix}" >
+          {{ agendaPrefix }} {{ item.item }}
         </span>
         <span>{{ item.shortTitle || item.title }}</span>
       </div>
       <hr>
     </section>
-    <Offline v-if="isInSession && offLine" />
+    <Offline v-if="isInSession(datetime) && offLine" />
     <iframe
       ref="docsFrame"
-      v-if="isInSession && !offLine"
+      v-if="isInSession(datetime) && !offLine"
       class="docs-frame"
-      :src="`${iFrameHost}/conferences/${conferenceCode}/schedules?viewOnly=true&${forceDate}`"
+      :src="`${iFrameHost}/conferences/${conferenceCode}/schedules?viewOnly=true&${forceDate(datetime)}`"
     />
   </div>
 </template>
@@ -26,89 +26,52 @@
 <script>
 import   documentDownloadMixin   from '~/modules/documentDownloadMixin'
 import   Offline                 from '~/components/Offline'
-import { DateTime              } from 'luxon'
-  
+import { mapGetters            } from 'vuex'
+
 export default {
   mixins    : [ documentDownloadMixin ],
   components: { Offline },
-  computed  : { isInSession, forceDate, offLine, inSessionAgendaItems },
+  computed  : { ...gettersMap() },
   created, asyncData
 }
 
-function asyncData ({ store, params, query }){
-  if(!isInSessionServer(store, query))
-    store.commit('routes/SET_SHOW_MEETING_NAV', { gendasOnly: true })
-  else
-    store.commit('routes/SET_SHOW_MEETING_NAV', false)
+function asyncData ({  params, query }){
+  const { conferenceCode } = params
+  const { datetime }       = query
 
   return {
-    conferenceCode: params.conferenceCode,
-    iFrameHost    : process.env.IFRAME_HOST,
-    conference    : store.state.conferences.selected,
-    agenda        : store.state.conferences.selectedMeeting.agenda
+    conferenceCode,
+    datetime,
+    iFrameHost: process.env.IFRAME_HOST
   }
+}
+
+function gettersMap(){
+  return mapGetters({
+    isInSession : 'conferences/isInSession',
+    offLine     : 'offLine/isOffLine',
+    forceDate   : 'conferences/forceDate',
+    agendaItems : 'conferences/agendaItems',
+    agendaPrefix: 'conferences/agendaPrefix'
+  })
 }
 
 function created(){
-  if(!this.isInSession)
+  if(!this.isInSession(this.datetime))
     this.$store.commit('routes/SET_SHOW_MEETING_NAV', { agendasOnly: true })
-}
-
-function inSessionAgendaItems (){
-  if(!this.isInSession) return []
-  const { agenda } = this
-
-  return agenda.items
-}
-
-function offLine(){ return this.$store.state.offLine.isOffLine }
-
-function isInSessionServer(store, { datetime }){
-  const conference = store.state.conferences.selected
-  const start = DateTime.fromISO(conference.schedule.start)
-  const end = DateTime.fromISO(conference.schedule.start)
-  const now = DateTime.local().setZone(conference.timezone)
-  //eslint-disable-next-line
-  console.log(conference)
-  
-  if((start <= now && now <= end) || isValidDate(datetime)){
-    store.commit('routes/SET_SHOW_MEETING_NAV', false)
-    return true
-  }
-  return false
-}
-  
-function forceDate(){
-  if(isValidDate(this.$route.query.datetime))
-    return `&datetime=${this.$route.query.datetime}`
-  return ''
-}
-
-function isValidDate(date){ return !isNaN(new Date(date).getTime()) }
-
-function isInSession(){
-  const { conference } = this
-  const { start, end } = conference.schedule
-  const cStart          = DateTime.fromISO(start)
-  const cEnd            = DateTime.fromISO(end)
-  const now             = DateTime.local().setZone(conference.timezone)
-
-  if((cStart <= now && now <= cEnd) || isValidDate(this.$route.query.datetime)){
+  else
     this.$store.commit('routes/SET_SHOW_MEETING_NAV', false)
-    return true
-  }
-  return false
 }
 </script>
 
 <style >
   .main {padding-top:.1em;}
   .main.not-in-session {padding-top:2em;}
-  .agenda.item { padding: 1em 1em 1em 1em;}
+  .agenda.item { padding: .5em 1em .5em 1em;}
   .label.agenda      { background: #777; display: inline-block; min-width: 45px;    }
   .label.agenda.CBD  { background: #009B48; }
   .label.agenda.CP   { background: #A05800; }
   .label.agenda.NP   { background: #0086B7; }
   .label { display: inline; padding: .2em .6em .2em .6em; font-size: 75%; font-weight: 700; line-height: 1; color: #fff; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: .25em; }
-  .docs-frame{ width:100%; height:90vh; border: none; }
+  .docs-frame{ width:100%; height:87vh; border: none; }
 </style>

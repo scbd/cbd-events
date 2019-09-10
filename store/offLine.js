@@ -9,6 +9,11 @@ export const mutations = {
   TOGGLE: toggleMutation
 }
 
+export const getters = { isOffLine, isOnLine }
+
+function isOffLine(state){ return state.isOffLine }
+function isOnLine(state){ return state.isOnLine }
+
 function setMutation (state, onLine){
   state.isOnLine = onLine
   state.isOffLine = !onLine

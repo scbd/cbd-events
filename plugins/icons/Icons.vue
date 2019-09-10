@@ -179,5 +179,6 @@ export default {
 .x05 {
   font-size: .5em;
 }
-
+.pdf{ fill:red; }
+.word{ fill:blue; }
 </style>

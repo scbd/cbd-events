@@ -119,7 +119,7 @@ function deleteArrayOfFiles(commit, files, { $localForage }){
     $localForage.blobs.removeItem(name)
   }
 }
-
+const all           = (state) => state.data
 const getByMeeting  = (state) => (meetingCode) => state.data.filter((file) => file.baseName.includes(meetingCode))
 const isDownloading = (state) => Boolean(state.downloading)
 const hasDownloads  = (state) => Boolean(state.data.length)
@@ -133,7 +133,7 @@ export const actions = {
   DELETE_ALL: deleteAllAction
 }
 
-export const getters = { get, hasDownloads, isDownloading, getByMeeting }
+export const getters = { get, hasDownloads, isDownloading, getByMeeting, all }
 
 export const state  = () => ({
   data       : [],

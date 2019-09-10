@@ -2,7 +2,7 @@
   <div class="container-fluid home">
     <div class="row">
       <div class="col-12">
-        <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${title | lstring} logo`" >
+        <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
       </div>
       <div class="col-6" >
         <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-about', params: { conferenceCode } })">
@@ -30,7 +30,7 @@
         </nuxt-link>
       </div>
       <div class="col-6">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: getCalStartDate() } })">
+        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
           <Icon name="calendar-o"  in-text="true"/> Calendar
         </nuxt-link>
       </div>
@@ -44,51 +44,48 @@
 </template>
 
 <script>
-
-import { DateTime        } from 'luxon'
-import { lstring         } from '~/plugins/filters'
+import { mapGetters } from 'vuex'
+import { lstring  }   from '~/plugins/filters'
 
 export default {
-  name: 'index',
-
-  methods : { lstring, getCalStartDate },
-  computed: { hasDownloads, conference, getHeroImage },
+  name    : 'index',
+  methods : { lstring },
+  computed: { conference, getHeroImage,
+    ...gettersMap() },
   asyncData
 }
-  
 function asyncData ({ store, params }){
   const { conferenceCode } = params
-  const   meetingCode      = 'xxx'
 
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
-  return { conferenceCode, meetingCode  }
+  return { conferenceCode }
 }
 
-function hasDownloads(){ return this.$store.getters.hasDownloads }
-
-function getCalStartDate(){
-  const { startDate } = this.$store.state.conferences.selected
-  const start         = DateTime.fromISO(startDate).startOf('day')
-  const now           = DateTime.local().startOf('day')
-
-  if(now<start) return start.toISODate()
-
-  return now.toUTC().toISODate()
+function gettersMap(){
+  return mapGetters({
+    meetingCode : 'conferences/meetingCode',
+    hasDownloads: 'files/hasDownloads',
+    startDate   : 'conferences/startDate'
+  })
 }
 
 function getHeroImage(){
-  console.log(this.conference.coverImageBlob)
-  try{ return  this.conference.coverImageBlob || this.conference.imageBlob || false }
-  catch(e){ return {} }
+  try{
+    let blob = this.conference.heroImageBlob || this.conference.imageBlob
+
+    if(blob) blob = URL.createObjectURL(blob)
+    return   blob || false
+  }
+  catch(e){ return false }
 }
 
 function conference(){
   try{
-    const { imageBlob, coverImageBlob } = this.$store.state.conferences.selected
-    const { title } = this.$store.state.conferences.selected.app.cbdEvents
+    const   selectedApp                       = this.$store.getters['conferences/selectedApp']
+    const { title, imageBlob, heroImageBlob } = selectedApp
 
-    return  { title, imageBlob, coverImageBlob }
+    return  { title, imageBlob, heroImageBlob }
   }
   catch(e){ return {} }
 }

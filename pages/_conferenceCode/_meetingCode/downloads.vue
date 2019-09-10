@@ -1,17 +1,13 @@
 <template>
-  <div class="page-view container-fluid">
+  <div class="container">
     <section v-for="(file, $index) in files" :key="file.name" >
-      <div class="file">
-        <div class="col-xs-1 paddingless" @click="openFile(file)" >
-          <svg v-if="!isPDF(file.type)" class="icon x2 word" >
-            <use xlink:href="#icon-file-word-o" />
-          </svg>
-          <svg v-if="isPDF(file.type)" class="icon x2 pdf" >
-            <use xlink:href="#icon-file-pdf-o" />
-          </svg>
+      <div class="row file pl-3 pr-3">
+        <div class="col-1 paddingless" @click="openFile(file)" >
+          <Icon v-if="!isPDF(file.type)" name="file-word-o" x="2" in-text="true"/>
+          <Icon v-if="isPDF(file.type)" name="file-pdf-o" x="2" in-text="true"/>
         </div>
         <div
-          :class="{'col-xs-10':(isIOS && !isIpad), 'col-xs-11':(!isIOS || isIpad)}"
+          :class="{'col-10':(isIOS && !isIpad), 'col-11':(!isIOS || isIpad)}"
           @click="openFile(file)"
         >
           {{ file.baseName | trimName }}<br>
@@ -37,24 +33,25 @@
 <script>
 import { DateTime    } from 'luxon'
 import { formatBytes } from '~/modules/helpers'
+import { mapGetters  } from 'vuex'
 import   localFiles    from '~/modules/localFileSystem.js'
   
 export default {
   name    : 'Downloads',
   methods : { isPDF, timeDisplay, formatBytes, openFile, shareFile, saveCordovaFileLocally, openSafariPWA },
-  computed: { files, meeting, isIpad },
+  computed: { isIpad, ...gettersMap() },
   filters : { trimName },
   asyncData,
   created
 }
 
 function asyncData ({ store, params }){
-  store.commit('routes/SET_SHOW_MEETING_NAV', true)
-  return {
-    conferenceCode: params.conferenceCode,
-    meetingCode   : params.meetingCode,
-    isIOS         : false
-  }
+  const { conferenceCode } = params
+  const   isIOS            = false
+
+  store.commit('routes/SET_SHOW_MEETING_NAV', false)
+
+  return { conferenceCode, isIOS }
 }
 
 function created(){ this.isIOS = !!this.$cordova }
@@ -107,8 +104,13 @@ async function saveCordovaFileLocally(file){
     throw e
   }
 }
-  
-function meeting(){ return this.$store.state.conferences.selectedMeeting }
+
+function gettersMap(){
+  return mapGetters({
+    meeting: 'conferences/meeting',
+    files  : 'files/all'
+  })
+}
   
 function openFile(file){
   const { $cordova } = this
@@ -192,28 +194,13 @@ function timeDisplay (isoDate){
   
 function isPDF (contentType){ return !!~contentType.indexOf('application/pdf') }
   
-function files (){ return this.$store.getters.getByMeeting(this.meetingCode) }
 </script>
+
 <style scoped>
-.point{
-  font-size:.5em;
-  vertical-align:middle;
-}
-.page-view{
-  margin-top:85px;
-}
-.file{
-  min-height: 50px;
-  cursor: pointer;
-}
-.pdf{
-  fill:red;
-}
-.word{
-  fill:blue;
-}
-.hr{
-  margin: 0 -15px 1em -15px;
-}
+.point{ font-size:.5em; vertical-align:middle; }
+.page-view{ margin-top:85px; }
+.file{ min-height: 50px; cursor: pointer; }
+
+.hr{ margin: 0 -15px 1em -15px; }
 </style>
 

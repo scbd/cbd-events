@@ -10,11 +10,10 @@ export default {
 }
 
 function mounted(){
-  if (process.client && this.$refs.docsFrame){
-    this.$store.dispatch('files/LOAD')
-    window.addEventListener('message', this.saveFiles)
-    this.$refs.docsFrame.onload = () => this.$nuxt.$loading.finish()
-  }
+  if (!process.client || !this.$refs.docsFrame) return null
+  this.$store.dispatch('files/LOAD')
+  window.addEventListener('message', this.saveFiles)
+  this.$refs.docsFrame.onload = () => this.$nuxt.$loading.finish()
 }
 
 function created(){
@@ -23,9 +22,9 @@ function created(){
   if(this.$nuxt.$loading.start)  this.$nuxt.$loading.start()
 }
 
-function   beforeDestroy (){
-  if(process.client && this.$refs.docsFrame)
-    window.removeEventListener('message', this.saveFiles)
+function beforeDestroy (){
+  if(!process.client || !this.$refs.docsFrame) return null
+  window.removeEventListener('message', this.saveFiles)
 }
 
 async function saveFiles({ data }){
@@ -39,7 +38,7 @@ async function saveFiles({ data }){
   
 
   const blobs    = await getBlobs(msg)
-  const fileObjs = getFileObjs(msg, blobs)
+  const fileObjs = this.getFileObjs(msg, blobs)
 
 
   try{

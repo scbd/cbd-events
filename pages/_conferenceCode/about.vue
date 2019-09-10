@@ -23,7 +23,6 @@ async function asyncData ({ store }){
   let { content, blob, title } = await store.dispatch('about/get')
 
   blob = URL.createObjectURL(blob)
-  console.log(content)
   return { content, blob, title }
 }
 </script>
