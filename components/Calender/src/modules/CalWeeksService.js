@@ -1,36 +1,18 @@
 import { DateTime } from 'luxon'
 import   Vue        from 'vue'
 
-const en = require('../locales/en.json')
-const fr = require('../locales/fr.json')
-
-
 export default class {
-  constructor($i18n, weekDateTime, locale='en'){
-    this.loading =false
-    this._initI18n($i18n, locale)
+  constructor($i18n, weekDateTime){
+    this._initI18n($i18n)
 
     Vue.set(this, 'iterations', [])
     this.weekIterations(weekDateTime)
+    this.loading = false
   }
-  _initI18n($i18n, locale){
-    this.locale=locale
-    this.$i18n = $i18n
-    // let options = {
-    //   locale: locale,
-    //   fallbackLocale: 'en',
-    //   silentTranslationWarn: true,
-    //   sync:true,
-    //   messages: {
-    //     en: require(`../locales/en.json`),
-    //     fr: require(`../locales/fr.json`)
-    //   }
-    // }
-    const messages = { en, fr }
 
-    //eslint-disable-next-line
-    for (const locale in messages)
-      this.$i18n.mergeLocaleMessage(locale, messages[locale])
+  _initI18n($i18n){
+    this.locale = $i18n.locale
+    this.$i18n  = $i18n
   }
 
   get selected(){
@@ -44,9 +26,8 @@ export default class {
     weekDateTime.setLocale(this.locale)
 
     this.weekDateTime  = weekDateTime.startOf('week') || DateTime.local().startOf('week')
-
-    this.startWeek   = weekDateTime.minus({ weeks: 7 }).startOf('week')
-    this.endWeek     = weekDateTime.plus({ weeks: 7 }).startOf('week')
+    this.startWeek     = weekDateTime.minus({ weeks: 7 }).startOf('week')
+    this.endWeek       = weekDateTime.plus({ weeks: 7 }).startOf('week')
 
     for (let i = 0; i < 15; i++){
       const nw = {

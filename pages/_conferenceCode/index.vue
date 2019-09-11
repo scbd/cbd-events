@@ -50,10 +50,10 @@ import { lstring  }   from '~/plugins/filters'
 export default {
   name    : 'index',
   methods : { lstring },
-  computed: { conference, getHeroImage,
-    ...gettersMap() },
+  computed: { conference, getHeroImage, ...gettersMap() },
   asyncData
 }
+
 function asyncData ({ store, params }){
   const { conferenceCode } = params
 

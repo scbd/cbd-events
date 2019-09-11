@@ -4,14 +4,13 @@
     <div class="page container-fluid">
       <div class="row">
         <div
-          class="block gradient"
+          class="block gradient col-12"
           @click="changeMeeting(meeting)"
           v-for="(meeting,index) in visibleMeetings"
           :key="index"
         >
           <div>
-            <h4>{{ meeting.title }}</h4>
-            <p>{{ meeting.subTitle }}</p>
+            <h4>{{ meeting.evtCd}}</h4>
           </div>
         </div>
       </div>
@@ -20,23 +19,22 @@
 </template>
 
 <script>
-import   Header     from '~/components/header/header-bottom-screen'
-import { isObject } from '~/modules/helpers'
-  
+import Header from '~/components/header/header-bottom-screen'
+
 export default {
   name      : 'Meetings',
   layout    : 'bottom-screen',
   components: { Header },
-  methods   : { done, changeMeeting },
-  computed  : { hasAgenda, agendasOnly, visibleMeetings },
+  methods   : { hasAgenda, done, changeMeeting },
+  computed  : { agendasOnly, visibleMeetings },
   asyncData, mounted
 }
 
 function asyncData ({ app, store }){
-  return  {
-    title   : app.i18n.t('meetings'),
-    meetings: store.state.conferences.meetings
-  }
+  const title = app.i18n.t('meetings')
+  const { meetings } = store.state.conferences
+
+  return  { title, meetings }
 }
 
 function mounted(){ this.$root.$on('bottom-screen-done', done) }
@@ -44,29 +42,28 @@ function mounted(){ this.$root.$on('bottom-screen-done', done) }
 function visibleMeetings(){
   const { meetings } = this
 
+  console.log(meetings)
   if(!meetings) return []
 
-  return meetings.filter(m => (this.hasAgenda(m.agenda) ||(!this.agendasOnly && m.id)))
+  return meetings.filter(m => (this.hasAgenda(m) ||(!this.agendasOnly && m.id)))
 }
 
 function agendasOnly(){
-  const showMeetingNav = this.$store.state.routes.showMeetingNav
+  try{
+    const { showMeetingNav } = this.$store.state.routes
 
-  return isObject(showMeetingNav) && showMeetingNav.agendasOnly
+    return showMeetingNav.agendasOnly
+  }
+  catch(e){ return false }
 }
 
-function hasAgenda(){
-  const showMeetingNav = this.$store.state.routes.showMeetingNav
-
-  return agenda => isObject(showMeetingNav) && showMeetingNav.agendasOnly && agenda
-}
-  
+function hasAgenda({ agenda }){ return this.agendasOnly && agenda }
 function done(){ this.$router.go(-1) }
   
 function changeMeeting(meeting){
   const { name }           = this.$store.state.routes.prevRoute
   const { conferenceCode } = this.$route.params
-  const params             = { conferenceCode, meetingCode: meeting.code }
+  const   params           = { conferenceCode, meetingCode: meeting.evtCd }
 
   this.$store.commit('conferences/setSelectedMeeting', meeting)
   this.$router.push({ name, params })

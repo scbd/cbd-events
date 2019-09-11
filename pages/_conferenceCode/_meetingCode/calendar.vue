@@ -1,28 +1,35 @@
 <template>
   <Calendar
-    class="cal"
-    :options="{ queryFn:getEvents, conference:conference, locale:$i18n.locale,height:'100vh' }"
+    :options="{ queryFn:getEvents, conference:conference, height:'80vh' }"
   />
 </template>
 
 <script>
-import { DateTime } from 'luxon'
-import Calendar     from '~/components/Calender/src/components/index.vue'
+import { DateTime   } from 'luxon'
+import { mapGetters } from 'vuex'
+import   Calendar     from '~/components/Calender/src/components/'
 
 export default {
   name      : 'Calender',
   components: { Calendar },
-  methods   : { getEvents, genQuery, getConference, getQueryUrl },
+  methods   : { getEvents, genQuery, getQueryUrl },
+  computed  : { ...gettersMap() },
   asyncData
+}
+
+function gettersMap(){
+  return mapGetters({
+    meeting     : 'conferences/meeting',
+    conference  : 'conferences/conference',
+    conferenceId: 'conferences/conferenceId'
+  })
 }
 
 function asyncData ({ store }){
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
-
-  return { conference: store.state.conferences.selected }
+  return { }
 }
 
-function getConference (){ return this.$store.state.conferences.selected }
 
 function genFields(query){
   const locale          = query.locale.toUpperCase()|| 'EN'
@@ -36,12 +43,11 @@ function genFields(query){
   return fields + itemFields + organizerFields + locationFields + localizedFields + metaFields
 }
 
-
 async function getEvents(query){
-  if(!query.conference) query.conference = this.conference._id
+  if(!query.conference) query.conference = this.conference.id
   
   const events   = {}
-  const queryUrl = getQueryUrl(query)
+  const queryUrl = this.getQueryUrl(query)
   const response = await this.$axios.get(queryUrl)
 
   events.raw   = sanitizeIndexResult(response.data.response.docs)
@@ -114,33 +120,25 @@ function mapByWeek(days){
 }
 
 function genQuery(query){
-  let q = 'schema_s:reservation'
+  const { start, end, selectedStream, keyWordFilter, selectedProgramme } = query
+  const { startDate, endDate, id                    } = this.conference
+  const { locale } = this.$i18n
 
-  if(query.conference){
-    q += `+AND+conference_s:${query.conference}`
-    if(!query.start)
-      q += `+AND+(start_s:[ ${this.conference.StartDate} TO *])`
-        
-    if(!query.end)
-      q += `+AND+(end_s:[ * TO ${this.conference.EndDate}])`
-  }
+  let qStart = `+AND+(start_s:[ ${startDate} TO *])`
+  let qEnd   = `+AND+(end_s:[ * TO ${endDate}])`
 
-  if(query.start)
-    q += `+AND+(start_s:[ ${query.start} TO *])`
+  let q      = `schema_s:reservation+AND+conference_s:${id}`
+  
+  // if user passes start end over write default
+  if(start) qStart = `+AND+(start_s:[ ${start} TO *])`
+  if(end)   qEnd   = `+AND+(end_s:[ * TO ${end}])`
+  
+  q += qStart + qEnd
 
-  if(query.end)
-    q += `+AND+(end_s:[ * TO ${query.end}])`
+  if(selectedStream)    q += `+AND+(stream_ss:${selectedStream})`
+  if(selectedProgramme) q += `+AND+(thematicAreas_ss:${selectedProgramme})`
+  if(keyWordFilter)     q += `+AND+(text_${locale.toUpperCase()}_txt:"${keyWordFilter}*")`
 
-  if(query.selectedStream)
-    q += `+AND+(stream_ss:${query.selectedStream})`
-  if(query.selectedProgramme)
-    q += `+AND+(thematicAreas_ss:${query.selectedProgramme})`
-  if(query.keyWordFilter)
-    q += `+AND+(text_${this.$i18n.locale.toUpperCase()}_txt:"${query.keyWordFilter}*")`
   return q
 }
 </script>
-
-<style>
-  .cal{ margin-bottom: 50px; }
-</style>

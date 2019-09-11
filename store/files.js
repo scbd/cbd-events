@@ -96,13 +96,13 @@ function saveObjectOfFiles({ files, blobs }, commit, { $localForage }){
 }
 
 async function deleteAllFiles(commit, { $localForage }){
-  commit('DELALL')
+  commit('DELETE_ALL')
   await $localForage.files.clear()
   await $localForage.blobs.clear()
 }
 
 async function deleteObjectOfFiles(commit, files, { $localForage }){
-  commit('DELALL')
+  commit('DELETE_ALL')
   await $localForage.files.clear()
   await $localForage.blobs.clear()
 }
@@ -147,5 +147,5 @@ export const mutations = {
   SAVE            : save,
   DELETE          : deleteMutation,
   DOWNLOADING     : downloading,
-  DELALL          : deleteAllMutation
+  DELETE_ALL      : deleteAllMutation
 }

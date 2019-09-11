@@ -11,7 +11,7 @@
 
 <script>
 
-import { DateTime }         from 'luxon'
+import { DateTime }       from 'luxon'
 import events             from '../modules/Bus'
 import CalBody            from './body/CalBody'
 import CalHeader          from './header/CalHeader'
@@ -21,89 +21,99 @@ import messages           from '../locales'
 
 
 export default {
-  name : 'Calendar',
-  props: [ 'options' ],
-  data(){
-    return{
-      events           : {},
-      query            : {},
-      iterationsService: this.setIterationsService(this.$i18n, this.$route.query.selected),
-      conference       : this.options.conference
-    }
-  },
+  name      : 'Calendar',
+  props     : [ 'options' ],
   components: { CalBody, CalHeader, CalFooter },
-  computed  : {
-    iterations(){
-      let its;
-
-      if(this.iterationsService) its = this.iterationsService.iterations; return its || []
-    },
-    selectedIteration(){ return this.iterationsService.selected || {} },
-    queryObject
-  },
-  methods: {
-    changeDateTime,
-    setIterationsService,
-    getEvents(){
-      return this.options.queryFn(this.queryObject).then((e) => {
-        this.events = e
-      })
-    },
-    setQueryString,
-    applyFilter
-  },
-  mounted(){
-    events.$on('showFilter', this.applyFilter)
-  },
-  created(){
-    if(!this.$route.query || !this.$route.query.selected)
-      this.$router.replace({
-        query: { selected: DateTime.local().toFormat('yyyy-MM-dd') }
-      })
-    else if(this.$route.query.selected)
-      this.iterationsService=this.setIterationsService(this.$i18n, this.$route.query.selected)
-    this.setQueryString(0)
-    this.getEvents()
-  },
-  beforeCreate(){
-    if(!this.$i18n)
-      throw new Error('$i18n must be installed')
-
-    if(this.$i18n)
-      //eslint-disable-next-line
-      for (const locale in messages){
-        const msgs = this.$i18n.getLocaleMessage(locale)
-
-        this.$i18n.setLocaleMessage(locale, Object.assign(msgs, messages[locale]))
-      }
-  }
-
+  computed  : { iterations, selectedIteration, queryObject },
+  methods   : { changeDateTime, setIterationsService, getEvents, setQueryString, applyFilter },
+  data,
+  mounted,
+  created,
+  beforeCreate
 }
 
-function applyFilter (e){
-  if(e && e.data && !e.data.show){
-    if(e.data.keyWordFilter) this.query.keyWordFilter = e.data.keyWordFilter
-    if(e.data.selectedAgendaItem) this.query.selectedAgendaItem = e.data.selectedAgendaItem
-    if(e.data.selectedProgramme) this.query.selectedProgramme = e.data.selectedProgramme
-    if(e.data.selectedStream) this.query.selectedStream = e.data.selectedStream
+function data(){
+  return{
+    events           : {},
+    query            : {},
+    iterationsService: this.setIterationsService(this.$i18n, this.$route.query.selected),
+    conference       : this.options.conference
   }
-  else{
-    this.query = {}
+}
+
+function mounted(){
+  events.$on('showFilter', this.applyFilter)
+}
+
+function beforeCreate(){
+  const { $i18n } = this
+  
+  if(!$i18n) throw new Error('$i18n must be installed')
+
+  for (const locale in messages){
+    const msgs = $i18n.getLocaleMessage(locale)
+
+    $i18n.setLocaleMessage(locale, Object.assign(msgs, messages[locale]))
   }
-  if(!this.query.locale)this.query.locale=this.options.locale || this.$i18n.locale
-  this.getEvents(this.queryObject)
+}
+
+function created(){
+  const { $route, $router, $i18n } = this
+  const { query } = $route
+  const start = this.conference.startDate? DateTime.fromISO(this.conference.startDate) : DateTime.local()
+  const route = { query: { selected: start.toFormat('yyyy-MM-dd') } }
+
+  if(!query || !query.selected)
+    $router.replace(route)
+  else
+    this.iterationsService = this.setIterationsService($i18n, query.selected)
+
+  this.setQueryString(0)
+  this.getEvents()
+}
+
+function getEvents(){
+  const { queryFn } = this.options
+
+  console.log('this.queryObject', this.queryObject)
+  return queryFn(this.queryObject)
+    .then((e) => { this.events = e })
+}
+
+function selectedIteration(){
+  try { return this.iterationsService.selected }
+  catch(e){ return {} }
+}
+
+function iterations(){
+  if(!this.iterationsService) return []
+
+  const { iterations } = this.iterationsService
+
+  return iterations || []
+}
+
+function applyFilter ({ data }){
+  try{
+    const { options, $i18n } = this
+    const locale = options.locale || $i18n.locale
+    
+    if(!data.show) this.query = Object.assign(this.query, { locale })
+
+    this.query = Object.assign({ locale }, this.query, data)
+  }
+  catch(e){ this.query = {} }
+  finally{ this.getEvents(this.queryObject) }
 }
 
 
 function queryObject (){
   //eslint-disable-next-line
-  let { locale, conference } = this.options
+  let   { conference } = this.options
+  const { id         } = conference
+  const   locale       = this.options.locale || this.$i18n.locale || 'en'
+  const   query        = Object.assign(this.query, { locale, conference: id })
 
-  if(conference)
-    conference = conference._id
-  const query = Object.assign(this.query, { locale, conference })
-
-  if(!query.locale)query.locale='en'
   this.query = query
   return query
 }
@@ -120,25 +130,27 @@ function changeDateTime(numberOfIterations){
 }
 //
 function setQueryString(interations){
-  let nextIteration
+  const { next, prev } = this.selectedIteration
+  
+  let nextIteration = this.selectedIteration
 
-  if(interations==-1) nextIteration = this.selectedIteration.next
-  if(interations==-2) nextIteration = this.selectedIteration.next.next
-  if(interations==2) nextIteration = this.selectedIteration.prev.prev
-  if(interations==1) nextIteration = this.selectedIteration.prev
-  if(interations==0) nextIteration = this.selectedIteration
+  if(interations ==- 1) nextIteration = next
+  if(interations == -2) nextIteration = next.next
+  if(interations == 2)  nextIteration = prev.prev
+  if(interations == 1)  nextIteration = prev
+  
+  const { aDateTime, endDateTime } = nextIteration
+  const route = { query: { selected: aDateTime.toFormat('yyyy-MM-dd') } }
 
-  if(interations)
-    this.$router.replace({
-      query: { selected: nextIteration.aDateTime.toFormat('yyyy-MM-dd') }
-    })
-  const start = nextIteration.aDateTime.toUTC().toISO()
-  const end = nextIteration.endDateTime.toUTC().toISO()
+  
+  if(interations) this.$router.replace(route)
 
-  this.query.start = start
-  this.query.end = end
+  const start = aDateTime.toUTC().toISO()
+  const end   = endDateTime.toUTC().toISO()
+
+  this.query = { ...this.query, start, end }
 }
-//
+
 function setIterationsService($i18n, date, type='week'){
   if(!$i18n) throw new Error('must have i18n installed')
   const opts   = this? this.options || {} : {}
@@ -146,7 +158,7 @@ function setIterationsService($i18n, date, type='week'){
 
   if(date) date = DateTime.fromISO(date)
   else date = DateTime.local()
-  if(type==='week')
+  if(type === 'week')
     return new CalWeeks($i18n, date, locale)
 }
 </script>
