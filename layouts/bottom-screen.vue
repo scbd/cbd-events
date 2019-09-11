@@ -15,8 +15,11 @@ export default {
   name: 'BottomScreen',
   data (){
     return {
-      isMounted: true
+      isMounted: false
     }
+  },
+  mounted(){
+    this.isMounted=true
   }
 }
 </script>

@@ -33,3 +33,18 @@ export const normalizeLString = (prop, locale='en') => {
 }
 
 export const isUndefined = (prop) => typeof prop === 'undefined'
+
+export const  sanitizeIndexResult = (docs) => {
+  for (let i = 0; i < docs.length; i++)
+    // eslint-disable-next-line
+    for (const j in docs[i]) {
+
+      const skip              = !~j.indexOf('_')
+      const sanitizedPropName = j.slice(0, j.indexOf('_'))
+
+      if(skip) continue
+      docs[i][sanitizedPropName] = docs[i][j]
+    }
+    
+  return docs
+}

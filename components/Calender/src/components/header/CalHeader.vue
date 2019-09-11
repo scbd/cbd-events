@@ -1,28 +1,14 @@
 <template>
-  <div
-    class="container-fluid"
-    :class="[$style.bg,$style.gradient]"
-  >
-    <div
-      class="row"
-      :class="[$style.row]"
-    >
-      <div
-        class="col-xs-9"
-        :class="[$style.left]"
-      >
+  <div class="container-fluid" :class="[$style.bg,$style.gradient]" >
+    <div class="row" :class="[$style.row]" >
+
+      <div class="col-9" :class="[$style.left]" >
         <span :class="[$style.title]">{{ selectedIteration.title }} </span>
         <small><span>{{ selectedIteration.subTitle }}</span></small>
       </div>
-      <div
-        class="col-xs-3"
-        :class="[$style.right]"
-      >
-        <span
-          @click="filter"
-          :class="[$style.pointer]"
-          class="eco-filter"
-        />
+
+      <div class="col-3 debug" :class="[$style.right]" @click="toggleFilter">
+        <Icon  name="filter-list" :class="[$style.pointer]" />
       </div>
     </div>
   </div>
@@ -33,36 +19,21 @@
 import events from '../../modules/Bus'
 
 export default {
-  name : 'CalHeader',
-  props: [ 'selectedIteration' ],
-  data(){
-    return{
-      showFilter: false
-    }
-  },
-  methods: {
-    filter
-  }
+  name   : 'CalHeader',
+  props  : [ 'selectedIteration' ],
+  methods: { toggleFilter },
+  data
 }
 
-function filter(){
-  events.$emit('showFilter')
-}
+function  data(){ return{ showFilter: false } }
+
+function toggleFilter(){ events.$emit('showFilter') }
+
 </script>
 
 <style module>
-  .row{
-    background-color: rgba(0,0,0,0.40);
-    height: 1.75em;
-  }
-  .bg{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    color:white;
-    z-index:500;
-  }
+  .row{ background-color: rgba(0,0,0,0.40); height: 1.75em; }
+  .bg{ position:absolute; top:0; left:0; right:0; color:white; z-index:500; }
   .gradient {
       position:relative;
       background: #bdc3c7; /* For browsers that do not support gradients */
@@ -71,19 +42,8 @@ function filter(){
       background: -moz-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Firefox 3.6 to 15 */
       background: linear-gradient(to bottom right, #bdc3c7, #2c3e50); /* Standard syntax (must be last) */
   }
-  .left{
-    line-height: 1.75em;
-    height: 1.75em;
-    text-align: left;
-  }
-  .right{
-    text-align: right;
-    height: 1.75em;
-  }
-  .title{
-    font-weight: bold;
-  }
-  .pointer{
-    cursor:pointer;
-  }
+  .left{ line-height: 1.75em; height: 1.75em; text-align: left; }
+  .right{ text-align: right; height: 1.75em; }
+  .title{ font-weight: bold; }
+  .pointer{ cursor:pointer; }
 </style>

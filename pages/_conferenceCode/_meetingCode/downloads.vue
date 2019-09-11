@@ -15,7 +15,7 @@
           {{ file.lastModified | timeDisplay }}
           <span class="point">●</span> {{ file.size | formatBytes }}
         </div>
-        <div v-if="isIOS" class="col-xs-1 paddingless text-center" @click="shareFile(file, $cordova)" >
+        <div v-if="isIOS" class="col-1 paddingless text-center" @click="shareFile(file, $cordova)" >
           <svg class="icon x2"><use xlink:href="#icon-share-alternitive" /></svg>
         </div>
       </div>
@@ -62,17 +62,14 @@ function asyncData ({ store, params }){
 
   return { conferenceCode }
 }
-function isIOS(){
-  return isIOSCordova(this.$cordova)
-}
+
+function isIOS(){ return isIOSCordova(this.$cordova) }
+
 function mounted (){
   if(!this.$cordova) this.$cordova = null
-  console.log('mounted', this.$cordova)
-}
-//eslint-disable-next-line
-function test(){
   setOpenSafariFn(this.openSafari)
 }
+
 function openSafari({ blob }){
   const name       = 'conferenceCode-fileView'
   const params     = { conferenceCode: this.conferenceCode }

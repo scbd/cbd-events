@@ -97,37 +97,17 @@ import { DateTime }           from 'luxon'
 import CalEventDetailsFile  from './CalEventDetailsFile'
 
 export default {
-  name : 'Details',
-  props: [ 'event', 'conference' ],
-  data(){
-    return{
-      api: process.env.API
-    }
-  },
+  name      : 'Details',
+  props     : [ 'event', 'conference' ],
   components: { AgendaItem, CalEventDetailsFile, FileStatus },
-  methods   : {
-    showDetails,
-    files,
-    itemTextArr,
-    goTo,
-    isInSession,
-    addToCalReady
-  },
-  computed: {
-    calEvent,
-    dateTime,
-    location,
-    organizer,
-    organizerEmail
-  }
+  methods   : { showDetails, files, itemTextArr, goTo, isInSession, addToCalReady },
+  computed  : { calEvent, dateTime, location, organizer, organizerEmail }
 }
 
-function addToCalReady(){
-  return this.conference.schedule.addToCalReady
-}
+function addToCalReady(){ return this.conference.schedule.addToCalReady }
   
 function goTo(url){
-  if(typeof window !== 'undefined')
+  if(!process.server)
     window.open(url, '_blank')
 }
 
@@ -142,16 +122,19 @@ function showDetails (e){
   e.data ={ data: true }
   events.$emit('EventDetails', e)
 }
+
 function calEvent (){
   if(!this.event) return {}
   return this.event
 }
+
 function dateTime (){
   const start = DateTime.fromISO(this.calEvent.start, { zone: this.calEvent.timezone }).toFormat('T')
   const end = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toFormat('T  cccc, LLLL L ')
 
   return  `${start} - ${end}`
 }
+
 function location (){
   const localName = this.calEvent.roomLocalName || ''
   const location = this.calEvent.roomLocation
@@ -168,6 +151,7 @@ function organizer (){
   if(!email && !name) return false
   return  `${name} ${email}`
 }
+
 function organizerEmail (){
   return  this.calEvent.organizerEmail || ''
 }

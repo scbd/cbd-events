@@ -22,6 +22,7 @@ export default () => new Promise(((resolve) => {
     contactUs                        : 'Contact Us',
     callThe                          : 'Call the',
     emailThe                         : 'Email the',
-    scbd                             : 'SCBD'
+    scbd                             : 'SCBD',
+    weekSelect                       : 'Change Week'
   })
 }))

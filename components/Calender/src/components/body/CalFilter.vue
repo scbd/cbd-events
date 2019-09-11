@@ -3,7 +3,7 @@
     <div :class="[$style.main]" @click.stop="showFilter" >
       <div :class="$style.title">
         {{ $t('filterEventsTitle') }}
-        <span class="pull-right">
+        <span :class="$style.pullRight">
           <a href="#" @click.stop="done" >Done</a>
         </span>
       </div>
@@ -207,4 +207,5 @@ function sanitizeResult(docs, locale='en'){
     z-index: 20;
     overflow-y: auto;
   }
+    .pullRight { float: right; margin:0 0 0 0; }
 </style>

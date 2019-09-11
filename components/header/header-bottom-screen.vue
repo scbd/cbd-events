@@ -1,12 +1,12 @@
 <template>
   <nav class="mainn navbar  navbar-default">
-    <div class="col-xs-3" @click="close" >
+    <div class="col-3" @click="close" >
       <svg class="icon-clock-o" v-if="options && options.cancel" >
         <use xlink:href="#icon-close" />
       </svg>
     </div>
-    <div class="col-xs-6 mid"> {{ title }} </div>
-    <div class="col-xs-3 right-side" @click="done" > {{ $t('done') }} </div>
+    <div class="col-6 mid"> {{ title }} </div>
+    <div class="col-3 right-side" @click="done" > {{ $t('done') }} </div>
   </nav>
 </template>
 
@@ -29,7 +29,7 @@ function done(){
 <style scoped>
   .left-side{ text-align: left; }
   .right-side{ text-align: right; }
-  .mid{ text-align: center; }
+  .mid{ text-align: center; font-weight: bold;}
   .mainn{
     color:#333;
     padding: .2em .2em 0 .2em;

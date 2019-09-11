@@ -5,9 +5,10 @@
 </template>
 
 <script>
-import { DateTime   } from 'luxon'
-import { mapGetters } from 'vuex'
-import   Calendar     from '~/components/Calender/src/components/'
+
+import { mapGetters          } from 'vuex'
+import { sanitizeIndexResult } from '~/modules/apiNormalize'
+import   Calendar              from '~/components/Calender/src/components/'
 
 export default {
   name      : 'Calender',
@@ -30,7 +31,6 @@ function asyncData ({ store }){
   return { }
 }
 
-
 function genFields(query){
   const locale          = query.locale.toUpperCase()|| 'EN'
   const fields          = 'identifier_s,conference_s,timezone_s,start_dt,end_dt,'
@@ -48,11 +48,9 @@ async function getEvents(query){
   
   const events   = {}
   const queryUrl = this.getQueryUrl(query)
-  const response = await this.$axios.get(queryUrl)
+  const docs     = await this.$axios.get(queryUrl).then((r) => r.data.response.docs)
 
-  events.raw   = sanitizeIndexResult(response.data.response.docs)
-  events.days  = mapByDay(events.raw)
-  events.weeks = mapByWeek(events.days)
+  events.raw     = sanitizeIndexResult(docs)
 
   return events
 }
@@ -62,62 +60,9 @@ function getQueryUrl(query){
   const f        = genFields(query)
   const q        = this.genQuery(query)
 
-  return`${endPoint}?fl=${f}&q=${q}&sort=start_dt+DESC&start=0&wt=json&rows=300`
+  return`${endPoint}?fl=${f}&q=${q}&sort=start_dt+DESC&start=0&wt=json&rows=5000`
 }
 
-function sanitizeIndexResult(docs){
-  for (let i = 0; i < docs.length; i++)
-    // eslint-disable-next-line
-    for (const j in docs[i]) {
-      const skip              = !~j.indexOf('_')
-      const sanitizedPropName = j.slice(0, j.indexOf('_'))
-
-      if(!skip) continue
-      docs[i][sanitizedPropName] = docs[i][j]
-    }
-    
-  return docs
-}
-
-function mapByDay(docs){
-  const days = {}
-
-  for (let i = docs.length-1; i >=0; i--){
-    const dayStart = DateTime.fromISO(docs[i].start).startOf('day')
-    const dayEnd = DateTime.fromISO(docs[i].start).endOf('day')
-    const start = DateTime.fromISO(docs[i].start)
-
-    // eslint-disable-next-line
-    if(!days.hasOwnProperty(dayStart.toUTC().toISODate())) days[dayStart.toUTC().toISODate()]=[]
-
-    if(start>=dayStart && start<=dayEnd)
-      days[dayStart.toUTC().toISODate()].push(docs[i])
-  }
-  return days
-}
-
-function mapByWeek(days){
-  const weeks = {}
-  // eslint-disable-next-line
-  for (const day in days){
-    const week  = DateTime.fromISO(day).toUTC().year+'-'+DateTime.fromISO(day).toUTC().weekNumber
-
-    // eslint-disable-next-line
-    if(!weeks.hasOwnProperty(week)) weeks[week]={}
-    weeks[week][day]=days[day]
-  }
-  const weekArr = Object.values(weeks)
-
-  //link listafy
-  for (let i = 0; i < weekArr.length; i++){
-    if(i>0)
-      weekArr[i].next = weekArr[i-1]
-    if(i<weekArr.length-1)
-      weekArr[i].prev = weekArr[i+1]
-  }
-
-  return weeks
-}
 
 function genQuery(query){
   const { start, end, selectedStream, keyWordFilter, selectedProgramme } = query

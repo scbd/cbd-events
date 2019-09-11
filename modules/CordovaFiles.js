@@ -58,7 +58,6 @@ function openFileFromIOS({ inAppBrowser }, file){
   return inAppBrowser.open(blobUrl)
 }
 
-
 function openSafari ({ blob, baseName }){
   try{ CordovaFiles.OpenSafariFn(blob) }
   catch(e){ openFileDefault({ blob, baseName }) }
@@ -86,8 +85,4 @@ export default class CordovaFiles{
   static shareFile       = shareFile
 }
 
-function setOpenSafariFn (fn){
-  console.log('CordovaFiles.OpenSafariFn', CordovaFiles.OpenSafariFn)
-  CordovaFiles.OpenSafariFn = fn
-  console.log('CordovaFiles.OpenSafariFn', CordovaFiles.OpenSafariFn)
-}
+export const setOpenSafariFn  = (fn) => { CordovaFiles.OpenSafariFn = fn }

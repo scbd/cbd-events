@@ -21,7 +21,8 @@
             <b v-else>
               {{ meeting.subTitle | lstring}}
             </b>
-            <svg class="icon-clock-o"><use xlink:href="#icon-select-arrows" /></svg>
+            <Icon name="select-arrows" in-text="true"/>
+    
           </div>
         </div>
       </nav>

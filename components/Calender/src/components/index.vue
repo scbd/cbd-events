@@ -1,29 +1,27 @@
 <template>
   <section ref="main">
+    <WeekSelect :iteration="selectedIteration"/>
     <div :class="[$style.calComponent]">
-      <CalHeader :selected-iteration="selectedIteration" />
+      <CalHeader :selected-iteration="selectedIteration" v-if="false"/>
+      
       <CalBody :selected-iteration="selectedIteration" :conference="conference" :events="events" />
-      <CalFooter :iterations="iterations" @action="changeDateTime" />
     </div>
   </section>
 </template>
 
-
 <script>
-
 import { DateTime }       from 'luxon'
 import events             from '../modules/Bus'
 import CalBody            from './body/CalBody'
 import CalHeader          from './header/CalHeader'
-import CalFooter          from './footer/CalFooter'
 import CalWeeks           from '../modules/CalWeeksService'
 import messages           from '../locales'
-
+import WeekSelect   from './body/WeekSelect'
 
 export default {
   name      : 'Calendar',
   props     : [ 'options' ],
-  components: { CalBody, CalHeader, CalFooter },
+  components: { CalBody, CalHeader, WeekSelect },
   computed  : { iterations, selectedIteration, queryObject },
   methods   : { changeDateTime, setIterationsService, getEvents, setQueryString, applyFilter },
   data,
@@ -75,8 +73,9 @@ function created(){
 function getEvents(){
   const { queryFn } = this.options
 
-  console.log('this.queryObject', this.queryObject)
   return queryFn(this.queryObject)
+    .then(mapByDay)
+    .then(mapByWeek)
     .then((e) => { this.events = e })
 }
 
@@ -93,8 +92,9 @@ function iterations(){
   return iterations || []
 }
 
-function applyFilter ({ data }){
+function applyFilter (event){
   try{
+    const { data } = event
     const { options, $i18n } = this
     const locale = options.locale || $i18n.locale
     
@@ -128,7 +128,7 @@ function changeDateTime(numberOfIterations){
     this.iterationsService.add(num)
   })
 }
-//
+
 function setQueryString(interations){
   const { next, prev } = this.selectedIteration
   
@@ -161,6 +161,58 @@ function setIterationsService($i18n, date, type='week'){
   if(type === 'week')
     return new CalWeeks($i18n, date, locale)
 }
+
+function mapByDay(events){
+  const { raw } = events
+  const days = {}
+
+  for (let i = raw.length-1; i >=0; i--){ //backrards so days are in order in object from push
+    const { hasOwnProperty } = Object.prototype
+    const   dayStart         = DateTime.fromISO(raw[i].start).startOf('day')
+    const   dayEnd           = DateTime.fromISO(raw[i].start).endOf('day')
+    const   start            = DateTime.fromISO(raw[i].start)
+    const   dayStartText     = dayStart.toISODate()
+
+    if(!hasOwnProperty.call(days, dayStartText))
+      days[dayStartText]=[]
+
+    if(start>=dayStart && start<=dayEnd)
+      days[dayStartText].push(raw[i])
+  }
+  events.days = days
+  return events
+}
+
+function mapByWeek(events){
+  const { days } = events
+  const { hasOwnProperty } = Object.prototype
+  const weeks = {}
+
+  for (const day in days){
+    const year       = DateTime.fromISO(day).toUTC().year
+    const weekNumber = DateTime.fromISO(day).toUTC().weekNumber
+    const weekText   = `${year}-${weekNumber}`
+
+    if(!hasOwnProperty.call(weeks, weekText)) weeks[weekText]={}
+    
+    weeks[weekText][day]=days[day]
+  }
+  events.weeks=createLinkedList(weeks)
+  return events
+}
+
+function createLinkedList(weeks){
+  const weekArr = Object.values(weeks)
+
+  //link listafy
+  for (let i = 0; i < weekArr.length; i++){
+    if(i>0)
+      weekArr[i].next = weekArr[i-1]
+    if(i<weekArr.length-1)
+      weekArr[i].prev = weekArr[i+1]
+  }
+  return weeks
+}
 </script>
 <style>
   a { color: #337ab7; text-decoration: none; }
@@ -168,5 +220,5 @@ function setIterationsService($i18n, date, type='week'){
   a:focus { color: #23527c; text-decoration: underline; }
 </style>
 <style module>
-  .calComponent{ position: relative; height: 100vh; width: 100vw; padding-bottom:5.3em; }
+  .calComponent{ position: relative; height: 86vh; width: 100vw;   }
 </style>
