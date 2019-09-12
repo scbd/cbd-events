@@ -1,9 +1,9 @@
 #TODO
 - home screen menu
-  - info overview todays agenda Downloads Documents Calendar 
-  - test links, before and after conf/meeting change
+  - hide if not there
+  - settings
 - create info page
- -   - not internet first load, save cache, refresh after load if can
+ -  not internet first load, save cache, refresh after load if can
 - fix agenda
   - provisional before
   - in session during

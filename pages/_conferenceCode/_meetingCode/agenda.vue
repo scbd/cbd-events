@@ -9,6 +9,7 @@
         <span class="label agenda" :class="{[agendaPrefix]:agendaPrefix}" >
           {{ agendaPrefix }} {{ item.item }}
         </span>
+        <h6 v-if="!agendaItems || !agendaItems.length"> Unavailable, will be posted shortly.</h6>
         <span>{{ item.shortTitle || item.title }}</span>
       </div>
       <hr>

@@ -4,12 +4,12 @@
       <div class="col-12">
         <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
       </div>
-      <div class="col-6" >
+      <div v-if="aboutExists" class="col-6" >
         <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-about', params: { conferenceCode } })">
           <Icon name="info-circle"  in-text="true"/> About
         </nuxt-link>
       </div>
-      <div class="col-6">
+      <div v-if="conferenceCal" class="col-6">
         <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-overview', params: { conferenceCode } })">
           <Icon name="calendar"  in-text="true"/> Overview
         </nuxt-link>
@@ -34,7 +34,7 @@
           <Icon name="calendar-o"  in-text="true"/> Calendar
         </nuxt-link>
       </div>
-      <div class="col-6">
+      <div v-on:click="toggleSettings" class="col-6">
         <div  class="btn btn-secondary btn-index" >
           <Icon name="cog"  in-text="true"/> Settings
         </div>
@@ -49,25 +49,33 @@ import { lstring  }   from '~/plugins/filters'
 
 export default {
   name    : 'index',
-  methods : { lstring },
+  methods : { lstring, toggleSettings },
   computed: { conference, getHeroImage, ...gettersMap() },
   asyncData
 }
 
-function asyncData ({ store, params }){
+async function asyncData ({ store, params }){
   const { conferenceCode } = params
+
+  const aboutExists = await store.dispatch('about/get')
 
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
-  return { conferenceCode }
+  return { conferenceCode, aboutExists }
 }
 
 function gettersMap(){
   return mapGetters({
-    meetingCode : 'conferences/meetingCode',
-    hasDownloads: 'files/hasDownloads',
-    startDate   : 'conferences/startDate'
+    meetingCode  : 'conferences/meetingCode',
+    hasDownloads : 'files/hasDownloads',
+    startDate    : 'conferences/startDate',
+    conferenceCal: 'conferences/conferenceCal',
+    cbdEvents    : [ 'conferences/selectedApp' ]
   })
+}
+
+function toggleSettings(){
+  this.$root.$emit('toggleSetting')
 }
 
 function getHeroImage(){
@@ -82,13 +90,13 @@ function getHeroImage(){
 
 function conference(){
   try{
-    const   selectedApp                       = this.$store.getters['conferences/selectedApp']
-    const { title, imageBlob, heroImageBlob } = selectedApp
+    const { title, imageBlob, heroImageBlob } = this.cbdEvents
 
     return  { title, imageBlob, heroImageBlob }
   }
   catch(e){ return {} }
 }
+
 </script>
 
 <style scoped>

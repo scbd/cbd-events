@@ -55,9 +55,10 @@ function gettersMap(){
   })
 }
 
-function asyncData ({ store, params }){
+async function asyncData ({ store, params }){
   const { conferenceCode } = params
 
+  await store.dispatch('files/LOAD')
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
   return { conferenceCode }

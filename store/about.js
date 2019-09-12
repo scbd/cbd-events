@@ -7,19 +7,18 @@ async function get({ dispatch }, force){
   const { conferenceCode } = this.$router.currentRoute.params
   const   exists           = await dispatch('exists')
 
+  console.log('exists ', exists)
   if(exists && !force){
     dispatch('get', true) // reload latest
     return exists
   }
-  
+
   const  article = await loadArticle(this.$axios, conferenceCode)
   
   if(!article) return undefined
 
-  article.blob = await getBlob(this, article.coverImage)
-
   dispatch('save', { conferenceCode, article })
-
+  article.blob = await getBlob(this, article.coverImage)
   return article
 }
 
@@ -28,12 +27,13 @@ function exists ({ state, dispatch }){
   const { docs           } = state
   const { conferenceCode } = this.$router.currentRoute.params
 
+  console.log('conferenceCode', conferenceCode)
   if(docs[conferenceCode]) return docs[conferenceCode]
 
   return dispatch('existsLocal')
 }
 
-async function existsLocal ({ commit }){
+async function existsLocal ({ commit  }){
   const { conferenceCode } = this.$router.currentRoute.params
   const   article          = await this.$localForage.about.getItem(conferenceCode)
 
@@ -56,8 +56,14 @@ function getBlob({ $axios }, { url }){
 
 
 function loadArticle($axios, conferenceCode){
-  return $axios.$get(`${process.env.API}/api/v2017/articles`, { params: getQuery(conferenceCode) })
-    .then((r) => r[0])
+  try{
+    return $axios.$get(`${process.env.API}/api/v2017/articles`, { params: getQuery(conferenceCode) })
+      .then((r) => r[0])
+  }
+  catch(e){
+    console.log('err', e)
+    return undefined
+  }
 }
 
 function getQuery(code){

@@ -34,9 +34,12 @@ export default {
   methods   : { offlineNotice, onlineNotice, toggleSideMenu, toggle, onScroll, hasScrolled  },
   beforeDestroy,
   beforeMount,
-  data
+  data,
+  mounted
 }
-
+function mounted(){
+  this.$root.$on('toggleSetting', () => this.toggleSideMenu())
+}
 function data (){
   return {
     showLinks     : false,

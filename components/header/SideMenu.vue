@@ -4,10 +4,10 @@
     <transition name="test">
       <div class="container-fluid side-menu " v-if="isOpen" >
         <div class="row">
-          <div class="col pr-0 pl-0 debug">
+          <div class="col pr-0 pl-0">
             <br>
             <h4>{{ $t('settings') }}</h4>
-            <div class="list-group debug">
+            <div class="list-group">
               <nuxt-link :to="localePath({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
                 <button class="list-group-item" >
                   <svg class="icon"><use xlink:href="#icon-transfer" /></svg> {{ switchConference }}

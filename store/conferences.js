@@ -64,6 +64,13 @@ function conference (state){
   try{ return state.selected }
   catch(e){ return {} }
 }
+
+function conferenceCal(state){
+  try{ return state.selected.apps.conferenceCal }
+  catch(e){ return undefined }
+}
+
+
 function conferenceId (state){
   try{ return state.selected.id }
   catch(e){ return {} }
@@ -126,7 +133,7 @@ function setMeetings        (state, payLoad = {}){ state.meetings = payLoad }
 
 export const state     = () => ({ docs: [], selected: false, selectedMeeting: false, meetings: [] })
 export const actions   = { get: getConferences, getMeetings }
-export const getters   = { conference, meeting, byCode, selectedApp, meetingCode, startDate, isInSession, forceDate, agendaItems, agenda, agendaPrefix, conferenceId }
+export const getters   = { conferenceCal, conference, meeting, byCode, selectedApp, meetingCode, startDate, isInSession, forceDate, agendaItems, agenda, agendaPrefix, conferenceId }
 export const mutations = { setSelected, setSelectedMeeting, setConferences, setMeetings }
 
 
@@ -136,7 +143,7 @@ function getActive (conferences){ return conferences.find((c) => c.active) || co
 function queryConferences($axios, { locale='en' }){
   const queryParameters = {
     //title: 1, timezone: 1, Description: 1,
-    f: {  code: 1,  MajorEventIDs: 1, StartDate: 1, EndDate: 1,  'apps.cbdEvents': 1, conference: 1, schedule: 1, timezone: 1  },
+    f: {  code: 1,  MajorEventIDs: 1, StartDate: 1, EndDate: 1,  'apps.cbdEvents': 1, conference: 1, schedule: 1, timezone: 1,  'apps.conferenceCal': 1 },
     q: { 'apps.cbdEvents': { $exists: true } },
     s: { StartDate: -1 }
   }
