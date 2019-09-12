@@ -22,7 +22,6 @@ export const dotEnvReader = () => {
 export const isCordovaEnv = () => cordovaEnvironments.includes(process.env.NODE_ENV)
 
 export const isAndroidEnv = () => {
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV)
   return ~process.env.NODE_ENV.indexOf('android')
 }
   
@@ -56,20 +55,3 @@ export const cordovaNuxtConfig = (nuxtConfig) => {
   delete(nuxtConfig.axios.proxy)
   return nuxtConfig
 }
-
-//dotEnvReader()
-// export const cordovaAndroidNuxtConfig = (nuxtConfig)=>{
-//   console.log('isAndroidEnv()',isAndroidEnv())
-//   if(!isAndroidEnv()) return nuxtConfig
-//   nuxtConfig.modules.push( ['~/modules/nuxtModules/localForage.js', {
-//                                                           name: 'cbd-events',
-//                                                           driver      : [localforage.WEBSQL,localforage.INDEXEDDB,localforage.LOCALSTORAGE],
-//                                                           version: 1.0,
-//                                                           size: 4980736, // Size of database, in bytes. WebSQL-only for now.
-//                                                           storeName: 'files', // Should be alphanumeric, with underscores.
-//                                                           description: 'Main file store'
-//                                                         }]
-//                        )
-                        
-//   return nuxtConfig
-// }

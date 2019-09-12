@@ -42,7 +42,6 @@ function mounted(){ this.$root.$on('bottom-screen-done', done) }
 function visibleMeetings(){
   const { meetings } = this
 
-  console.log(meetings)
   if(!meetings) return []
 
   return meetings.filter(m => (this.hasAgenda(m) ||(!this.agendasOnly && m.id)))

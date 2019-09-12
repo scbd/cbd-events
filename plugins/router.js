@@ -2,13 +2,7 @@
 export default  ({ app, store }) => {
   const prevRoute = store.state.routes.route
 
-  
-  // app.router.beforeEach((to, from, next) => {
-  //   to.path = app.localePath(to.path).replace('#', '')
-  //   next()
-  // })
   app.router.afterEach((to) => {
-    // eslint-disable-next-line
     const { name, path, params, fullPath, query } = to
     const route = { name, path, params, fullPath, query }
     

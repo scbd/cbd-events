@@ -36,7 +36,7 @@ export default {
     },
     leave
   }
-}// export
+}
 
 function changeDate(index){
   if(Number(index) === 7) return

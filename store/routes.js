@@ -46,6 +46,3 @@ function setShowNavs(state, payLoad=true){
 function toggleMeetings(state){
   state.showMeetings = !state.showMeetings
 }
-// function toggleSettings(state){
-//   state.showSettings = !state.showSettings
-// }

@@ -105,12 +105,10 @@ function isInSession(state){
     try{
       const { startDate, endDate, timezone }  = state.selected
 
-      
       const cStart          = DateTime.fromISO(startDate)
       const cEnd            = DateTime.fromISO(endDate)
       const now             = DateTime.local().setZone(timezone)
 
-      console.log(datetime)
       if((cStart <= now && now <= cEnd) || isValidDate(datetime))
         return true
     
@@ -278,7 +276,6 @@ function queryMeetings ($axios, selected, locale='en'){
  
   return $axios.$get(`${ process.env.API }/api/v2016/meetings`, { params: queryParameters })
     .then(response => {
-      console.log('~~~~response', response)
       if(!Array.isArray(response)) response = [ response ]
       return normalizeApiResponse(response, locale)
     })

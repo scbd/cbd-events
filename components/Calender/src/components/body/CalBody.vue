@@ -84,11 +84,6 @@ function isMeeting(){
 }
 
 function leave(){
-  // let change = this.selectedIteration.change ? '' : '-'
-  // let num = Math.abs(this.selectedIteration.changeNum )
-  // let time = 750
-  // if(num>1) time = 1600
-
   for (const ref in this.$children[0].$refs)
     this.$children[0].$refs[ref].style.display='block'
 

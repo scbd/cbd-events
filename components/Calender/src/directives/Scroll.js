@@ -1,11 +1,8 @@
-//vue directive
+
 export default  {
   inserted
 }
 
-//============================================================
-//
-//============================================================
 function inserted(el, binding){
   if(typeof window === 'undefined') return //ssr
 
@@ -15,15 +12,12 @@ function inserted(el, binding){
   }
 
   if(el === document.body || el === document || el === window)
-    document.onscroll = removeEvent;
+    document.onscroll = removeEvent
   
   else
   if (el.addEventListener)
-    el.addEventListener('scroll', removeEvent);
+    el.addEventListener('scroll', removeEvent)
   
   else
-    el.attachEvent('onscroll', removeEvent);
-      
-
-  // window.addEventListener('scroll', f)
+    el.attachEvent('onscroll', removeEvent)
 }

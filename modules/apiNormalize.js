@@ -5,7 +5,6 @@ export const toCamelCase = (item) => camelCaseKeys(item, { deep: true });
 
 export const normalizeSolrResponse = (docs, locale='en') => {
   for (let i = 0; i < docs.length; i++){
-    // eslint-disable-next-line
     for (const variable in docs[i]){
       let sanitizedPropName
 
@@ -36,9 +35,7 @@ export const isUndefined = (prop) => typeof prop === 'undefined'
 
 export const  sanitizeIndexResult = (docs) => {
   for (let i = 0; i < docs.length; i++)
-    // eslint-disable-next-line
-    for (const j in docs[i]) {
-
+    for (const j in docs[i]){
       const skip              = !~j.indexOf('_')
       const sanitizedPropName = j.slice(0, j.indexOf('_'))
 

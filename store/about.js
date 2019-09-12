@@ -7,7 +7,6 @@ async function get({ dispatch }, force){
   const { conferenceCode } = this.$router.currentRoute.params
   const   exists           = await dispatch('exists')
 
-  console.log('exists ', exists)
   if(exists && !force){
     dispatch('get', true) // reload latest
     return exists
@@ -27,7 +26,6 @@ function exists ({ state, dispatch }){
   const { docs           } = state
   const { conferenceCode } = this.$router.currentRoute.params
 
-  console.log('conferenceCode', conferenceCode)
   if(docs[conferenceCode]) return docs[conferenceCode]
 
   return dispatch('existsLocal')
