@@ -14,15 +14,9 @@
         </div>
         <div class="sub" v-if="showMeetingNav" >
           <div class="sub-con" @click="toggle()" >
-            <b v-if="meeting.title">
-              {{ meeting.evtCd}}
-              <!-- <span v-if="!~meeting.subTitle.indexOf('COPMOP')">{{ meeting.subTitle }}</span> -->
-            </b>
-            <b v-else>
-              {{ meeting.subTitle | lstring}}
-            </b>
+            <b v-if="meeting.title"> {{ meeting.evtCd}} </b>
+            <b v-else> {{ meeting.subTitle | lstring}} </b>
             <Icon name="select-arrows" in-text="true"/>
-    
           </div>
         </div>
       </nav>

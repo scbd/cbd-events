@@ -2,12 +2,13 @@
   <div class="container-fluid" :class="[$style.bg,$style.gradient]" >
     <div class="row" :class="[$style.row]" >
 
-      <div class="col-9" :class="[$style.left]" >
+      <div v-on:click="toggleWeekSelect()" class="col-9" :class="[$style.left]" >
         <span :class="[$style.title]">{{ selectedIteration.title }} </span>
         <small><span>{{ selectedIteration.subTitle }}</span></small>
+        <Icon name="select-arrows" in-text="true"/>
       </div>
 
-      <div class="col-3 debug" :class="[$style.right]" @click="toggleFilter">
+      <div class="col-3" :class="[$style.right]" @click="toggleFilter">
         <Icon  name="filter-list" :class="[$style.pointer]" />
       </div>
     </div>
@@ -21,8 +22,12 @@ import events from '../../modules/Bus'
 export default {
   name   : 'CalHeader',
   props  : [ 'selectedIteration' ],
-  methods: { toggleFilter },
+  methods: { toggleWeekSelect, toggleFilter },
   data
+}
+
+function toggleWeekSelect(){
+  this.$root.$emit('bottom-screen-done', { something: 'yes' })
 }
 
 function  data(){ return{ showFilter: false } }

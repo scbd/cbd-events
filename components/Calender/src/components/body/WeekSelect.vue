@@ -1,69 +1,70 @@
 <template>
-
-
   <transition  name="slide-details">
-    
-    <div class="page container-fluid debug">
-      
-        <nav class="mainn navbar  navbar-default debug">
-    <div class="col-3" @click="close" >
-      <svg class="icon-clock-o" v-if="options && options.cancel" >
-        <use xlink:href="#icon-close" />
-      </svg>
-    </div>
-    <div class="col-6 mid"> {{ title }} </div>
-    <div class="col-3 right-side" @click="done" > {{ $t('done') }} </div>
-  </nav>
+    <div class="page container-fluid" v-if="hide">
       <div class="row">
-                  <!-- @click="changeMeeting(meeting)"
-          v-for="(meeting,index) in visibleMeetings"
-          :key="index" -->
-        <div class="block gradient col-12" >
+
+        <Header :title="title" />
+
+        <div v-on:click="changeDate(5)" class="block gradient col-12" >
           <div>
-            <h4>some date</h4>
+            <h4>{{iteration.prev.prev.title}}</h4>
+            <small><span>{{ iteration.prev.prev.subTitle }}</span></small>
           </div>
         </div>
-      </div>
-      </div>
 
+        <div v-on:click="changeDate(4)" class="block gradient col-12" >
+          <div>
+            <h4>{{iteration.prev.title}}</h4>
+            <small><span>{{ iteration.prev.subTitle }}</span></small>
+          </div>
+        </div>
+
+        <div v-on:click="changeDate(8)" class="block gradient col-12" >
+          <div>
+            <h4>{{iteration.next.title}}</h4>
+            <small><span>{{ iteration.next.subTitle }}</span></small>
+          </div>
+        </div>
+
+        <div v-on:click="changeDate(9)" class="block gradient col-12" >
+          <div>
+            <h4>{{iteration.next.next.title}}</h4>
+            <small><span>{{ iteration.next.next.subTitle }}</span></small>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </transition>
 
 </template>
 
 <script>
-
-// import EventsBus from '../../modules/Bus'
+import Header    from '~/components/header/header-bottom-screen'
 
 export default {
-  name    : 'WeekSelect',
-  props   : [ 'iteration' ],
-  computed: { done, close },
+  name      : 'WeekSelect',
+  props     : [ 'iteration' ],
+  components: { Header },
+  methods   : { changeDate },
   data,
   mounted
 }
 
 function data(){
   const title = this.$t('weekSelect')
+  const hide  = false
 
-  return { title }
-}
-
-function mounted(){
-  console.log(this.iteration)
-  this.$root.$on('bottom-screen-done', () => {})
-}
-function close(){
-  this.$root.$emit('bottom-screen-cancel', { something: 'yes' })
+  return { title, hide }
 }
 
-function done(){
-  this.$root.$emit('bottom-screen-done', { something: 'yes' })
+function changeDate(index){
+  this.$root.$emit('changeDate', 7 - Number(index))
+  this.hide = !this.hide
 }
-// function showDetails (e){
-//   e.stopPropagation()
-//   e.data = { data: true }
-//   events.EventsBus('weekSelect', e)
-// }
+
+function mounted(){ this.$root.$on('bottom-screen-done', () =>  this.hide = !this.hide) }
+
 </script>
 
 <style scoped>
@@ -91,7 +92,7 @@ function done(){
             background-color: rgba(0,0,0,0.40);
             text-align: center;
             color:white;
-            margin: 1em 0 1em 0;
+            margin: 3em 0 1em 0;
             cursor: pointer;
             padding: 1em;
             border-top: 1px solid #ccc;

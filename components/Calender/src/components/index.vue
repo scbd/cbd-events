@@ -2,7 +2,7 @@
   <section ref="main">
     <WeekSelect :iteration="selectedIteration"/>
     <div :class="[$style.calComponent]">
-      <CalHeader :selected-iteration="selectedIteration" v-if="false"/>
+      <CalHeader :selected-iteration="selectedIteration" />
       
       <CalBody :selected-iteration="selectedIteration" :conference="conference" :events="events" />
     </div>
@@ -16,7 +16,7 @@ import CalBody            from './body/CalBody'
 import CalHeader          from './header/CalHeader'
 import CalWeeks           from '../modules/CalWeeksService'
 import messages           from '../locales'
-import WeekSelect   from './body/WeekSelect'
+import WeekSelect         from './body/WeekSelect'
 
 export default {
   name      : 'Calendar',
@@ -41,6 +41,7 @@ function data(){
 
 function mounted(){
   events.$on('showFilter', this.applyFilter)
+  this.$root.$on('changeDate', this.changeDateTime)
 }
 
 function beforeCreate(){
