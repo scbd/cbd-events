@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid home">
     <div class="row">
-      <div class="col-12">
+      <div class="col-12 mb-3">
         <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
       </div>
       <div v-if="aboutExists" class="col-6" >
@@ -83,7 +83,7 @@ function getHeroImage(){
     let blob = this.conference.heroImageBlob || this.conference.imageBlob
 
     if(blob) blob = URL.createObjectURL(blob)
-    return   blob || false
+    return   blob || 'https://attachments.cbd.int/cbd-logo-en.svg'
   }
   catch(e){ return false }
 }

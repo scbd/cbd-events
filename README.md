@@ -1,20 +1,10 @@
 #TODO
-- home screen menu
-  - hide if not there
-  - settings
-- create info page
- -  not internet first load, save cache, refresh after load if can
-- fix agenda
-  - provisional before
-  - in session during
-- test documents after conference change
-  - have blaise fix download dialog and view only
-- test calendar
-  - missing day bug
+
+- have blaise fix download dialog and view only
 - test no cover and just standard image
 - install codepush - test
 - test ios
-    - deploy on ios
+- deploy on ios
 
 # CBD-Events PWA
 

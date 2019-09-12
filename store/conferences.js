@@ -9,10 +9,10 @@ async function getConferences({ state, dispatch, commit, rootState }){
   const { conferenceCode } = this.$router.currentRoute.params
   const   response         = await queryConferences(this.$axios, rootState.i18n)
 
+
   commit('setConferences', response)
   
   await initSelectedConference({ $axios, state, commit }, { conferenceCode, response })
-
   await dispatch('getMeetings')
 
   return response
@@ -124,7 +124,12 @@ function setSelected (state, payLoad){
   state.meetings = []
   state.selected = { ...{}, ...payLoad }
 }
-
+function setDeleteAll (state){
+  state.selectedMeeting = false
+  state.meetings = []
+  state.docs = []
+  state.selected = false
+}
 function setConferences     (state, payLoad = []){ state.docs = payLoad }
 function setSelectedMeeting (state, payLoad = {}){ state.selectedMeeting = payLoad }
 function setMeetings        (state, payLoad = {}){ state.meetings = payLoad }
@@ -132,7 +137,7 @@ function setMeetings        (state, payLoad = {}){ state.meetings = payLoad }
 export const state     = () => ({ docs: [], selected: false, selectedMeeting: false, meetings: [] })
 export const actions   = { get: getConferences, getMeetings }
 export const getters   = { conferenceCal, conference, meeting, byCode, selectedApp, meetingCode, startDate, isInSession, forceDate, agendaItems, agenda, agendaPrefix, conferenceId }
-export const mutations = { setSelected, setSelectedMeeting, setConferences, setMeetings }
+export const mutations = { setDeleteAll, setSelected, setSelectedMeeting, setConferences, setMeetings }
 
 
 function isValidDate(date){ return !isNaN(new Date(date).getTime()) }

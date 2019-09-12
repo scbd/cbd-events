@@ -62,14 +62,17 @@ function mounted(){ this.$root.$on('bottom-screen-done', done) }
 
 function done(){ this.$router.go(-1) }
 
-function changeConference(conference){
+async function changeConference(conference){
   const { code }   = conference
   const { locale } = this.$store.state.i18n
   const  name      = `conferenceCode___${locale}`
   const  params    = { conferenceCode: code }
 
-  this.$store.commit('conferences/setSelected', conference)
-  this.$router.replace({ name, params })
+  this.$store.commit('conferences/setDeleteAll')
+
+  await this.$store.dispatch('conferences/get').then(() => {
+    this.$router.push({ name, params }, () => this.$router.go(0))
+  })
 }
 
 function getImage({ apps }){
