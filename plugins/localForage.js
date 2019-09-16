@@ -80,7 +80,7 @@ const createVueIntance = function (options){
         })
       },
       iterate:lf.iterate,
-      setDriver (drivreName) {
+      setDriver (driverName) {
         return new Promise((resolve, reject) => {
           resolve(lf.setDriver(driverName))
         })

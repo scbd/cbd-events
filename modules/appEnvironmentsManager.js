@@ -39,10 +39,6 @@ export const cordovaNuxtConfig = (nuxtConfig) => {
   nuxtConfig.head.link =[ { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' } ]
   nuxtConfig.head.script=  [ { src: 'cordova.js' } ]
   
-  //delete(nuxtConfig.manifest.icons)
-
-  nuxtConfig.modules.splice(nuxtConfig.modules.indexOf('@nuxtjs/proxy'), 1)
-
   nuxtConfig.generate = { dir: 'cordova/www' }
 
   nuxtConfig.router.mode ='hash'
@@ -50,8 +46,5 @@ export const cordovaNuxtConfig = (nuxtConfig) => {
   nuxtConfig.build.publicPath  =  '/nuxt/'
   nuxtConfig.plugins.unshift('~/plugins/cordova.js')
   
-  delete(nuxtConfig.proxy)
-
-  delete(nuxtConfig.axios.proxy)
   return nuxtConfig
 }

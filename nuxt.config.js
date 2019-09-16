@@ -1,5 +1,6 @@
 import { dotEnvReader, cordovaNuxtConfig } from './modules/appEnvironmentsManager'
-import { resolve } from 'path'
+// import { resolve } from 'path'
+const localforage = require('localforage')
 
 dotEnvReader() // read env related vars and set them to nodejs.env
 
@@ -45,13 +46,14 @@ let config = {
     '@nuxtjs/axios',
     [ '~/modules/nuxtModules/localForage.js', {
       name       : 'cbd-events',
+      driver     : [ localforage.WEBSQL, localforage.LOCALSTORAGE ],
       version    : 1.0,
       size       : 4980736, // Size of database, in bytes. WebSQL-only for now.
       storeName  : 'files', // Should be alphanumeric, with underscores.
       description: 'Main file store',
       instances  : [ 
                       { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' },
-                      { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'about', description: 'file blobs' }
+                      { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'about', description: 'about articles' }
                     ]
     } ]
   ],

@@ -4,14 +4,18 @@ async function loadAction({ state, commit }){
   const { length } = state.data
   const   data     = []
 
+  console.log('state.data', length)
+  console.log('this.$localForage', this.$localForage)
   try{
-    if(length) return
+    if(!length) return
 
-    await this.$localForage.files.iterate((value) => {
+    await this.$localForage.files.iterate((value, key, iterationNumber) => {
+      console.log('files iteration number', iterationNumber)
       data.push(value)
     })
-    
+    console.log('files data', data)
     await this.$localForage.blobs.iterate((value, key, iterationNumber) => {
+      console.log('blobs iteration number', iterationNumber)
       data[iterationNumber-1].blob = value
     })
 

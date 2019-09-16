@@ -11,7 +11,7 @@
     "build:dev": " rm -rf .nuxt && NODE_ENV=dev nuxt build",
     "build:stg": " rm -rf .nuxt && NODE_ENV=stg nuxt build",
     "build:ios:dev": "rm -rf .nuxt && NODE_ENV=iosdev nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
-    "build:ios": "rm -rf .nuxt && NODE_ENV=ios nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
+    "build:ios": "rm -rf .nuxt && rm -rf cordova/www/* && NODE_ENV=ios nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
     "ios:sim": "open ./cordova/platforms/ios/CBD\\ Events.xcworkspace/",
     "build:android:dev": "rm -rf .nuxt && NODE_ENV=androiddev nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build android",
     "build:android": "rm -rf .nuxt && NODE_ENV=android nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build android",

@@ -15,6 +15,7 @@
     <allow-intent href="geo:*" />
     <allow-intent href="https://*.cbddev.xyz/*" />
     <allow-navigation href="blob:file:*" />
+    <allow-navigation href="about:blank" />
     <allow-navigation href="https://*.cbd.int/conferences/*/*/documents" />
     <allow-navigation href="https://*.cbd.int/conferences/*/schedules" />
     <allow-navigation href="https://*.cbddev.xyz/conferences/*/*/documents" />
@@ -23,6 +24,7 @@
     <allow-intent href="itms-apps:*" />
     <allow-intent href="https://*.cbd.int/*" />
     <platform name="ios">
+        <preference name="APP_SECRET" value="8284127f-0583-4a22-98cb-b03d68c42ce8" />
         <icon height="20" src="res/icons/ios/20.png" width="20" />
         <icon height="29" src="res/icons/ios/29.png" width="29" />
         <icon height="40" src="res/icons/ios/40.png" width="40" />
@@ -62,6 +64,7 @@
         <preference name="ShowSplashScreenSpinner" value="false" />
     </platform>
     <platform name="android">
+        <preference name="APP_SECRET" value="09da66e3-d79a-4d0d-a8e6-4f2a12c42e33" />
         <preference name="minSdkVersion" value="19" />
         <cache-path name="cache" path="." />
         <external-cache-path name="cache" path="." />
