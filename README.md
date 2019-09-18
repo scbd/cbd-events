@@ -6,7 +6,13 @@
 - test ios
 - deploy on ios
 
-# CBD-Events PWA
+# CBD-Events 
+
+## android
+
+https://developer.android.com/studio
+https://www.java.com/ES/download/
+https://gradle.org/install/
 
 android/project.properties 
 change to: cordova.system.library.1=com.android.support:support-v4:27.1.0

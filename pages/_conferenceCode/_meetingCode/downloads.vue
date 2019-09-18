@@ -25,7 +25,7 @@
     <section v-if="!files.length">
       <div class="text-center">
         <br><br><br><br>
-        <span>No files downloaded for the <br><b>{{ meeting.title }}</b></span>
+        <span>No files downloaded for the <br><b>{{ meeting.title | lstring}}</b></span>
       </div>
     </section>
   </div>
@@ -37,13 +37,13 @@ import { mapGetters } from 'vuex'
 import { isIOSCordova, isIpad                    } from '~/modules/Device'
 import { isPDF,    isMsWord                      } from '~/modules/MimeTypes'
 import { openFile, shareFile,   setOpenSafariFn  } from '~/modules/CordovaFiles'
-import { trimName, timeDisplay, formatBytes      } from '~/plugins/filters'
+import { lstring, trimName, timeDisplay, formatBytes      } from '~/plugins/filters'
 
 export default {
   name    : 'Downloads',
   methods : {  isPDF, isMsWord, openFile, shareFile, openSafari },
   computed: { isIOS, isIpad, ...gettersMap() },
-  filters : { trimName, timeDisplay, formatBytes },
+  filters : { trimName, timeDisplay, formatBytes, lstring },
   asyncData,
   mounted
 }
@@ -64,7 +64,7 @@ async function asyncData ({ store, params }){
   return { conferenceCode }
 }
 
-function isIOS(){ return isIOSCordova(this.$cordova) }
+function isIOS(){ return isIOSCordova(this.$cordova.device) }
 
 function mounted (){
   if(!this.$cordova) this.$cordova = null

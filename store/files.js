@@ -7,7 +7,7 @@ async function loadAction({ state, commit }){
   console.log('state.data', length)
   console.log('this.$localForage', this.$localForage)
   try{
-    if(!length) return
+    if(length) return
 
     await this.$localForage.files.iterate((value, key, iterationNumber) => {
       console.log('files iteration number', iterationNumber)

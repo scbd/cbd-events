@@ -13,6 +13,8 @@ const saveLocally = async (fileData, { file }) => {
     const dirEntry  = await LocalFiles.resolveLocalFileSystemURL(fileSystemUrl)
     const fileEntry = await LocalFiles.getFile(dirEntry, baseName, { create: true, exclusive: false })
 
+    console.log('dirEntry', dirEntry)
+    console.log('fileEntry', fileEntry)
     await LocalFiles.write(fileEntry, blob)
 
     return fileEntry.toURL()
@@ -41,12 +43,12 @@ async function openFileFromCordova($cordova, file){
   const   isIOS                 = Device.isIOSCordova(device)
 
   if(!$cordova) throw new Error('$cordova object not found')
-  if(isIOS)     return openFileFromIOS($cordova, file)
-
-  const fileURL = await saveLocally(file)
+  //if(isIOS)     return openFileFromIOS($cordova, file)
+  console.log('file', file)
+  const fileURL = await saveLocally(file, $cordova)
 
   //TODO add correct mime
-  return fileOpener2.open(fileURL, 'application/pdf', { error, success })
+  return fileOpener2.open(decodeURIComponent(fileURL), file.type, { error, success })
 }
   
 function error   (e){ console.log(`Error status: ${e.status} - Error message: ${e.message}`, e); throw e }
@@ -54,6 +56,8 @@ function success (){  console.log('file opened successfully') }
   
 function openFileFromIOS({ inAppBrowser }, file){
   const blobUrl = LocalFiles.createBlobUrl(file)
+
+  console.log('blobUrl', blobUrl)
 
   return inAppBrowser.open(blobUrl)
 }
@@ -63,8 +67,9 @@ function openSafari ({ blob, baseName }){
   catch(e){ openFileDefault({ blob, baseName }) }
 }
 
-export const shareFile = async (file, { fileOpener2 }) => {
-  const fileURL = await saveLocally(file)
+export const shareFile = async (file, $cordova) => {
+  const { fileOpener2  } = $cordova
+  const fileURL = await saveLocally(file, $cordova)
 
   fileOpener2.showOpenWithDialog(decodeURIComponent(fileURL), file.type, showOpenWithDialogOptions)
 }

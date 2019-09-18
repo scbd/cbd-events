@@ -46,7 +46,6 @@ let config = {
     '@nuxtjs/axios',
     [ '~/modules/nuxtModules/localForage.js', {
       name       : 'cbd-events',
-      driver     : [ localforage.WEBSQL, localforage.LOCALSTORAGE ],
       version    : 1.0,
       size       : 4980736, // Size of database, in bytes. WebSQL-only for now.
       storeName  : 'files', // Should be alphanumeric, with underscores.

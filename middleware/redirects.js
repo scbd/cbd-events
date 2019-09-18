@@ -10,8 +10,9 @@ export default async function ({ route, redirect, store }){
   if(!store.state.conferences.selected || !store.state.conferences.selectedMeeting) return
   
   const conferenceCode = store.state.conferences.selected.code
+  const hasRouteParams = Object.keys(route.params).length
 
-  if(!route.name && !Object.keys(route.params).length)
+  if(!hasRouteParams)
     if(!store.state.i18n.initalized)
       redirect(`/${conferenceCode}`)
 }

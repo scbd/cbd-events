@@ -3,7 +3,7 @@ import VueCordova from 'vue-cordova'
 
 Vue.use(VueCordova)
 
-export default (ctx, inject) => {
+export default ({app}, inject) => {
   Vue.cordova.on('deviceready', () => {
     const { cordova }                     = window
     const { file, InAppBrowser, plugins } = cordova
@@ -15,5 +15,11 @@ export default (ctx, inject) => {
     Vue.cordova.fileOpener2  = plugins.fileOpener2
   })
 
+  const  localePath = (link) => {
+    return app.localePath(link).replace('#', '')
+  }
+
   inject('cordova', Vue.cordova)
+  inject('localePath', localePath)
 }
+

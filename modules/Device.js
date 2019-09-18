@@ -4,8 +4,8 @@ export const userAgentHasChrome = () => window && window.navigator && ~window.na
 export const userAgentHasIPad   = () => window && window.navigator && ~window.navigator.userAgent.match(/iPad/i)
 export const isIpad             = () => window && window.navigator && !!window.navigator.userAgent.match(/iPad/i)
 export const isSafari           = () => userAgentHasSafari && userAgentHasChrome
-export const isIOSCordova       = ($cordova) => {
-  try{ return $cordova.device.platform === 'iOS' }
+export const isIOSCordova       = ({ platform }) => {
+  try{ return platform === 'iOS' }
   catch(e){ return false }
 }
 
