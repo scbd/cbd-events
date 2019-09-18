@@ -13,8 +13,6 @@ const saveLocally = async (fileData, { file }) => {
     const dirEntry  = await LocalFiles.resolveLocalFileSystemURL(fileSystemUrl)
     const fileEntry = await LocalFiles.getFile(dirEntry, baseName, { create: true, exclusive: false })
 
-    console.log('dirEntry', dirEntry)
-    console.log('fileEntry', fileEntry)
     await LocalFiles.write(fileEntry, blob)
 
     return fileEntry.toURL()
@@ -43,24 +41,18 @@ async function openFileFromCordova($cordova, file){
   const   isIOS                 = Device.isIOSCordova(device)
 
   if(!$cordova) throw new Error('$cordova object not found')
-  //if(isIOS)     return openFileFromIOS($cordova, file)
-  console.log('file', file)
+
   const fileURL = await saveLocally(file, $cordova)
 
-  //TODO add correct mime
-  return fileOpener2.open(decodeURIComponent(fileURL), file.type, { error, success })
+  if(isIOS)
+    return fileOpener2.open(decodeURIComponent(fileURL), file.type, { error, success })
+
+  fileOpener2.showOpenWithDialog(decodeURIComponent(fileURL), file.type, showOpenWithDialogOptions)
 }
   
 function error   (e){ console.log(`Error status: ${e.status} - Error message: ${e.message}`, e); throw e }
 function success (){  console.log('file opened successfully') }
   
-function openFileFromIOS({ inAppBrowser }, file){
-  const blobUrl = LocalFiles.createBlobUrl(file)
-
-  console.log('blobUrl', blobUrl)
-
-  return inAppBrowser.open(blobUrl)
-}
 
 function openSafari ({ blob, baseName }){
   try{ CordovaFiles.OpenSafariFn(blob) }
