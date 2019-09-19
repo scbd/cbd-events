@@ -1,18 +1,18 @@
 export default async function ({ route, redirect, store }){
-  //get conferences if we do not have
-  if(!store.state.conferences.selected)
-    await store.dispatch('conferences/get')
+  try{
+    const { name } = route
+    const hasRouteParams = Object.keys(route.params).length
+    const isConferenceLoaded = store.state.conferences.selected
 
-  // this is a hack to fix bug from nuxt-i18n
-  // the bug is load in default switch locale then switch back default routes are lost warning
-  // reactive values on side menu do not change when locale changes
-  // this work around fixes
-  if(!store.state.conferences.selected || !store.state.conferences.selectedMeeting) return
-  
-  const conferenceCode = store.state.conferences.selected.code
-  const hasRouteParams = Object.keys(route.params).length
+    if(name.includes('offline')) return
 
-  if(!hasRouteParams)
-    if(!store.state.i18n.initalized)
-      redirect(`/${conferenceCode}`)
+    if(!isConferenceLoaded)
+      await store.dispatch('conferences/get')
+
+    const { code } = store.state.conferences.selected
+    const isAppFistLoad = !hasRouteParams && code
+
+    if(isAppFistLoad) redirect(`/${code}`)
+  }
+  catch(e){ redirect('/offline') }
 }

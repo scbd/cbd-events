@@ -13,17 +13,18 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
-    <allow-intent href="https://*.cbddev.xyz/*" />
+    
     <allow-navigation href="blob:file:*" />
     <allow-intent href="blob:file:*" />
     <allow-navigation href="https://*.cbd.int/conferences/*/*/documents" />
     <allow-navigation href="https://*.cbd.int/conferences/*/schedules" />
     <allow-navigation href="https://*.cbddev.xyz/conferences/*/*/documents" />
     <allow-navigation href="https://*.cbddev.xyz/conferences/*/schedules" />
-    <allow-intent href="itms:*" />
-    <allow-intent href="itms-apps:*" />
     <allow-intent href="https://*.cbd.int/*" />
+    <allow-intent href="https://*.cbddev.xyz/*" />
     <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
         <preference name="CodePushDeploymentKey" value="ZHp1f_spAQBTkgs8Tvv3vNuCuXFbSk3HKzVAm" />
         <preference name="APPCENTER_ANALYTICS_ENABLE_IN_JS" value="true" />
         <icon height="20" src="res/icons/ios/20.png" width="20" />
@@ -65,7 +66,8 @@
         <preference name="ShowSplashScreenSpinner" value="false" />
     </platform>
     <platform name="android">
-        <preference name="CodePushDeploymentKey" value="7KHkhKLrmgLBVjA0d6oUaK9_77MwBkVlEKNCQ" />
+        <allow-intent href="market:*" />
+        <preference name="CodePushDeploymentKey" value="RegHZCKYRwWGMu6BYptIuxl_m-MZSkVlNYERQ" />
         <preference name="APPCENTER_ANALYTICS_ENABLE_IN_JS" value="true" />
         <preference name="minSdkVersion" value="19" />
         <cache-path name="cache" path="." />
@@ -106,6 +108,5 @@
     <plugin name="cordova-plugin-statusbar" spec="~2.4.2" />
     <plugin name="cordova-plugin-splashscreen" spec="~5.0.2" />
     <plugin name="cordova-plugin-file-opener2" spec="^2.0.19" />
-    <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <plugin name="cordova-plugin-inappbrowser" spec="^3.0.0" />
 </widget>

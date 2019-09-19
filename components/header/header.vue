@@ -74,13 +74,16 @@ function showMeetingNav(){
 }
 
 function conference (){
-  const conference = this.$store.state.conferences.selected
+  try{
+    const conference = this.$store.state.conferences.selected
 
-  if(!conference) return
+    if(!conference) return {}
   
-  const { cbdEvents } = conference.apps
+    const { cbdEvents } = conference.apps
 
-  return cbdEvents || {}
+    return cbdEvents || {}
+  }
+  catch(e){ return {} }
 }
 
 function meeting (){
@@ -109,7 +112,7 @@ function toggleSideMenu(){
 }
 
 function offlineNotice(){
-  this.$swal({
+  this.$swal.fire({
     title: this.$i18n.t('internetConnectionLost'),
     text : this.$i18n.t('internetConnectionLostDescription'),
     icon : 'warning'
@@ -117,7 +120,7 @@ function offlineNotice(){
 }
 
 function onlineNotice(){
-  this.$swal({
+  this.$swal.fire({
     title: this.$i18n.t('internetConnectionRestored'),
     icon : 'success'
   })

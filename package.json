@@ -8,7 +8,7 @@
     "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt",
     "dev:ios": "rm -rf .nuxt  && NODE_ENV=local nuxt",
     "build:ios": "rm -rf .nuxt && rm -rf cordova/www/* && NODE_ENV=ios nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
-    "build:android": "rm -rf .nuxt && NODE_ENV=android nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build android --buildFlag='-UseModernBuildSystem=0'",
+    "build:android": "rm -rf .nuxt && NODE_ENV=android nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build android",
     "lint": "eslint --ext .js,.vue  .",
     "lint:fix": "eslint --fix --ext .js,.vue .",
     "clear:cache": "rm yarn.lock && rm -rf node_modules && yarn "
@@ -25,7 +25,7 @@
     "nuxt": "2.9.2",
     "nuxt-i18n": "6.0.2",
     "object-sizeof": "1.5.1",
-    "sweetalert": "2.1.2",
+    "sweetalert2": "^8.17.6",
     "velocity-animate": "1.5.2",
     "vue-cordova": "0.1.2",
     "vue-notifications": "1.0.2"

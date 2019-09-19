@@ -26,6 +26,9 @@ export default () => new Promise(((resolve) => {
     weekSelect                       : 'Change Week',
     downloading                      : 'Downloading Update',
     downloadComplete                 : 'Update Download Complete',
-    installing                       : 'Installing Update'
+    installing                       : 'Installing Update',
+    offline                          : 'No internet connection',
+    offlineMsg                       : 'CBD Events cannot initialize without an internet connection',
+    tryAgain                         : 'Try Again?'
   })
 }))
