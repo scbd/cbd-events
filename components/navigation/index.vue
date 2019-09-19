@@ -16,9 +16,7 @@
         </nuxt-link>
 
         <li class="nav-item " v-if="downloading">
-          <div class="lds-ring" >
-            <div /><div /><div /><div />
-          </div>
+          <Spinner/>
         </li>
 
         <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode, meetingCode } })">
@@ -37,10 +35,11 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name    : 'Navigation',
+  name      : 'Navigation',
+  components: { Spinner: () => import('../Spinner') },
+  computed  : { showNavs, ...gettersMap() },
+  methods   : { onScroll, hasScrolled },
   data,
-  computed: { showNavs, ...gettersMap() },
-  methods : { onScroll, hasScrolled },
   beforeMount,
   beforeDestroy
 }

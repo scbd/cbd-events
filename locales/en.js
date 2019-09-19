@@ -23,6 +23,9 @@ export default () => new Promise(((resolve) => {
     callThe                          : 'Call the',
     emailThe                         : 'Email the',
     scbd                             : 'SCBD',
-    weekSelect                       : 'Change Week'
+    weekSelect                       : 'Change Week',
+    downloading                      : 'Downloading Update',
+    downloadComplete                 : 'Update Download Complete',
+    installing                       : 'Installing Update'
   })
 }))

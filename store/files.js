@@ -7,9 +7,9 @@ async function loadAction({ state, commit }){
   try{
     if(length) return
 
-    await this.$localForage.files.iterate((value, key, iterationNumber) =>  data.push(value) )
+    await this.$localForage.files.iterate((value) =>  data.push(value))
 
-    await this.$localForage.blobs.iterate((value, key, iterationNumber) =>  data[iterationNumber-1].blob = value ) 
+    await this.$localForage.blobs.iterate((value, key, iterationNumber) =>  data[iterationNumber-1].blob = value)
     
     if(data.length) commit('SET', data)
   }
