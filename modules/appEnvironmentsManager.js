@@ -2,7 +2,7 @@ const path   = require('path')
 const dotenv = require('dotenv')
 
 export const pwaEnvironments = [ 'local', 'dev', 'stg' ]
-export const cordovaEnvironments = [ 'ios', 'iosdev', 'iosstg', 'android', 'androiddev', 'androidstg' ]
+export const cordovaEnvironments = [ 'ios', 'iosdev', 'iosstg', 'android', 'androiddev', 'androidstg', 'cordova' ]
 export const environments = pwaEnvironments.concat(cordovaEnvironments)
 
 export const dotEnvReader = () => {
@@ -40,8 +40,9 @@ export const cordovaNuxtConfig = (nuxtConfig) => {
   nuxtConfig.head.script=  [ { src: 'cordova.js' } ]
   
   nuxtConfig.generate = { dir: 'cordova/www' }
-
-  nuxtConfig.router.mode ='hash'
+  
+  if(process.env.NODE_ENV!='cordova')
+    nuxtConfig.router.mode ='hash'
 
   nuxtConfig.build.publicPath  =  '/nuxt/'
   nuxtConfig.plugins.unshift('~/plugins/cordova.js')

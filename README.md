@@ -14,12 +14,9 @@ https://developer.android.com/studio
 https://www.java.com/ES/download/
 https://gradle.org/install/
 
-android/project.properties 
-change to: cordova.system.library.1=com.android.support:support-v4:27.1.0
+ANDROID_SDK_ROOT=/Users/randyhoulahan/Library/Android/sdk
 
-gradle.build
-defaultTargetSdkVersion=28 //Integer - We ALWAYS target the latest by default
-defaultCompileSdkVersion=28 //Integer - We ALWAYS compile with the latest by default
+
 
 ## Build Setup
 

@@ -6,9 +6,9 @@
   "private": true,
   "scripts": {
     "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt",
-    "dev:ios": "rm -rf .nuxt  && NODE_ENV=local nuxt",
-    "build:ios": "rm -rf .nuxt && rm -rf cordova/www/* && NODE_ENV=ios nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0'",
-    "build:android": "rm -rf .nuxt && NODE_ENV=android nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build android",
+    "dev:cordova": "rm -rf .nuxt && rm -rf cordova/www/* && NODE_ENV=cordova nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r  && cd cordova && cordova prepare browser && cordova run browser --port=3000",
+    "build:ios": "rm -rf .nuxt && rm -rf cordova/www/* && NODE_ENV=ios nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build ios --buildFlag='-UseModernBuildSystem=0' && cordova platform remove ios && cordova platform add ios",
+    "build:android": "rm -rf .nuxt && NODE_ENV=android nuxt generate && replace '/nuxt/' 'nuxt/' cordova/www -r && cd cordova && cordova build android && cordova platform remove android && cordova platform add android",
     "lint": "eslint --ext .js,.vue  .",
     "lint:fix": "eslint --fix --ext .js,.vue .",
     "clear:cache": "rm yarn.lock && rm -rf node_modules && yarn "

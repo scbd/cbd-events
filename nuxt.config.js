@@ -17,7 +17,7 @@ let config = {
     meta : [ { charset: 'utf-8' },
       { name: 'viewport',  content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'CBD/UN Biodiversity Events Application. Information on CBD/UN Biodiversity conferences and related events is available to you at the touch of your finger. Access important information including agendas,  descriptions, in-session documents and activity dates and times. You can create a custom schedule to help you manage your time while at the event or download documents to read on the go or offline.' },
-      { hid: 'Content-Security-Policy', name:'Content-Security-Policy', content: 'default-src https://codepush.appcenter.ms \'self\' data: gap: https://ssl.gstatic.com \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\'; media-src *'}
+      { hid: 'Content-Security-Policy', name:'Content-Security-Policy', content: 'default-src https://codepush.appcenter.ms \'self\' data: gap: https://ssl.gstatic.com \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\'; media-src *' }
     ],
     link: [ { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' } ]
   },

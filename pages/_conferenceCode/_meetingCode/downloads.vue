@@ -64,7 +64,11 @@ async function asyncData ({ store, params }){
   return { conferenceCode }
 }
 
-function isIOS(){ return isIOSCordova(this.$cordova.device) }
+function isIOS(){
+  console.log(this.$cordova)
+  try{ return isIOSCordova(this.$cordova.device) }
+  catch(e){ return {} }
+}
 
 function mounted (){
   if(!this.$cordova) this.$cordova = null
