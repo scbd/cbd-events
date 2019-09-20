@@ -12,54 +12,70 @@
 ![SCBD][logoText]
 
 [![codebeat badge](https://codebeat.co/badges/c285df61-93ad-47e2-bdc7-887ba7eda336)](https://codebeat.co/projects/github-com-scbd-cbd-events-master)
-[![Dependency Status](https://david-dm.org/scbd/chm.cbd.int.svg)](https://david-dm.org/scbd/chm.cbd.int)
-[![Dependency Status](https://david-dm.org/scbd/cbd-events)](https://david-dm.org/scbd/cbd-events.svg)
-[![Dependency Status](https://david-dm.org/scbd/cbd-events?type=dev)](https://david-dm.org/scbd/cbd-events/dev-status.svg)
+[![Dependency Status](https://david-dm.org/scbd/cbd-events.svg)](https://david-dm.org/scbd/cbd-events)
+[![Dependency Status](https://david-dm.org/scbd/cbd-events/dev-status.svg)](https://david-dm.org/scbd/cbd-events?type=dev)
 
 [![App Store][appStoreImg]](appStoreLink)
-[![App Store](appStoreLink)](appStoreImg)
+[![Play Store][playStoreImg]](appStoreLink) 
 
 
 # CBD-Events 
 
-## android
+## Prerequisites
 
-https://developer.android.com/studio
-https://www.java.com/ES/download/
-https://gradle.org/install/
+### Android
+Install the following:
 
-ANDROID_SDK_ROOT=/Users/randyhoulahan/Library/Android/sdk
+1. https://www.java.com/ES/download/
+2. https://gradle.org/install/
+3. https://developer.android.com/studio
+4. Down load simulator in android studio tools > avd manager
 
+```bash
+echo "ANDROID_SDK_ROOT=/Users/$(whoami)/Library/Android/sdk" >>~/.bash_profile
+```
+
+### IOS
+Install the following:
+
+1. https://apps.apple.com/ca/app/xcode/id497799835?mt=12
 
 
 ## Build Setup
 
-
-# install dependencies
+### Install dependencies
 ``` bash
 $ yarn install
 ```
 
-# serve with hot reload at localhost:3000
+### Serve with hot reload at localhost:3000
 ``` bash
 $ yarn dev
 ```
 
-# build ios platform for production
+### Build ios platform for production
 ``` bash
 $ yarn build:ios
 ```
+1. Open xcode studio project './cordova/platforms/ios'
+2. Run in selected simulator
 
-# build android platform for production
+
+### Build android platform for production
 ``` bash
 $ yarn build:android
 ```
+1. Open android studio project './cordova/platforms/android'
+2. Run in selected simulator
 
+## Publish
+
+[See the cordova workspace: https://github.com/scbd/cbd-events/blob/oweg-update/cordova/README.md](https://github.com/scbd/cbd-events/blob/oweg-update/cordova/README.md)
 
 
 [logo]:https://www.cbd.int/styles/ui/templates/cbd2011/images/logo-cbd-leaf-line.gif
 [logoText]:https://www.cbd.int/styles/ui/templates/cbd2011/images/logo-cbd-text-en.gif
 [appStoreImg]:https://www.cbd.int/images/logos/com/Apple/Download_on_the_App_Store_Badge.png
 [appStoreLink]:https://apps.apple.com/ca/app/cbd-events/id1441613306
-[playStoreImg]:https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png
+[playStoreImg]:https://attachments.cbd.int/125x125/en_badge_web_generic.png
 [playStoreLink]:https://play.google.com/store/apps/details?id=io.cbd.unbioevents&hl=en

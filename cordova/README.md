@@ -1,10 +1,22 @@
-
-
 ![SCBD Leaf][logo]
 ![SCBD][logoText]
 
-[![codebeat badge](https://codebeat.co/badges/6270ec63-1b6d-44ce-a416-3760836ca13e)](https://codebeat.co/projects/github-com-scbd-conference-cal-master)
-[![Dependency Status](https://david-dm.org/scbd/conference-cal)](https://david-dm.org/scbd/conference-cal)
+
+# Publish IOS
+1. first build IOS for production, then:
+``` bash
+$ yarn release:ios
+```
+2. Log into the app center and give a description to the release: 
+[https://appcenter.ms/orgs/SCBD/apps/cbd-events-ios/distribute/code-push](https://appcenter.ms/orgs/SCBD/apps/cbd-events-ios/distribute/code-push)
+
+# Publish Android
+1. first build android for production, then:
+``` bash
+$ yarn release:android
+```
+2. Log into the app center and give a description to the release:
+[https://appcenter.ms/orgs/SCBD/apps/cbd-events-android](https://appcenter.ms/orgs/SCBD/apps/cbd-events-android)
 
 
 [logo]:https://www.cbd.int/styles/ui/templates/cbd2011/images/logo-cbd-leaf-line.gif
