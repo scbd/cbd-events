@@ -9,7 +9,7 @@
         "platform:reload:android": "cordova platform remove android && cordova platform add android",
         "clear:cache": "rm package-lock.json && rm -rf node_modules && rm -rf plugins/* && rm -rf platforms/*",
         "release:ios": "appcenter codepush release -a SCBD/cbd-events-ios -c ./platforms/ios/www -d Production -t \"*\" --mandatory",
-        "release:android": "appcenter codepush release -a SCBD/cbd-events-android -c ./platforms/android/www -d Production -t \"*\" --mandatory"
+        "release:android": "appcenter codepush release -a SCBD/cbd-events-android -c ./platforms/android/app/src/main/assets/www -d Production -t \"*\" --mandatory"
     },
     "author": "Apache Cordova Team",
     "license": "Apache-2.0",
@@ -50,8 +50,8 @@
             "cordova-plugin-device": {}
         },
         "platforms": [
-            "android",
             "browser",
+            "android",
             "ios"
         ]
     },

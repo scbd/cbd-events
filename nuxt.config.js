@@ -1,6 +1,4 @@
 import { dotEnvReader, cordovaNuxtConfig } from './modules/appEnvironmentsManager'
-// import { resolve } from 'path'
-const localforage = require('localforage')
 
 dotEnvReader() // read env related vars and set them to nodejs.env
 
