@@ -111,7 +111,7 @@ function genFilesQuery(){
 }
 
 function genFilePath(){
-  return  `${process.env.API}/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
+  return  `${process.env.NUXT_ENV_API}/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
 }
 
 function genFilesParams(){

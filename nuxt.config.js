@@ -5,11 +5,6 @@ dotEnvReader() // read env related vars and set them to nodejs.env
 let config = {
   mode: 'spa',
   dev : (process.env.NODE_ENV !== 'production'),
-  env : {
-    API        : process.env.API,
-    IFRAME_HOST: process.env.IFRAME_HOST,
-    ATTACHMENTS: process.env.ATTACHMENTS
-  },
   head: {
     title: 'CBD Events - UN Biodiversity Conference App',
     meta : [ { charset: 'utf-8' },
@@ -66,7 +61,7 @@ let config = {
   loading: { color: '#009b48' },
   router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },
   build  : { extend },
-  axios  : { browserBaseURL: '/', baseURL: process.env.API },
+  axios  : { browserBaseURL: '/', baseURL: process.env.NUXT_ENV_API },
   cache  : { max: 1000, maxAge: 900000 },
   render : { http2: { push: true }, static: { maxAge: '1y', setHeaders } }
 }

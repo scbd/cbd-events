@@ -25,7 +25,7 @@ export default {
 
 function asyncData ({ store, params }){
   const { conferenceCode, meetingCode } = params
-  const   iFrameHost                    = process.env.IFRAME_HOST
+  const   iFrameHost                    = process.env.NUXT_ENV_IFRAME_HOST
 
   store.commit('routes/SET_SHOW_MEETING_NAV', true)
 

@@ -56,7 +56,7 @@ async function getEvents(query){
 }
 
 function getQueryUrl(query){
-  const endPoint = `${process.env.API}/api/v2013/index/select`
+  const endPoint = `${process.env.NUXT_ENV_API}/api/v2013/index/select`
   const f        = genFields(query)
   const q        = this.genQuery(query)
 

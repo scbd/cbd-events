@@ -46,7 +46,7 @@ function data (){
     lastScrollTop : 0,
     show          : true,
     isSideMenuOpen: false,
-    attachments   : process.env.ATTACHMENTS
+    attachments   : process.env.NUXT_ENV_ATTACHMENTS
   }
 }
 

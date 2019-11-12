@@ -43,7 +43,7 @@ function asyncData ({  params, query }){
   return {
     conferenceCode,
     datetime,
-    iFrameHost: process.env.IFRAME_HOST
+    iFrameHost: process.env.NUXT_ENV_IFRAME_HOST
   }
 }
 

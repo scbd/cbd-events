@@ -128,7 +128,7 @@ function toggleStream (){
 }
 
 function getPrograms(){
-  const endPoint = `${process.env.API}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
+  const endPoint = `${process.env.NUXT_ENV_API}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
 
   return axios.get(endPoint)
 }

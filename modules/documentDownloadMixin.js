@@ -77,7 +77,7 @@ function getBlobs({ data }){
   return Promise.all(blobs)
 }
 function closeDialog (){
-  this.$refs.docsFrame.contentWindow.postMessage(JSON.stringify({ type: 'closeDialogRemote' }), process.env.IFRAME_HOST)
+  this.$refs.docsFrame.contentWindow.postMessage(JSON.stringify({ type: 'closeDialogRemote' }), process.env.NUXT_ENV_IFRAME_HOST)
 }
 
 function createFileObj (fileData, blob){
