@@ -17,7 +17,7 @@ async function get({ dispatch }, force){
   if(!article) return undefined
 
   dispatch('save', { conferenceCode, article })
-  article.blob = await getBlob(this, article.coverImage)
+  article.blob = await getBlob(this, article.coverImage || {})
   return article
 }
 
@@ -55,7 +55,7 @@ function getBlob({ $axios }, { url }){
 
 function loadArticle($axios, conferenceCode){
   try{
-    return $axios.$get(`${process.env.API}/api/v2017/articles`, { params: getQuery(conferenceCode) })
+    return $axios.$get(`${process.env.NUXT_ENV_API}/api/v2017/articles`, { params: getQuery(conferenceCode) })
       .then((r) => r[0])
   }
   catch(e){
