@@ -34,6 +34,7 @@ function notice(){
 function redirect(){
   const { codePush } = window
 
-  codePush.restartApplication()
+  if(codePush)
+    codePush.restartApplication()
 }
 </script>
