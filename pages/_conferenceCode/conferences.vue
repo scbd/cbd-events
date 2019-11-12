@@ -2,11 +2,11 @@
   <section>
     <Header :title="screenTitle" />
     <div class="page container-fluid">
-      <div class="row" v-for="conference in conferencesWithMeetings" :key="conference._id">
+      <div class="row" v-for="(conference, index) in conferencesWithMeetings" :key="conference._id">
         <div @click="changeConference(conference)" class="col" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" >
 
-          <img crossorigin="anonymous" v-if="getHeroImage(conference)" :src="getHeroImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
-          <img crossorigin="anonymous" v-if="!getHeroImage(conference)" :src="getImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
+          <img crossorigin="anonymous" v-if="getHeroImage(conference, index)" :src="getHeroImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
+          <img crossorigin="anonymous" v-if="!getHeroImage(conference, index)" :src="getImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
 
           <div v-if="!getHeroImage(conference)" class="container d-flex">
             <h4 class="justify-content-center align-self-center">{{ title(conference) }}</h4>
@@ -82,10 +82,10 @@ function getImage({ apps }){
   return cbdEvents.image
 }
 
-function getHeroImage({ apps }){
+function getHeroImage({ apps }, index){
   const { cbdEvents } = apps
 
-  if(!cbdEvents || !cbdEvents.heroImage) return false
+  if(!index || !cbdEvents || !cbdEvents.heroImage) return false
   return cbdEvents.heroImage
 }
 </script>
