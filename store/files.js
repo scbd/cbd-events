@@ -1,12 +1,9 @@
 
 //read from local storage and update state
-async function loadAction({ state, commit }){
-  const { length } = state.data
+async function loadAction({  commit }){
   const   data     = []
 
   try{
-    if(length) return
-
     await this.$localForage.files.iterate((value) => { data.push(value) })  // nee curly bracket else iterate breaks on first iteration ???
 
     await this.$localForage.blobs.iterate((value, key, iterationNumber) =>  { data[iterationNumber-1].blob = value }) // same

@@ -43,6 +43,7 @@ async function saveFiles({ data }){
 
   try{
     await this.$store.dispatch('files/SAVE', { files: fileObjs, blobs })
+    await this.$store.dispatch('files/LOAD')
   }
   catch(e){
     console.error(e)
