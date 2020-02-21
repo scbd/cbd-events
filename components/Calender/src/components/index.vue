@@ -190,8 +190,8 @@ function mapByWeek(events){
   const weeks = {}
 
   for (const day in days){
-    const year       = DateTime.fromISO(day).toUTC().year
-    const weekNumber = DateTime.fromISO(day).toUTC().weekNumber
+    const year       = DateTime.fromISO(day).year
+    const weekNumber = DateTime.fromISO(day).weekNumber
     const weekText   = `${year}-${weekNumber}`
 
     if(!hasOwnProperty.call(weeks, weekText)) weeks[weekText]={}

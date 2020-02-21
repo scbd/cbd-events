@@ -130,7 +130,7 @@ function calEvent (){
 
 function dateTime (){
   const start = DateTime.fromISO(this.calEvent.start, { zone: this.calEvent.timezone }).toFormat('T')
-  const end = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toFormat('T  cccc, LLLL L ')
+  const end = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toFormat('T  cccc, LLLL dd ')
 
   return  `${start} - ${end}`
 }
