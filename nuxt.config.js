@@ -23,8 +23,7 @@ let config = {
       defaultLocale        : 'en',
       detectBrowserLanguage: { cookieKey: 'localePref', useCookie: true },
       locales              : [
-        { code: 'en', file: 'en.js', iso: 'en-US' },
-        { code: 'fr', file: 'fr.js', iso: 'fr-FR' }
+        { code: 'en', file: 'en.js', iso: 'en-US' }
       ],
       strategy: 'prefix_except_default',
       lazy    : true,
@@ -60,7 +59,7 @@ let config = {
   ],
   loading: { color: '#009b48' },
   router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },
-  build  : { extend },
+  build  : { transpile: [ 'camelcase-keys' ] },
   axios  : { browserBaseURL: '/', baseURL: process.env.NUXT_ENV_API },
   cache  : { max: 1000, maxAge: 900000 },
   render : { http2: { push: true }, static: { maxAge: '1y', setHeaders } }
@@ -73,18 +72,4 @@ module.exports = config
 function setHeaders(res, path){
   if (path.includes('sw.js'))
     res.setHeader('Cache-Control', `public, max-age=${15 * 60}`)
-}
-
-/*
-** Run ESLint on save
-*/
-function extend(config, { isDev, isClient }){
-  if (isDev && isClient)
-    config.module.rules.push({
-      enforce: 'pre',
-      test   : /\.(js|vue)$/,
-      loader : 'eslint-loader',
-      exclude: /(node_modules)/,
-      options: { fix: true }
-    })
 }
