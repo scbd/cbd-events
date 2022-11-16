@@ -9,7 +9,6 @@ async function getConferences({ state, dispatch, commit, rootState }){
   const { conferenceCode } = this.$router.currentRoute.params
   const   response         = await queryConferences(this.$axios, rootState.i18n)
 
-
   commit('setConferences', response)
   
   await initSelectedConference({ $axios, state, commit }, { conferenceCode, response })
@@ -197,7 +196,7 @@ function hasNoMenus({ apps, conference, majorEventIDs }){
 }
 
 function extractMenus(conference){
-  return conference.menus || conference.events.filter((e) => e.menus) || []
+  return conference?.menus || conference?.events.filter((e) => e.menus) || []
 }
 
 function extractMeetingsFromMenus({ apps, conference, majorEventIDs }){
