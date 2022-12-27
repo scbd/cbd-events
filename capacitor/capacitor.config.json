@@ -1,0 +1,26 @@
+{
+  "appId": "io.cbd.unbioevents",
+  "appName": "cbd-events",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "loggingBehavior": "production",
+  "backgroundColor":"000000",
+  "server": {
+    "cleartext": true
+  },
+  "android": {
+    "webContentsDebuggingEnabled": false
+  },
+  "ios": {
+    "contentInset": "always"
+},
+  "plugins": {
+		"CapacitorUpdater": {
+			"autoUpdate": false,
+      "statsUrl": ""
+		}
+	}
+}
+
+
+
