@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid home">
     <div class="row">
-      <div class="col-12 mb-3">
-        <img crossorigin="anonymous" class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
+      <div class="col-12  mb-3">
+        <img  class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
       </div>
-      <div v-if="aboutExists" class="col-6" >
+      <div v-if="showAbout" class="col-6" >
         <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-about', params: { conferenceCode } })">
           <Icon name="info-circle"  in-text="true"/> About
         </nuxt-link>
@@ -50,7 +50,7 @@ import { lstring  }   from '~/plugins/filters'
 export default {
   name    : 'index',
   methods : { lstring, toggleSettings },
-  computed: { conference, getHeroImage, ...gettersMap() },
+  computed: { conference, getHeroImage, ...gettersMap(), showAbout },
   asyncData
 }
 
@@ -82,25 +82,32 @@ function getHeroImage(){
   try{
     let blob = this.conference.heroImageBlob || this.conference.imageBlob
 
-    if(blob) blob = URL.createObjectURL(blob)
-    return   blob || 'https://attachments.cbd.int/cbd-logo-en.svg'
+    return   blob? URL.createObjectURL(blob) :  'https://attachments.cbd.int/cbd-logo-en.svg'
   }
   catch(e){ return false }
 }
 
 function conference(){
   try{
-    const { title, imageBlob, heroImageBlob } = this.cbdEvents
+    const { title, imageBlob, heroImageBlob, heroImage, image, hasAbout } = this.cbdEvents
 
-    return  { title, imageBlob, heroImageBlob }
+    return  { title, imageBlob, heroImageBlob, heroImage, image, hasAbout }
   }
   catch(e){ return {} }
 }
 
+function showAbout(){
+  const { hasAbout } = this.conference || {}
+
+  return hasAbout || this.aboutExists
+}
 </script>
 
 <style scoped>
   .home{ padding-bottom: 3em; }
-  .hero  { align-self: start; width:95vw; }
+  .hero  {   display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80%; max-height: 50vh;}
   .btn-index { width:100%; background-color: rgb(1, 70, 58); text-align: left; font-size: 1em; text-align: center; margin-bottom: 1em;}
 </style>

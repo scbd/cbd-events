@@ -27,7 +27,7 @@ export default {
   components: { Header },
   methods   : { hasAgenda, done, changeMeeting },
   computed  : { agendasOnly, visibleMeetings },
-  asyncData, mounted
+  asyncData, mounted, beforeDestroy
 }
 
 function asyncData ({ app, store }){
@@ -37,8 +37,9 @@ function asyncData ({ app, store }){
   return  { title, meetings }
 }
 
-function mounted(){ this.$root.$on('bottom-screen-done', done) }
-
+function mounted(){ this.$root.$on('bottom-screen-done', this.done) }
+function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
+  
 function visibleMeetings(){
   const { meetings } = this
 

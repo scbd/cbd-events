@@ -1,6 +1,6 @@
-import   axios      from 'axios'
 import   path       from 'path'
 import   sizeOf     from 'object-sizeof'
+import { HTTP } from '@ionic-native/http';
 
 export default {
   methods: { saveFiles, getFileName, createFileObj, closeDialog, getFileObjs },
@@ -35,9 +35,9 @@ async function saveFiles({ data }){
   this.$store.commit('routes/SET_SHOW_NAVS', true)
   this.$nuxt.$loading.start()
   this.$store.commit('files/DOWNLOADING')
-  
 
   const blobs    = await getBlobs(msg)
+
   const fileObjs = this.getFileObjs(msg, blobs)
 
 
@@ -69,13 +69,25 @@ function getBlobs({ data }){
   const blobs = []
 
   for (let i = 0; i < data.length; i++){
-    const downloadUri = data[i].url
-    const restParams = { method: 'get', url: downloadUri, responseType: 'blob' }
+    const { url } = data[i] 
+    const restParams = { url, method: 'get',  responseType: 'blob' } //url: downloadUri,
 
-    blobs[i] = axios(restParams).then((res) => res.data)
+    blobs[i] = HTTP.sendRequest(url,restParams).then((res) => convertBlobToBase64(res.data))
+   // blobs[i] = axios(restParams).then( (res) => res.data)
   }
 
   return Promise.all(blobs)
+}
+
+
+function convertBlobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.readAsDataURL(blob)
+      reader.onload = () => resolve(reader.result.toString())
+      reader.onerror = error => reject(error)
+  })
 }
 function closeDialog (){
   this.$refs.docsFrame.contentWindow.postMessage(JSON.stringify({ type: 'closeDialogRemote' }), process.env.NUXT_ENV_IFRAME_HOST)

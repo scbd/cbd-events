@@ -2,7 +2,7 @@
   <div class="container-fluid" :class="[$style.bg,$style.gradient]" >
     <div class="row" :class="[$style.row]" >
 
-      <div v-on:click="toggleWeekSelect()" class="col-9" :class="[$style.left]" >
+      <div v-on:click.stop="toggleWeekSelect()" class="col-9" :class="[$style.left]" >
         <span :class="[$style.title]">{{ selectedIteration.title }} </span>
         <small><span>{{ selectedIteration.subTitle }}</span></small>
         <Icon name="select-arrows" in-text="true"/>

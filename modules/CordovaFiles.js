@@ -1,8 +1,12 @@
-import LocalFiles from '~/modules/LocalFileSystem'
-import Device     from '~/modules/Device'
+
+import { FileOpener } from '@awesome-cordova-plugins/file-opener'
+import { writeFile } from '~/composables/file-system'
+
+
+import { Share } from '@capacitor/share';
 
 const rect                      = [ 0, 0, innerWidth / 2, 0 ]
-const showOpenWithDialogOptions = { error: (e) => { console.log('Error: ', e); }, rect }
+const showOpenWithDialogOptions = { error: (e) => { console.error('Error: '+e.message); }, rect }
 
 const saveLocally = async (fileData, { file }) => {
   try{
@@ -10,12 +14,20 @@ const saveLocally = async (fileData, { file }) => {
     const { baseName, blob }                = fileData
     const   fileSystemUrl                   = tempDirectory || cacheDirectory
 
-    const dirEntry  = await LocalFiles.resolveLocalFileSystemURL(fileSystemUrl)
-    const fileEntry = await LocalFiles.getFile(dirEntry, baseName, { create: true, exclusive: false })
+    // const dirEntry  = await LocalFiles.resolveLocalFileSystemURL(fileSystemUrl)
+    // const fileEntry = await LocalFiles.getFile(dirEntry, baseName, { create: true, exclusive: false })
 
-    await LocalFiles.write(fileEntry, blob)
+    const uri = await writeFile(baseName, blob) //await LocalFiles.write(fileEntry, blob)
 
-    return fileEntry.toURL()
+
+  
+    // const ref = await InAppBrowser.create(uri);
+    // const dirEntry  = await LocalFiles.resolveLocalFileSystemURL(fileSystemUrl)
+    // const fileEntry = await LocalFiles.getFile(dirEntry, baseName, { create: true, exclusive: false })
+
+    // await LocalFiles.write(fileEntry, blob)
+
+    return uri
   }
   catch(e){
     console.error(e)
@@ -37,43 +49,59 @@ const  openFileDefault = ({ blob, baseName }) => {
 }
   
 async function openFileFromCordova($cordova, file){
-  const { fileOpener2, device } = $cordova
-  const   isIOS                 = Device.isIOSCordova(device)
+console.log('openFileFromCordova', file.type)
+  // const { fileOpener2 } = $cordova
+  // console.error('Device keys',JSON.stringify(Object.keys(Device)))
+  // console.error('$cordova.Device.getInfo()',$cordova.Device.getInfo())
+  // console.warn('$cordova',JSON.stringify(Object.keys($cordova.Device.getInfo())))
+  // const   isIOS                 = isIOSCordova(Device)
 
   if(!$cordova) throw new Error('$cordova object not found')
 
-  const fileURL = await saveLocally(file, $cordova)
+  const fileURL = decodeURIComponent(await saveLocally(file, $cordova))
 
-  if(isIOS)
-    return fileOpener2.open(decodeURIComponent(fileURL), file.type, { error, success })
 
-  fileOpener2.showOpenWithDialog(decodeURIComponent(fileURL), file.type, showOpenWithDialogOptions)
+  //await FileOpener.showOpenWithDialog(fileURL, file.type, showOpenWithDialogOptions)
+  //   await FileOpener.appIsInstalled('com.adobe.reader', {
+  //     success : function(res) {
+  //         if (res.status === 0) {
+  //             console.log('Adobe Reader is not installed.');
+  //         } else {
+  //             console.log('Adobe Reader is installed.')
+  //         }
+  //     }
+  // });
+  // if(isIOS)
+     return FileOpener.open(decodeURIComponent(fileURL), file.type, { error, success })
+
+
+     
 }
   
-function error   (e){ console.log(`Error status: ${e.status} - Error message: ${e.message}`, e); throw e }
+function error   (e){ console.error(`Error status: ${e.status} - Error message: ${e.message}`); throw e }
 function success (){  console.log('file opened successfully') }
   
 
-function openSafari ({ blob, baseName }){
-  try{ CordovaFiles.OpenSafariFn(blob) }
-  catch(e){ openFileDefault({ blob, baseName }) }
-}
+// function openSafari ({ blob, baseName }){
+//   try{ CordovaFiles.OpenSafariFn(blob) }
+//   catch(e){ openFileDefault({ blob, baseName }) }
+// }
 
 export const shareFile = async (file, $cordova) => {
-  const { fileOpener2  } = $cordova
-  const fileURL = await saveLocally(file, $cordova)
+  const url = await saveLocally(file, $cordova)
 
-  fileOpener2.showOpenWithDialog(decodeURIComponent(fileURL), file.type, showOpenWithDialogOptions)
+  await Share.share({  title: file.baseName, url, dialogTitle: `Share ${file.baseName}`,})
 }
 
 export const openFile = (file, $cordova) => {
-  if(!$cordova && this && this.$cordova)   $cordova = this.$cordova
 
-  if ($cordova)                    return openFileFromCordova($cordova, file)
-  if (Device.isInternetExplorer()) return window.navigator.msSaveOrOpenBlob(file.blob)
-  if (Device.isSafari())           return openSafari(file)
+  // if(!$cordova && this && this.$cordova)   $cordova = this.$cordova
 
-  return openFileDefault(file)
+  return openFileFromCordova($cordova, file)
+
+//   if ($cordova)                    return openFileFromCordova($cordova, file)
+
+//   return openFileDefault(file)
 }
 
 export default class CordovaFiles{

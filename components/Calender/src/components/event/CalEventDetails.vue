@@ -9,14 +9,15 @@
           :class="$style.pointer"
           class="eco-cancel pull-right"
         />
-        <span>{{ calEvent.title }}</span>
+        <span>{{ calEvent.title }} </span>
       </div>
       <div :class="[$style.body]">
-        <div class="text-primary">
-          <span class="eco-clock" /> {{ dateTime }}
+        <div class="text-primary" >
+          <span class="eco-clock" > {{ dateTime }} </span>
+          <!-- <Icon name="calendar-plus" /> -->
         </div>
 
-        <div v-if="addToCalReady()">
+        <div >
           <span class="eco-calendar-empty" />
           <span
             :key="index"
@@ -27,7 +28,7 @@
           </span>
         </div>
 
-        <div v-if="isInSession()">
+        <div >
           <span class="eco-location" /> {{ location }}
         </div>
         <div v-if="(organizer || organizerEmail) && $isStaff">
@@ -95,15 +96,25 @@ import AgendaItem           from './AgendaItem'
 import FileStatus           from './CalEventDetailsFileStatus'
 import { DateTime }           from 'luxon'
 import CalEventDetailsFile  from './CalEventDetailsFile'
+// import { Calendar } from '@awesome-cordova-plugins/calendar'
 
 export default {
   name      : 'Details',
   props     : [ 'event', 'conference' ],
   components: { AgendaItem, CalEventDetailsFile, FileStatus },
-  methods   : { showDetails, files, itemTextArr, goTo, isInSession, addToCalReady },
+  methods   : { addToCal, showDetails, files, itemTextArr, goTo, isInSession, addToCalReady },
   computed  : { calEvent, dateTime, location, organizer, organizerEmail }
 }
 
+function addToCal(){
+  const success = function(message) { console.log("Success: " + JSON.stringify(message)); };
+  const error   = function(message) { console.error("Error: " + message); };
+  const start   = DateTime.fromISO(this.calEvent.start, { zone: this.calEvent.timezone }).toJSDate()
+  const end     = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toJSDate()
+
+
+  // Calendar.createEventInteractively(this.calEvent.title,this.location,this.calEvent.description,start,end,success,error);
+}
 function addToCalReady(){ return this.conference.schedule.addToCalReady }
   
 function goTo(url){

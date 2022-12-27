@@ -9,16 +9,17 @@ import Offline from '~/components/Offline'
 export default {
   name      : 'offline',
   components: { Offline },
-  methods   : { notice, redirect },
+  methods   : { notice }, //, redirect
   data,
   mounted
 }
 function data(){
   return { offline: false }
 }
-function mounted(){
+async function mounted(){
   this.offline = true
   this.notice()
+
 }
 
 function notice(){
@@ -27,14 +28,14 @@ function notice(){
     text             : this.$i18n.t('offlineMsg'),
     type             : 'error',
     confirmButtonText: this.$i18n.t('tryAgain'),
-    onAfterClose     : this.redirect
+    // onAfterClose     : this.redirect
   })
 }
 
-function redirect(){
-  const { codePush } = window
+// function redirect(){
+//   const { codePush } = window
 
-  if(codePush)
-    codePush.restartApplication()
-}
+//   if(codePush)
+//     codePush.restartApplication()
+// }
 </script>

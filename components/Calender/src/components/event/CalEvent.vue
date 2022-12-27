@@ -9,7 +9,7 @@
       :class="[$style.mainTitle]"
       v-clamp:20="numLines"
     >
-      {{ event.title }}
+    {{ event.title }}
     </p>
     <div :class="[$style.footer]">
       {{ getStartTime() }}

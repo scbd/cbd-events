@@ -5,7 +5,7 @@
 </template>
 
 <script>
-
+import { HTTP             } from '@ionic-native/http'
 import { mapGetters          } from 'vuex'
 import { sanitizeIndexResult } from '~/modules/apiNormalize'
 import   Calendar              from '~/components/Calender/src/components/'
@@ -44,15 +44,22 @@ function genFields(query){
 }
 
 async function getEvents(query){
+  this.$store.commit('routes/SET_SHOW_MEETING_NAV', false)
+  try{
   if(!query.conference) query.conference = this.conference.id
   
   const events   = {}
   const queryUrl = this.getQueryUrl(query)
-  const docs     = await this.$axios.get(queryUrl).then((r) => r.data.response.docs)
+  const docs     = await HTTP.sendRequest(queryUrl, { method: 'get', responseType: 'json' }).then((r) => r.data.response.docs)
 
   events.raw     = sanitizeIndexResult(docs)
 
   return events
+  }catch(e){
+    console.error('Calender.getEvents', e.message)
+    console.error(e.message)
+    console.error(e)
+  }
 }
 
 function getQueryUrl(query){
@@ -60,17 +67,22 @@ function getQueryUrl(query){
   const f        = genFields(query)
   const q        = this.genQuery(query)
 
-  return`${endPoint}?fl=${f}&q=${q}&sort=start_dt+DESC&start=0&wt=json&rows=5000`
+  return encodeURI(`${endPoint}?fl=${f}&q=${q}&sort=start_dt+DESC&start=0&wt=json&rows=5000`)
 }
 
 
 function genQuery(query){
+
   const { start, end, selectedStream, keyWordFilter, selectedProgramme } = query
+  const { start: startOverride, end:endOverride } = this.conference?.apps?.cbdEvents || {}
   const { startDate, endDate, id                    } = this.conference
   const { locale } = this.$i18n
 
-  let qStart = `+AND+(start_s:[ ${startDate} TO *])`
-  let qEnd   = `+AND+(end_s:[ * TO ${endDate}])`
+  const qStartDate = startOverride || startDate
+  const qEndDate   = endOverride   || endDate
+
+  let qStart = `+AND+(start_s:[ ${qStartDate} TO *])`
+  let qEnd   = `+AND+(end_s:[ * TO ${qEndDate}])`
 
   let q      = `schema_s:reservation+AND+conference_s:${id}`
   

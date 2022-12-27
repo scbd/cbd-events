@@ -16,7 +16,7 @@ export default {
   components: { Header },
   methods   : { done },
   asyncData,
-  mounted
+  mounted, beforeDestroy
 }
 
 function asyncData ({ app, store }){
@@ -26,8 +26,8 @@ function asyncData ({ app, store }){
   }
 }
 
-function mounted(){ this.$root.$on('bottom-screen-done', done) }
-
+function mounted(){ this.$root.$on('bottom-screen-done', this.done) }
+function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
 function done(){ this.$router.go(-1) }
 
 </script>

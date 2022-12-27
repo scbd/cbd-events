@@ -59,7 +59,8 @@ function beforeCreate(){
 function created(){
   const { $route, $router, $i18n } = this
   const { query } = $route
-  const start = this.conference.startDate? DateTime.fromISO(this.conference.startDate) : DateTime.local()
+  const initStart = this.conference?.apps?.cbdEvents?.start || this.conference.startDate
+  const start = initStart? DateTime.fromISO(initStart) : DateTime.local()
   const route = { query: { selected: start.toFormat('yyyy-MM-dd') } }
 
   if(!query || !query.selected)
@@ -131,6 +132,7 @@ function changeDateTime(numberOfIterations){
 }
 
 function setQueryString(interations){
+
   const { next, prev } = this.selectedIteration
   
   let nextIteration = this.selectedIteration
@@ -143,7 +145,7 @@ function setQueryString(interations){
   const { aDateTime, endDateTime } = nextIteration
   const route = { query: { selected: aDateTime.toFormat('yyyy-MM-dd') } }
 
-  
+
   if(interations) this.$router.replace(route)
 
   const start = aDateTime.toUTC().toISO()
@@ -221,5 +223,5 @@ function createLinkedList(weeks){
   a:focus { color: #23527c; text-decoration: underline; }
 </style>
 <style module>
-  .calComponent{ position: relative; height: 86vh; width: 100vw;   }
+  .calComponent{ position: relative; height: 78vh; width: 100vw;   }
 </style>

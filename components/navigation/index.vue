@@ -1,6 +1,6 @@
 <template>
   <transition name="slide-up">
-    <nav class="navbar navbar-default menu-gradient">
+    <nav v-on:click="closeSettings" class="navbar navbar-default menu-gradient">
       <ul class="nav nav-pills nav-fill">
       
         <nuxt-link tag="li" class="nav-item" :to="localePath({ name: 'conferenceCode', params: { conferenceCode } })">
@@ -38,7 +38,7 @@ export default {
   name      : 'Navigation',
   components: { Spinner: () => import('../Spinner') },
   computed  : { showNavs, ...gettersMap() },
-  methods   : { onScroll, hasScrolled },
+  methods   : { onScroll, hasScrolled, closeSettings },
   data,
   beforeMount,
   beforeDestroy
@@ -89,6 +89,10 @@ function showNavs(){
     return this.$store.state.routes.showNavs
   else
     return this.show
+}
+
+function closeSettings(){
+  this.$root.$emit('close-setting')
 }
 
 function hasScrolled (){

@@ -5,28 +5,28 @@
 
         <Header :title="title" />
 
-        <div v-on:click="changeDate(5)" class="block gradient col-12" >
+        <div v-on:click="changeDate(1)" class="block gradient col-12" >
           <div>
             <h4>{{iteration.prev.prev.title}}</h4>
             <small><span>{{ iteration.prev.prev.subTitle }}</span></small>
           </div>
         </div>
 
-        <div v-on:click="changeDate(4)" class="block gradient col-12" >
+        <div v-on:click="changeDate(1)" class="block gradient col-12" >
           <div>
             <h4>{{iteration.prev.title}}</h4>
             <small><span>{{ iteration.prev.subTitle }}</span></small>
           </div>
         </div>
 
-        <div v-on:click="changeDate(8)" class="block gradient col-12" >
+        <div v-on:click="changeDate(-1)" class="block gradient col-12" >
           <div>
             <h4>{{iteration.next.title}}</h4>
             <small><span>{{ iteration.next.subTitle }}</span></small>
           </div>
         </div>
 
-        <div v-on:click="changeDate(9)" class="block gradient col-12" >
+        <div v-on:click="changeDate(-2)" class="block gradient col-12" >
           <div>
             <h4>{{iteration.next.next.title}}</h4>
             <small><span>{{ iteration.next.next.subTitle }}</span></small>
@@ -48,7 +48,7 @@ export default {
   components: { Header },
   methods   : { changeDate },
   data,
-  mounted
+  mounted, beforeDestroy 
 }
 
 function data(){
@@ -59,12 +59,12 @@ function data(){
 }
 
 function changeDate(index){
-  this.$root.$emit('changeDate', 7 - Number(index))
+  this.$root.$emit('changeDate', index)
   this.hide = !this.hide
 }
 
 function mounted(){ this.$root.$on('bottom-screen-done', () =>  this.hide = !this.hide) }
-
+function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
 </script>
 
 <style scoped>

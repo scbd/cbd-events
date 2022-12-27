@@ -22,8 +22,10 @@ export const normalizeSolrResponse = (docs, locale='en') => {
   return docs
 }
 
-export const normalizeApiResponse = (docs) => camelCaseKeys(docs, { deep: true })
+export const normalizeApiResponse = (docs) => {
 
+  return camelCaseKeys(docs, { deep: true })
+}
 export const isLString = (prop) => prop && (!isUndefined(prop.ar) || !isUndefined(prop.en) || !isUndefined(prop.zh) || !isUndefined(prop.ru) || !isUndefined(prop.fr) || !isUndefined(prop.es))
 
 export const normalizeLString = (prop, locale='en') => {

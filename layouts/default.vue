@@ -11,38 +11,25 @@
 </template>
 
 <script>
-import Header  from '~/components/header/header'
-import Nav     from '~/components/navigation/index'
+import   Header      from '~/components/header/header'
+import   Nav         from '~/components/navigation/index'
+import { updateOTA } from '~/composables/over-the-air'
+import { StatusBar } from '@capacitor/status-bar'
 
 export default {
   name      : 'Default',
   components: { Header, Nav, Loading: () => import('~/components/Loading')  },
-  methods   : { toggleConnection, onProgress, sync, onResume },
-  beforeMount,
-  mounted,
-  data
+  methods   : { toggleConnection, onProgress, onResume },
+  beforeMount, mounted, data
 }
+
 function data(){ return{ percent: null, state: null } }
 
-function mounted(){
-  this.sync()
+async function mounted(){
+  StatusBar.setBackgroundColor({ color: '#000000'})
+  const t = await updateOTA(this.onProgress, syncError)
+
   document.addEventListener('resume', this.onResume, false)
-}
-
-function sync(){
-  const { codePush } = window
-
-  if(!codePush) return
-
-  const syncOptions = {
-    updateDialog: {
-      appendReleaseDescription: true,
-      descriptionPrefix       : '\n\nChange log:\n'
-    },
-    installMode: window.InstallMode.IMMEDIATE
-  }
-
-  codePush.sync(null, syncOptions, this.onProgress, syncError)
 }
 
 function beforeMount(){
@@ -54,8 +41,8 @@ function beforeMount(){
   this.$store.commit('offLine/SET', window.navigator.onLine)
 }
 
-function onProgress (downloadProgress){
-  this.percent = ~~((downloadProgress.receivedBytes/downloadProgress.totalBytes)*100)
+function onProgress (info){
+  this.percent = info.percent
   this.state   = 'downloading'
 
   if(this.percent != 100) return
@@ -66,7 +53,7 @@ function onProgress (downloadProgress){
   setTimeout(() =>  this.state = null, 2000)
 }
 
-function syncError       (e){ console.log('error', e) }
-function onResume        (){ setTimeout(() => { this.sync() }, 0) }
+function syncError       (e){ console.error(`OTA Error: ${e.message}`) }
+function onResume        (){ setTimeout(() => { updateOTA(this.onProgress, syncError) }, 0) }
 function toggleConnection(){ this.$store.commit('offLine/TOGGLE') }
 </script>

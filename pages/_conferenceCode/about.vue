@@ -1,8 +1,8 @@
 <template>
-  <div class="container-fluid home">
+  <div v-if="title" class="container-fluid home">
     <div class="row">
       <div class="col-12">
-        <img crossorigin="anonymous" class="hero" v-if="blob" :src="blob" :alt="`${title | this.$filters.lstring} logo`" >
+        <img class="hero" v-if="blob" :src="blob" :alt="`${title | this.$filters.lstring} logo`" >
       </div>
       <div class="col-12">
         <span v-html="this.$options.filters.lstring(content)" />
@@ -17,12 +17,15 @@ export default {
   asyncData
 }
   
-async function asyncData ({ store }){
+async function asyncData ({ store, params }){
+  const { conferenceCode } = params
+  
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
   //eslint-disable-next-line
-  let { content, blob, title } = await store.dispatch('about/get')
+  let { content, blob, title } = await store.dispatch('about/get', { code: conferenceCode})
 
-  blob = URL.createObjectURL(blob)
+  if(blob)
+    blob = URL.createObjectURL(blob)
   return { content, blob, title }
 }
 </script>

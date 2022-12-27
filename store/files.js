@@ -23,7 +23,7 @@ function saveAction({ commit }, { files, blobs }){
       saveObjectOfFiles({ files, blobs }, commit, this)
   }
   catch(e){
-    console.log('Error:', e)
+    console.error(`Error: ${e.message}`)
   }
 }
 

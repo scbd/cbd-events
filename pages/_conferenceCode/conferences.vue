@@ -4,10 +4,8 @@
     <div class="page container-fluid">
       <div class="row" v-for="(conference, index) in conferencesWithMeetings" :key="conference._id">
         <div @click="changeConference(conference)" class="col" :class="{block:!getHeroImage(conference),hero:getHeroImage(conference)}" >
-
-          <img crossorigin="anonymous" v-if="getHeroImage(conference, index)" :src="getHeroImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
-          <img crossorigin="anonymous" v-if="!getHeroImage(conference, index)" :src="getImage(conference) || defaultImage" :alt="`${title(conference)} logo`" >
-
+          <img   v-if="getHeroImage(conference, index)" :src="getHeroImage(conference, index) || defaultImage" :alt="`${title(conference)} logo`" >
+          <img   v-if="!getHeroImage(conference, index)" :src="getImage(conference, index) || defaultImage" :alt="`${title(conference)} logo`" >
           <div v-if="!getHeroImage(conference)" class="container d-flex">
             <h4 class="justify-content-center align-self-center">{{ title(conference) }}</h4>
           </div>
@@ -27,7 +25,7 @@ export default {
   methods   : { done, getImage, getHeroImage, changeConference, title, description },
   computed  : { conferencesWithMeetings },
   asyncData,
-  mounted
+  mounted, beforeDestroy
 }
 
 function asyncData ({ app, store }){
@@ -58,7 +56,8 @@ function conferencesWithMeetings (){
   return conferences.filter(c => c.hasMeetings)
 }
 
-function mounted(){ this.$root.$on('bottom-screen-done', done) }
+function mounted(){ this.$root.$on('bottom-screen-done', this.done) }
+function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
 
 function done(){ this.$router.go(-1) }
 

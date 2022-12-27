@@ -27,12 +27,14 @@ export default {
   layout    : 'bottom-screen',
   methods   : { done, changeLanguage },
   asyncData,
-  mounted
+  mounted, beforeDestroy
 }
 
 function mounted(){
-  this.$root.$on('bottom-screen-done', done)
+  this.$root.$on('bottom-screen-done', this.done)
 }
+
+function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
 
 function asyncData ({ app }){
   return {

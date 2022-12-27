@@ -2,11 +2,14 @@
   <section>
     <Icon name="cog" is-text="true"/>
     <transition name="test">
-      <div class="container-fluid side-menu " v-if="isOpen" >
-        <div class="row">
-          <div class="col pr-0 pl-0">
-            <br>
+      <div class="side-menu" v-if="isOpen" >
+        <div style="position:relative; text-align: right;">
+          <Icon  name="close"/>
+        </div>
+
             <h4>{{ $t('settings') }}</h4>
+            
+
             <div class="list-group">
               <nuxt-link :to="localePath({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
                 <button class="list-group-item" >
@@ -36,8 +39,15 @@
                 </button>
               </a>
             </div>
-          </div>
-        </div>
+            <div class="list-group">
+              <a :href="`mailto:${supportEmail}`">
+                <button type="button" class="list-group-item" >
+                <svg class="icon"><use xlink:href="#icon-envelope" /></svg>
+                  {{ $t('IT Support') }}
+                  <span class="email">{{supportEmail}}</span>
+                </button>
+              </a>
+            </div>
       </div>
     </transition>
   </section>
@@ -47,7 +57,7 @@
 export default {
   name    : 'MainMenu',
   props   : { isOpen: { type: Boolean, default: false } },
-  computed: { conference, language, deleteAllDownloads, switchConference },
+  computed: { conference, language, deleteAllDownloads, switchConference, supportEmail },
   methods : { deleteAll },
   data
 }
@@ -57,6 +67,12 @@ function data ({ $route }){
   const  deleteing         = false
 
   return { conferenceCode, deleteing }
+}
+
+function supportEmail(){
+  const { supportEmail } = this.conference?.apps?.cbdEvents || { supportEmail: 'it@cbd.int'}
+
+  return supportEmail
 }
 
 async function deleteAll(){
@@ -80,10 +96,12 @@ section{display:inline-block;}
 .logo{ max-height: 1.3em; }
  h1{ margin: 1em 1em 1em 1em; }
 .list-group-item{ font-size: 1em; width:100%; text-align:left; }
-.side-menu{ position:absolute; top:30px; left:1px; height:100vh; width:100%; background-color: #eee; }
+.side-menu{ position:absolute; top:30px; left:1px; height:100vh; width:99vw; background-color: #eee; }
 .test-enter-active { transition: all .2s ease; }
 .test-leave-active { transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0); }
 .test-enter { transform: translatex(100vw); opacity: 0; }
 .test-leave-to { transform: translatex(100vw); opacity: 0; }
 .active{ color:#337ab7; }
+
+.pullRight { float: right; margin:0 0 0 0; }
 </style>

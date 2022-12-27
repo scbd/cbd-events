@@ -28,24 +28,24 @@ export const isAndroidEnv = () => {
 export const cordovaNuxtConfig = (nuxtConfig) => {
   if(!isCordovaEnv()) return nuxtConfig
   
-  nuxtConfig.mode = 'spa'
+  // nuxtConfig.mode = 'spa'
 
-  nuxtConfig.head.meta = [
-    { charset: 'utf-8' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1, minimal-ui, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' },
-    { hid: 'description', name: 'description', content: 'UN Biodiversity Events Application' }
-  ]
+  // nuxtConfig.head.meta = [
+  //   { charset: 'utf-8' },
+  //   { name: 'viewport', content: 'width=device-width, initial-scale=1, minimal-ui, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' },
+  //   { hid: 'description', name: 'description', content: 'UN Biodiversity Events Application' }
+  // ]
                           
-  nuxtConfig.head.link =[ { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' } ]
-  nuxtConfig.head.script=  [ { src: 'cordova.js' } ]
+  // nuxtConfig.head.link =[ { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' } ]
+  // nuxtConfig.head.script=  [ { src: 'cordova.js' } ]
   
-  nuxtConfig.generate = { dir: 'cordova/www' }
+  // nuxtConfig.generate = { dir: 'capacitor/www' }
   
-  if(process.env.NODE_ENV!='cordova')
-    nuxtConfig.router.mode ='hash'
+  // if(process.env.NODE_ENV!='cordova')
+  //   nuxtConfig.router.mode ='hash'
 
-  nuxtConfig.build.publicPath  =  '/nuxt/'
-  nuxtConfig.plugins.unshift('~/plugins/cordova.js')
+  // nuxtConfig.build.publicPath  =  '/nuxt/'
+  // nuxtConfig.plugins.unshift('~/plugins/cordova.js')
   
   return nuxtConfig
 }

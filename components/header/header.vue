@@ -31,7 +31,7 @@ export default {
   name      : 'Header',
   components: { SideMenu },
   computed  : { showMeetingNav, conference, meeting, showNavs },
-  methods   : { offlineNotice, onlineNotice, toggleSideMenu, toggle, onScroll, hasScrolled  },
+  methods   : { offlineNotice, onlineNotice, toggleSideMenu, toggle, onScroll, hasScrolled, closeSideMenu },
   beforeDestroy,
   beforeMount,
   data,
@@ -39,6 +39,7 @@ export default {
 }
 function mounted(){
   this.$root.$on('toggleSetting', () => this.toggleSideMenu())
+  this.$root.$on('close-setting', () => this.closeSideMenu())
 }
 function data (){
   return {
@@ -109,6 +110,10 @@ function toggle(){
 
 function toggleSideMenu(){
   this.isSideMenuOpen=!this.isSideMenuOpen
+}
+
+function closeSideMenu(){
+  this.isSideMenuOpen= false
 }
 
 function offlineNotice(){

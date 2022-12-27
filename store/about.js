@@ -1,23 +1,28 @@
+import { HTTP } from '@ionic-native/http'
+
 export const state     = () => ({ docs: {} })
 export const actions   = { get, exists, existsLocal, save }
 export const getters   = {  }
 export const mutations = { set }
 
-async function get({ dispatch }, force){
+async function get({ dispatch }, { force, code } = {}){
   const { conferenceCode } = this.$router.currentRoute.params
   const   exists           = await dispatch('exists')
+  const cCode = conferenceCode || code
+
+  if(!cCode) return undefined
 
   if(exists && !force){
-    dispatch('get', true) // reload latest
+    dispatch('get', { force: true }) // reload latest
     return exists
   }
 
-  const  article = await loadArticle(this.$axios, conferenceCode)
+  const  article = await loadArticle(cCode)
   
   if(!article) return undefined
 
-  dispatch('save', { conferenceCode, article })
-  article.blob = await getBlob(this, article.coverImage || {})
+  dispatch('save', { conferenceCode:cCode, article })
+  article.blob = await getBlob(article.coverImage || {})
   return article
 }
 
@@ -44,22 +49,24 @@ async function existsLocal ({ commit  }){
 
 function set(state, { conferenceCode, article }){ state.docs[conferenceCode] = article }
 
-function getBlob({ $axios }, { url }){
+function getBlob({ url }){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return $axios(restParams).then((res) => res.data)
+  return HTTP.sendRequest(url,restParams).then((res) => res.data)
 }
 
 
-function loadArticle($axios, conferenceCode){
+function loadArticle(conferenceCode){
   try{
-    return $axios.$get(`${process.env.NUXT_ENV_API}/api/v2017/articles`, { params: getQuery(conferenceCode) })
-      .then((r) => r[0])
+    const restParams = { method: 'get',  responseType: 'json', params: getQuery(conferenceCode) }
+
+    return HTTP.sendRequest(`${process.env.NUXT_ENV_API}/api/v2017/articles`, restParams)
+      .then(({ data }) => data[0])
   }
   catch(e){
-    console.log('err', e)
+    console.error(e)
     return undefined
   }
 }

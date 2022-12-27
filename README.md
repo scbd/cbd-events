@@ -1,22 +1,10 @@
-<!-- #TODO
- 
-- have blaise fix download dialog and view only
-- IOS bug- need to choose conference twice to switch
-- refactor remaining pages and components
-- if only one meeting, do not show meeting menu
-- auth
-- Post2020 integration
-- app config to store meetings and merge with minor events on conf object -->
-
 ![SCBD Leaf][logo]
 ![SCBD][logoText]
 
-[![codebeat badge](https://codebeat.co/badges/c285df61-93ad-47e2-bdc7-887ba7eda336)](https://codebeat.co/projects/github-com-scbd-cbd-events-master)
-[![Dependency Status](https://david-dm.org/scbd/cbd-events.svg)](https://david-dm.org/scbd/cbd-events)
-[![Dependency Status](https://david-dm.org/scbd/cbd-events/dev-status.svg)](https://david-dm.org/scbd/cbd-events?type=dev)
 
-[![App Store][appStoreImg]](appStoreLink)
-[![Play Store][playStoreImg]](appStoreLink) 
+
+[![App Store][appStoreImg]](https://apps.apple.com/ca/app/cbd-events/id1441613306)
+[![Play Store][playStoreImg]](https://play.google.com/store/apps/details?id=io.cbd.unbioevents) 
 
 
 # CBD-Events 
@@ -55,7 +43,7 @@ $ yarn dev
 
 ### Build ios platform for production
 ``` bash
-$ yarn build:ios
+$ yarn build:i
 ```
 1. Open xcode studio project './cordova/platforms/ios'
 2. Run in selected simulator
@@ -63,14 +51,31 @@ $ yarn build:ios
 
 ### Build android platform for production
 ``` bash
-$ yarn build:android
+$ yarn build:a
 ```
 1. Open android studio project './cordova/platforms/android'
 2. Run in selected simulator
 
 ## Publish
 
-[See the cordova workspace: https://github.com/scbd/cbd-events/blob/oweg-update/cordova/README.md](https://github.com/scbd/cbd-events/blob/oweg-update/cordova/README.md)
+### Android 
+[Play Console](https://play.google.com/console/u/0/developers/5920734745096691256/app/4973343219570834460/app-dashboard?timespan=thirtyDays)
+
+[App Store Connect](https://appstoreconnect.apple.com/apps/1441613306/appstore/ios/version/deliverable)
+
+## Over the Air Update (experimental) 
+Build for any platform.  Bump the release (patch or minor only). Make a release by the version.  Zip a  the cap/www folder  ENSURE no .file inside or entire app will crash with no turning back.  Add that zip file as an asset in the release.  Copy the release to s3://cbddocumentspublic-imagebucket-15w2zyxk3prl8/cbd-events/releases/${major}/${minor}/${patch}/dist.zip 
+
+`aws s3 cp ./dist.zip s3://cbddocumentspublic-imagebucket-15w2zyxk3prl8/cbd-events/releases/${major}/${minor}/${patch}/dist.zip`
+
+Lastly update s3://cbddocumentspublic-imagebucket-15w2zyxk3prl8/cbd-events/releases/index.json pushing the object to the array { tag_name: `${semiVersion}` }, using the acutal semiverion not the var rep.  Essentially following format https://api.github.com/repos/scbd/www.cbd.int/releases.
+
+
+### NOTES
+Must use this commit otherwise the original package will inject a prohibited permission into the android build which will cause ejection of publication.
+["cordova-plugin-file-opener2": "github:pwlin/cordova-plugin-file-opener2#0b15d93b4f0c5a70206fe276f7aa956f754c3ca3"](https://github.com/pwlin/cordova-plugin-file-opener2/commit/0b15d93b4f0c5a70206fe276f7aa956f754c3ca3)
+
+
 
 
 [logo]:https://www.cbd.int/styles/ui/templates/cbd2011/images/logo-cbd-leaf-line.gif

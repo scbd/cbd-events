@@ -65,7 +65,6 @@ async function asyncData ({ store, params }){
 }
 
 function isIOS(){
-  console.log(this.$cordova)
   try{ return isIOSCordova(this.$cordova.device) }
   catch(e){ return {} }
 }
