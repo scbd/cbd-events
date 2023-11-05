@@ -37,10 +37,10 @@ let config = {
       langDir : 'locales/',
       vueI18n : { fallbackLocale: 'en' },
       seo     : false,
-      vuex    : {
-        moduleName: 'i18n',
-        mutations : { setLocale: 'I18N_SET_LOCALE',  setMessages: 'I18N_SET_MESSAGES' }
-      }
+      // vuex    : {
+      //   moduleName: 'i18n',
+      //   mutations : { setLocale: 'I18N_SET_LOCALE',  setMessages: 'I18N_SET_MESSAGES' }
+      // }
     }
     ],
     [ '~/modules/nuxtModules/localForage.js', {
@@ -51,7 +51,8 @@ let config = {
       description: 'Main file store',
       instances  : [
         { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'blobs', description: 'file blobs' },
-        { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'about', description: 'about articles' }
+        { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'about', description: 'about articles' },
+        { name: 'cbd-events', version: 1.0, size: 4980736,  storeName: 'article', description: 'articles' }
       ]
     } ]
   ],

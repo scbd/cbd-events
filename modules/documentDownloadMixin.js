@@ -1,6 +1,6 @@
-import   path       from 'path'
-import   sizeOf     from 'object-sizeof'
-import { HTTP } from '@ionic-native/http';
+import path    from 'path'
+import sizeOf  from 'object-sizeof'
+import useHttp from '~/composables/http';
 
 export default {
   methods: { saveFiles, getFileName, createFileObj, closeDialog, getFileObjs },
@@ -72,8 +72,7 @@ function getBlobs({ data }){
     const { url } = data[i] 
     const restParams = { url, method: 'get',  responseType: 'blob' } //url: downloadUri,
 
-    blobs[i] = HTTP.sendRequest(url,restParams).then((res) => convertBlobToBase64(res.data))
-   // blobs[i] = axios(restParams).then( (res) => res.data)
+    blobs[i] = useHttp(restParams).then((data) => convertBlobToBase64(data))
   }
 
   return Promise.all(blobs)

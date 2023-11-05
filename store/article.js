@@ -8,12 +8,13 @@ export const mutations = { set }
 async function get({ dispatch }, { force, code } = {}){
   const { conferenceCode } = this.$router.currentRoute.params
   const   exists           = await dispatch('exists')
-  const cCode = conferenceCode || code
+  const   cCode            = conferenceCode || code
 
   if(!cCode) return undefined
 
   if(exists && !force){
     dispatch('get', { force: true }) // reload latest
+
     return exists
   }
 
@@ -22,12 +23,11 @@ async function get({ dispatch }, { force, code } = {}){
   if(!article) return undefined
 
   article.blob = await getBlob(article.coverImage || {}, this.$axios)
-  
-  dispatch('save', { conferenceCode:cCode, article })
 
+  await dispatch('save', { conferenceCode:cCode, article })
+  
   return article
 }
-
 
 function exists ({ state, dispatch }){
   const { docs           } = state
@@ -40,7 +40,7 @@ function exists ({ state, dispatch }){
 
 async function existsLocal ({ commit  }){
   const { conferenceCode } = this.$router.currentRoute.params
-  const   article          = await this.$localForage.about.getItem(conferenceCode)
+  const   article          = await this.$localForage.article.getItem(conferenceCode)
 
   if(!article) return undefined
 
@@ -78,7 +78,7 @@ function getQuery(code){
   const ag   = []
   const tags = []
 
-  tags[0] = encodeURIComponent('cbd-events')
+  tags[0] = encodeURIComponent('cbd-events-home')
   tags[1] = encodeURIComponent(code)
 
   const match = { 'adminTags.title.en': { $all: tags } }
@@ -93,5 +93,5 @@ function getQuery(code){
 
 function save({ commit }, { article, conferenceCode }){
   commit('set', { article, conferenceCode })
-  this.$localForage.about.setItem(conferenceCode, article)
+  this.$localForage.article.setItem(conferenceCode, article)
 }

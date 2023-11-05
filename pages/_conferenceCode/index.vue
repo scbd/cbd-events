@@ -39,16 +39,23 @@
           <Icon name="cog"  in-text="true"/> Settings
         </div>
       </div>
+
+      <div class="col-12">
+        <ArticleHome :content="content" :blob="blob" :title="title"/>
+      </div>
+      
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { lstring  }   from '~/plugins/filters'
+import { mapGetters } from 'vuex'                    ;
+import { lstring    } from '~/plugins/filters'       ;
+import   ArticleHome      from '~/components/article.vue';
 
 export default {
   name    : 'index',
+  components: { ArticleHome },
   methods : { lstring, toggleSettings },
   computed: { conference, getHeroImage, ...gettersMap(), showAbout },
   asyncData
@@ -61,7 +68,13 @@ async function asyncData ({ store, params }){
 
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
-  return { conferenceCode, aboutExists }
+
+  let  { content, blob, title } = await store.dispatch('article/get') || {} ;
+
+  if(blob)
+    blob = URL.createObjectURL(blob)
+
+  return { conferenceCode, aboutExists, content, blob, title }
 }
 
 function gettersMap(){

@@ -26,10 +26,20 @@ async function asyncData ({ store, params }){
 
   if(blob)
     blob = URL.createObjectURL(blob)
+
   return { content, blob, title }
 }
 </script>
-
+<style>
+h1{
+  font-size: 1.75rem;
+  margin: 1rem 0 1rem 0;
+}
+h2{
+  font-size: 1.4rem;
+  margin: .5rem 0 .5rem 0;
+}
+</style>
 <style scoped>
   .home{ padding-bottom: 3em; }
   .hero  { align-self: start; width:95vw; }

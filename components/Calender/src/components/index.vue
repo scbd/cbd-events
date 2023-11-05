@@ -148,8 +148,8 @@ function setQueryString(interations){
 
   if(interations) this.$router.replace(route)
 
-  const start = aDateTime.toUTC().toISO()
-  const end   = endDateTime.toUTC().toISO()
+  const start = aDateTime.toISO({includeOffset:false})
+  const end   = endDateTime.toISO({includeOffset:false})
 
   this.query = { ...this.query, start, end }
 }
@@ -174,7 +174,8 @@ function mapByDay(events){
     const   dayStart         = DateTime.fromISO(raw[i].start).startOf('day')
     const   dayEnd           = DateTime.fromISO(raw[i].start).endOf('day')
     const   start            = DateTime.fromISO(raw[i].start)
-    const   dayStartText     = dayStart.toISODate()
+    const   dayStartText     = dayStart.toISODate({includeOffset:false})
+
 
     if(!hasOwnProperty.call(days, dayStartText))
       days[dayStartText]=[]
@@ -182,6 +183,7 @@ function mapByDay(events){
     if(start>=dayStart && start<=dayEnd)
       days[dayStartText].push(raw[i])
   }
+
   events.days = days
   return events
 }
@@ -192,13 +194,14 @@ function mapByWeek(events){
   const weeks = {}
 
   for (const day in days){
-    const year       = DateTime.fromISO(day).toUTC().year
-    const weekNumber = DateTime.fromISO(day).toUTC().weekNumber
+    const year       = DateTime.fromISO(day).year
+    const weekNumber = DateTime.fromISO(day).weekNumber
     const weekText   = `${year}-${weekNumber}`
 
     if(!hasOwnProperty.call(weeks, weekText)) weeks[weekText]={}
-    
+
     weeks[weekText][day]=days[day]
+
   }
   events.weeks=createLinkedList(weeks)
   return events

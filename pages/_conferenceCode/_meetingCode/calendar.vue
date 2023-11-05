@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { HTTP             } from '@ionic-native/http'
+import useHttp from '~/composables/http';
 import { mapGetters          } from 'vuex'
 import { sanitizeIndexResult } from '~/modules/apiNormalize'
 import   Calendar              from '~/components/Calender/src/components/'
@@ -49,8 +49,8 @@ async function getEvents(query){
   if(!query.conference) query.conference = this.conference.id
   
   const events   = {}
-  const queryUrl = this.getQueryUrl(query)
-  const docs     = await HTTP.sendRequest(queryUrl, { method: 'get', responseType: 'json' }).then((r) => r.data.response.docs)
+  const url      = this.getQueryUrl(query)
+  const docs     = await useHttp( { url, method: 'get', responseType: 'json' }).then((data) => data.response.docs)
 
   events.raw     = sanitizeIndexResult(docs)
 

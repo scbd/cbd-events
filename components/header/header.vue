@@ -103,7 +103,7 @@ function onScroll (e){
 }
       
 function toggle(){
-  const { locale } = this.$store.state.i18n
+  const { locale } = this.$i18n
 
   this.$router.push({ name: `conferenceCode-meetingCode-meetings___${locale}`, params: this.$route.params })
 }
