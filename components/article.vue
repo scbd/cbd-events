@@ -15,7 +15,6 @@
     props: ['title', 'content', 'blob']
   }
   function data(){
-    console.log('this.blob',this.blob)
     return { show: false }
   }
   </script>
