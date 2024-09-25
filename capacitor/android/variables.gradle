@@ -1,16 +1,22 @@
 ext {
-    minSdkVersion = 22
-    compileSdkVersion = 32
-    targetSdkVersion = 32
-    androidxActivityVersion = '1.4.0'
-    androidxAppCompatVersion = '1.4.2'
+    minSdkVersion = 24
+    compileSdkVersion = 33
+    targetSdkVersion = 33
+    androidxActivityVersion = '1.9.2'
+    androidxAppCompatVersion = '1.7.0'
     androidxCoordinatorLayoutVersion = '1.2.0'
-    androidxCoreVersion = '1.8.0'
-    androidxFragmentVersion = '1.4.1'
-    coreSplashScreenVersion = '1.0.0-rc01'
-    androidxWebkitVersion = '1.4.0'
+    androidxCoreVersion = '1.13.1'
+    androidxFragmentVersion = '1.8.3'
+    coreSplashScreenVersion = '1.0.1'
+    androidxWebkitVersion = '1.12.0'
     junitVersion = '4.13.2'
-    androidxJunitVersion = '1.1.3'
-    androidxEspressoCoreVersion = '3.4.0'
-    cordovaAndroidVersion = '10.1.1'
+    androidxJunitVersion = '1.2.1'
+    androidxEspressoCoreVersion = '3.6.1'
+    cordovaAndroidVersion = '13.0.0'
+    androidGradlePluginVersion = '7.4.2'
+    googleGmsGoogleServicesVersion = '4.4.2'
+    gradlenexusPublishPluginVersion = '1.3.0'
+    orgMockitoMockitoInlineVersion = '5.2.0'
+    orgJsonJsonVersion = '20231013'
+    comAndroidSupportSupportV4Version = '28.0.0'
 }
