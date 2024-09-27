@@ -2,16 +2,18 @@ ext {
     minSdkVersion = 24
     compileSdkVersion = 33
     targetSdkVersion = 33
-    androidxActivityVersion = '1.9.2'
-    androidxAppCompatVersion = '1.7.0'
+    androidxActivityVersion = '1.7.2' // Downgrade from 1.9.2 - Requires Android 34
+    androidxAppCompatVersion = '1.6.1' // Downgrade from 1.7.0 - Issue java.lang.NullPointerException
     androidxCoordinatorLayoutVersion = '1.2.0'
-    androidxCoreVersion = '1.13.1'
-    androidxFragmentVersion = '1.8.3'
+    androidxCoreVersion = '1.10.1' // Downgrade from 1.13.1 - Requires Android 34
+    androidxFragmentVersion = '1.6.2' // Downgrade from 1.8.3 - Requires Android 34
     coreSplashScreenVersion = '1.0.1'
-    androidxWebkitVersion = '1.12.0'
+    androidxWebkitVersion = '1.7.0' // Downgrade from 1.12.0 - Requires Android 34
     junitVersion = '4.13.2'
     androidxJunitVersion = '1.2.1'
     androidxEspressoCoreVersion = '3.6.1'
+    androidxTestServicesStorageVersion = '1.5.0'
+    androidxTestCoreVersion = '1.6.1'
     cordovaAndroidVersion = '13.0.0'
     androidGradlePluginVersion = '7.4.2'
     googleGmsGoogleServicesVersion = '4.4.2'
@@ -19,4 +21,7 @@ ext {
     orgMockitoMockitoInlineVersion = '5.2.0'
     orgJsonJsonVersion = '20231013'
     comAndroidSupportSupportV4Version = '28.0.0'
+    comAndroidVolleyVolleyVersion = '1.2.1'
+    ioGithubG00fy2VersionCompareVersion = '1.5.0'
+    comGoogleCodeGsonGsonVersion = '2.11.0'
 }
