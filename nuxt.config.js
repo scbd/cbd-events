@@ -64,7 +64,14 @@ let config = {
   ],
   loading: { color: '#009b48' },
   router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },
-  build  : { transpile: [ 'camelcase-keys', '@awesome-cordova-plugins/file-opener' ] },
+  build  : { transpile: [ 'camelcase-keys', '@awesome-cordova-plugins/file-opener' ],
+    extend(config, { isClient }) {
+      // Extend only webpack config for client-bundle
+      if (isClient) {
+        config.devtool = 'source-map'
+      }
+    }
+  },
   cache  : { max: 1000, maxAge: 900000 },
   render : { http2: { push: true }, static: { maxAge: '1y', setHeaders } },
   generate: { dir: 'capacitor/www' }

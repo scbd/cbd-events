@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt",
-    "build:a": "rm -rf .nuxt && NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
+    "build:a": "rm -rf .nuxt && NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync --inline android",
     "build:i": "rm -rf .nuxt && NODE_ENV=ios nuxt generate && cd capacitor && yarn cap sync ios",
     "clean-reinstall": "rm -f yarn.lock && rm -f package-lock.json &&  rm -rf node_modules && CXXFLAGS=\"--std=c++17\" yarn install --force"
   },
