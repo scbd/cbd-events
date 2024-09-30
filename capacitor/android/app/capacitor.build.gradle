@@ -18,7 +18,7 @@ dependencies {
     implementation project(':capacitor-status-bar')
     implementation project(':capgo-capacitor-updater')
     implementation "androidx.webkit:webkit:$rootProject.ext.androidxWebkitVersion"
-    implementation "com.android.support:support-v4:28.0.0"
+    implementation "com.android.support:support-v4:$rootProject.ext.comAndroidSupportSupportV4Version"
 }
 
 

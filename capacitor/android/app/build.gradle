@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    namespace 'io.cbd.unbioevents'
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "io.cbd.unbioevents"
@@ -19,11 +21,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    configurations.configureEach {
-        resolutionStrategy {
-            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.20'
         }
     }
 }
