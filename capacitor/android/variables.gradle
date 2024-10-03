@@ -19,4 +19,5 @@ ext {
     orgMockitoMockitoInlineVersion = '5.2.0'
     orgJsonJsonVersion = '20231013'
     androidxTestServicesStorageVersion = '1.5.0'
+    androidxTestCoreVersion = '1.6.1'
 }
