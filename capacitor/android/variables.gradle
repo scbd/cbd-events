@@ -18,4 +18,5 @@ ext {
     gradlenexusPublishPluginVersion = '1.3.0'
     orgMockitoMockitoInlineVersion = '5.2.0'
     orgJsonJsonVersion = '20231013'
+    androidxTestServicesStorageVersion = '1.5.0'
 }
