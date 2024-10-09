@@ -1,29 +1,30 @@
 PODS:
-  - Alamofire (5.6.4)
-  - Capacitor (5.5.1):
+  - Alamofire (5.9.1)
+  - Capacitor (6.1.2):
     - CapacitorCordova
-  - CapacitorApp (5.0.6):
+  - CapacitorApp (6.0.1):
     - Capacitor
-  - CapacitorCordova (5.5.1)
-  - CapacitorDevice (5.0.6):
+  - CapacitorCordova (6.1.2)
+  - CapacitorDevice (6.0.1):
     - Capacitor
-  - CapacitorFilesystem (5.1.4):
+  - CapacitorFilesystem (6.0.1):
     - Capacitor
-  - CapacitorLocalNotifications (5.0.6):
+  - CapacitorLocalNotifications (6.1.0):
     - Capacitor
-  - CapacitorShare (5.0.6):
+  - CapacitorShare (6.0.2):
     - Capacitor
-  - CapacitorSplashScreen (5.0.6):
+  - CapacitorSplashScreen (6.0.2):
     - Capacitor
-  - CapacitorStatusBar (5.0.6):
+  - CapacitorStatusBar (6.0.1):
     - Capacitor
-  - CapgoCapacitorUpdater (5.3.25):
+  - CapgoCapacitorUpdater (6.3.0):
     - Alamofire
     - Capacitor
     - SSZipArchive
     - Version
-  - CordovaPlugins (5.5.1):
+  - CordovaPlugins (6.1.2):
     - CapacitorCordova
+  - CordovaPluginsResources (0.0.105)
   - SSZipArchive (2.4.3)
   - Version (0.8.0)
 
@@ -39,6 +40,7 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapgoCapacitorUpdater (from `../../node_modules/@capgo/capacitor-updater`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
+  - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
 
 SPEC REPOS:
   trunk:
@@ -69,23 +71,26 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capgo/capacitor-updater"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
+  CordovaPluginsResources:
+    :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
-  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
-  Capacitor: 9da0a2415e3b6098511f8b5ffdb578d91ee79f8f
-  CapacitorApp: 024e1b1bea5f883d79f6330d309bc441c88ad04a
-  CapacitorCordova: e128cc7688c070ca0bfa439898a5f609da8dbcfe
-  CapacitorDevice: 2c968f98a1ec4d22357418c1521e7ddc46c675e6
-  CapacitorFilesystem: af704badfbc69f6f8623d9ed313e5490e3723dcb
-  CapacitorLocalNotifications: c2d8b14794064fd4814b1d6c4ddbac8029afa295
-  CapacitorShare: cd41743331cb71d217c029de54b681cbd91e0fcc
-  CapacitorSplashScreen: 5fa2ab5e46cf5cc530cf16a51c80c7a986579ccd
-  CapacitorStatusBar: 565c0a1ebd79bb40d797606a8992b4a105885309
-  CapgoCapacitorUpdater: 0443df823e226926074450758ad28266e692a031
-  CordovaPlugins: 501ff841ca85e1bd0bade832f125f091e4c9d846
+  Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
+  Capacitor: 679f9673fdf30597493a6362a5d5bf233d46abc2
+  CapacitorApp: 0bc633b4eae40a1f32cd2834788fad3bc42da6a1
+  CapacitorCordova: f48c89f96c319101cd2f0ce8a2b7449b5fb8b3dd
+  CapacitorDevice: 7097a1deb4224b77fd13a6e60a355d0062a5d772
+  CapacitorFilesystem: 37fb3aa5c945b4539ab11c74a5c57925a302bf24
+  CapacitorLocalNotifications: 6bac9e948b2b8852506c6d74abb2cde140250f86
+  CapacitorShare: 591ae4693d85686ceb590db8e8b44aa014ec6490
+  CapacitorSplashScreen: 250df9ef8014fac5c7c1fd231f0f8b1d8f0b5624
+  CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
+  CapgoCapacitorUpdater: 1d281f3dd4d4f2aa7512f2aa95f0fc1ed1988dd2
+  CordovaPlugins: 44b1cac7fe25ddd1e415250b40d5ef97c0ffb6cd
+  CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: be1051356eaf82ebedd8fde0b00d1bedfff89505
+PODFILE CHECKSUM: c38c712ce80bf17dd0b017c53a6e354ef8ce97cf
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

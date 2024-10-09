@@ -1068,10 +1068,10 @@
   resolved "https://registry.yarnpkg.com/@capacitor/status-bar/-/status-bar-6.0.1.tgz#27cef2560cdefb8e14d2cecc976056ede7b822ef"
   integrity sha512-Usd9hZZQVAqy+jJfL7jRcYI7dcsxN09Na1yttwdl+F1bk3Ztoukk7CGPDm5VgKUSs53ihQBOy1+sczCACxhNiw==
 
-"@capgo/capacitor-updater@6.2.9":
-  version "6.2.9"
-  resolved "https://registry.yarnpkg.com/@capgo/capacitor-updater/-/capacitor-updater-6.2.9.tgz#0ad121a6d9b7f7adc3adffb612c459aa9db17202"
-  integrity sha512-jJ/tDyvWWc203NXQNkROIipaJniYgKbWkYMNctLunXlEZalSx8o7fdyEyT5kTiEolV/Yarfw1KDt0rq9C6bUYA==
+"@capgo/capacitor-updater@6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@capgo/capacitor-updater/-/capacitor-updater-6.3.0.tgz#f158259efd811acec98163daff1a09f84cd2cfbb"
+  integrity sha512-/rAzHWg2KRgwdVJbLxSv+ZqLLdJ6nm50kAwq4vHO8WrmDBu2Zm44+DukXGIxD/3XGCSRUKRzfFIkZPN3PLG5kg==
 
 "@csstools/cascade-layer-name-parser@^1.0.13":
   version "1.0.13"
@@ -1920,7 +1920,7 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.28.tgz#d45e01c4a56f143ee69c54dd6b12eade9e270a73"
   integrity sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==
 
-"@scbd/ckeditor5-build-inline-full@^35.0.0":
+"@scbd/ckeditor5-build-inline-full@35.0.0":
   version "35.0.0"
   resolved "https://registry.yarnpkg.com/@scbd/ckeditor5-build-inline-full/-/ckeditor5-build-inline-full-35.0.0.tgz#2831a248381cc763f6f4a70df779f3cf029abc3e"
   integrity sha512-JylTzrurMgAKSJm+Kjef6gkH+SQVZwf0NE3YSoLdtHmkRpJC1jO6pu0uPRK/ePOqN2ALCMoY/W5dYDLIYZ6c7g==
