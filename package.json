@@ -5,7 +5,7 @@
   "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
   "scripts": {
-    "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt",
+    "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt --open",
     "build:a": "rm -rf .nuxt && NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
     "build:i": "rm -rf .nuxt && NODE_ENV=ios nuxt generate && cd capacitor && yarn cap sync ios",
     "clean-reinstall": "rm -f yarn.lock && rm -f package-lock.json &&  rm -rf node_modules && CXXFLAGS=\"--std=c++17\" yarn install --force"
@@ -13,15 +13,15 @@
   "dependencies": {
     "@awesome-cordova-plugins/core": "6.9.0",
     "@awesome-cordova-plugins/file-opener": "6.9.0",
-    "@capacitor/app": "5.0.8",
-    "@capacitor/core": "5.7.8",
-    "@capacitor/device": "5.0.8",
-    "@capacitor/filesystem": "5.2.2",
-    "@capacitor/local-notifications": "5.0.8",
-    "@capacitor/share": "5.0.8",
-    "@capacitor/splash-screen": "5.0.8",
-    "@capacitor/status-bar": "5.0.8",
-    "@capgo/capacitor-updater": "5.9.5",
+    "@capacitor/app": "6.0.1",
+    "@capacitor/core": "6.1.2",
+    "@capacitor/device": "6.0.1",
+    "@capacitor/filesystem": "6.0.1",
+    "@capacitor/local-notifications": "6.1.0",
+    "@capacitor/share": "6.0.2",
+    "@capacitor/splash-screen": "6.0.2",
+    "@capacitor/status-bar": "6.0.1",
+    "@capgo/capacitor-updater": "6.2.9",
     "@ionic-native/core": "5.36.0",
     "@ionic-native/http": "5.36.0",
     "@nuxtjs/axios": "5.13.6",
@@ -46,8 +46,8 @@
     "eslint-friendly-formatter": "4.0.1",
     "eslint-loader": "4.0.2",
     "eslint-plugin-vue": "9.28.0",
-    "sass": "1.79.4",
     "replace": "1.2.2",
+    "sass": "1.79.4",
     "sass-loader": "10.5.2"
   }
 }

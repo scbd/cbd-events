@@ -17,24 +17,24 @@
   },
   "dependencies": {
     "@awesome-cordova-plugins/file-opener": "6.9.0",
-    "@capacitor/android": "5.7.8",
-    "@capacitor/app": "5.0.8",
-    "@capacitor/core": "5.7.8",
-    "@capacitor/device": "5.0.8",
-    "@capacitor/filesystem": "5.2.2",
-    "@capacitor/ios": "5.7.8",
-    "@capacitor/local-notifications": "5.0.8",
-    "@capacitor/share": "5.0.8",
-    "@capacitor/splash-screen": "5.0.8",
-    "@capacitor/status-bar": "5.0.8",
-    "@capgo/capacitor-updater": "5.9.5",
+    "@capacitor/android": "6.1.2",
+    "@capacitor/app": "6.0.1",
+    "@capacitor/core": "6.1.2",
+    "@capacitor/device": "6.1.2",
+    "@capacitor/filesystem": "6.0.1",
+    "@capacitor/ios": "6.1.2",
+    "@capacitor/local-notifications": "6.1.0",
+    "@capacitor/share": "6.0.2",
+    "@capacitor/splash-screen": "6.0.2",
+    "@capacitor/status-bar": "6.0.1",
+    "@capgo/capacitor-updater": "6.2.9",
     "@ionic-native/http": "5.36.0",
     "cordova-plugin-advanced-http": "3.3.1",
     "cordova-plugin-file": "8.1.0",
     "cordova-plugin-file-opener2": "github:pwlin/cordova-plugin-file-opener2#0b15d93b4f0c5a70206fe276f7aa956f754c3ca3"
   },
   "devDependencies": {
-    "@capacitor/cli": "5.7.8",
+    "@capacitor/cli": "6.1.2",
     "jetifier": "2.0.0"
   }
 }
