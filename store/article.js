@@ -10,9 +10,12 @@ async function get({ dispatch }, { force, code, tag:passedTag } = {}){
 
   const   cCode            = code || conferenceCode;
   const   tag              = passedTag || paramTag;
-  const   exists           = await dispatch('exists', { code:cCode, tag});
 
   if(!cCode) return undefined
+  
+  const   exists           = await dispatch('exists', { code:cCode, tag});
+
+
 
   if(exists && !force){
     dispatch('get', { force: true, code, tag }) // reload latest

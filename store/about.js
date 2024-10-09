@@ -7,10 +7,11 @@ export const mutations = { set }
 
 async function get({ dispatch }, { force, code } = {}){
   const { conferenceCode } = this.$router.currentRoute.params
-  const   exists           = await dispatch('exists')
   const cCode = conferenceCode || code
 
   if(!cCode) return undefined
+
+  const   exists           = await dispatch('exists')
 
   if(exists && !force){
     dispatch('get', { force: true }) // reload latest
