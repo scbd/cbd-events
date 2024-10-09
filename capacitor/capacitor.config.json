@@ -1,6 +1,6 @@
 {
   "appId": "io.cbd.unbioevents",
-  "appName": "cbd-events",
+  "appName": "CBD Events",
   "webDir": "www",
   "bundledWebRuntime": false,
   "loggingBehavior": "production",

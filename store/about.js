@@ -1,4 +1,4 @@
-import { HTTP } from '@ionic-native/http'
+import useHttp from '~/composables/http';
 
 export const state     = () => ({ docs: {} })
 export const actions   = { get, exists, existsLocal, save }
@@ -17,12 +17,14 @@ async function get({ dispatch }, { force, code } = {}){
     return exists
   }
 
-  const  article = await loadArticle(cCode)
+  const  article = await loadArticle(cCode, this.$axios)
   
   if(!article) return undefined
 
+  article.blob = await getBlob(article.coverImage || {}, this.$axios)
+  
   dispatch('save', { conferenceCode:cCode, article })
-  article.blob = await getBlob(article.coverImage || {})
+
   return article
 }
 
@@ -49,21 +51,22 @@ async function existsLocal ({ commit  }){
 
 function set(state, { conferenceCode, article }){ state.docs[conferenceCode] = article }
 
-function getBlob({ url }){
+function getBlob({ url }, $axios){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return HTTP.sendRequest(url,restParams).then((res) => res.data)
+  return useHttp(restParams, $axios)
 }
 
 
-function loadArticle(conferenceCode){
+function loadArticle(conferenceCode, $axios){
   try{
-    const restParams = { method: 'get',  responseType: 'json', params: getQuery(conferenceCode) }
+    const url = `${process.env.NUXT_ENV_API}/api/v2017/articles`;
+    const restParams = {url,  method: 'get',  responseType: 'json', params: getQuery(conferenceCode) }
 
-    return HTTP.sendRequest(`${process.env.NUXT_ENV_API}/api/v2017/articles`, restParams)
-      .then(({ data }) => data[0])
+    return useHttp(restParams, $axios)
+      .then((data) => data[0])
   }
   catch(e){
     console.error(e)
@@ -78,7 +81,7 @@ function getQuery(code){
   tags[0] = encodeURIComponent('cbd-events')
   tags[1] = encodeURIComponent(code)
 
-  const match = { 'adminTags.title.en': { $all: tags } }
+  const match = { 'adminTags': { $all: tags } }
 
   ag.push({ $match: match })
   ag.push({ $project: { title: 1, summary: 1, content: 1, coverImage: 1 } })

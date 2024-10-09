@@ -1,12 +1,12 @@
 import { normalizeApiResponse } from '~/modules/apiNormalize'
 import { DateTime             } from 'luxon'
-import { HTTP             } from '@ionic-native/http'
-import queryFilter from '~/composables/query-filter'
+import   useHttp                from '~/composables/http'
+import   queryFilter            from '~/composables/query-filter'
+
 // ACTIONS
 async function getConferences({ state, dispatch, commit, rootState }){
   if(state.selected) return state.docs
 
-  const { $axios         } = this
   const { conferenceCode } = this.$router.currentRoute.params
   const   response         = await queryConferences(this.$axios, rootState.i18n)
 
@@ -146,24 +146,25 @@ function getActive (conferences){ return conferences.find((c) => c.active) || co
 
 function queryConferences($axios, { locale='en' }){
   const params = queryFilter({
-    q: { 'apps.cbdEvents': { $exists: true } },
-    s: { StartDate: -1 }
-  })
+                              q: { 'apps.cbdEvents': { $exists: true } },
+                              s: { StartDate: -1 }
+                            })
+  const url = `${process.env.NUXT_ENV_API}/api/v2016/conferences`;
 
-  return  HTTP.sendRequest(`${process.env.NUXT_ENV_API}/api/v2016/conferences`, { method: 'get', responseType: 'json', params })
-    .then(({ data }) => normalizeApiResponse(data, locale))
+  return  useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
+    .then((data) => normalizeApiResponse(data, locale))
     .then((data) => hasMeetings(data))
 }
 
-async function loadBlobs(conference){
+async function loadBlobs(conference, $axios){
   if(!conference?.apps) conference.apps = { cbdEvents: {} }
   if(!conference.apps.cbdEvents) conference.apps.cbdEvents = {}
 
   const { cbdEvents }             = conference?.apps || {}
   const { heroImage, image }      = cbdEvents || {}
 
-  cbdEvents.heroImageBlob = await getBlob(heroImage)
-  cbdEvents.imageBlob     = await getBlob(image)
+  cbdEvents.heroImageBlob = await getBlob(heroImage, $axios)
+  cbdEvents.imageBlob     = await getBlob(image, $axios)
 
   return conference
 }
@@ -179,41 +180,41 @@ async function initSelectedConference({ $axios, state, commit }, { conferenceCod
   else
     conference = getActive(response)
 
-  conference = await loadBlobs(conference)
+  conference = await loadBlobs(conference, $axios)
 
   commit('setSelected', conference)
 }
 
-function getBlob(url){
+function getBlob(url, $axios){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return HTTP.sendRequest(url, restParams).then((res) => res.data)
+  return useHttp(restParams, $axios)
 }
 
-function hasNoMenus({ apps, conference, majorEventIDs }){
+function hasNoMenus({ apps, conference, majorEventIds }){
   const { useMenus } = apps.cbdEvents
   const menus        = extractMenus(conference)
 
   if(useMenus && !menus) return true
 
-  if(!useMenus && !majorEventIDs) true
+  if(!useMenus && !majorEventIds) true
 }
 
 function extractMenus(conference){
   return conference.menus || conference?.events.filter((e) => e.menus) || []//(conference?.events || []).filter((e) => e.menus) || []
 }
 
-function extractMeetingsFromMenus({ apps, conference, majorEventIDs }){
+function extractMeetingsFromMenus({ apps, conference, majorEventIds }){
   const { useMenus } = apps.cbdEvents
   const menus        = extractMenus(conference)
-  const meetings     = useMenus? menus : majorEventIDs
+  const meetings     = useMenus? menus : majorEventIds
 
   return meetings
 }
 
-//checks is conference has major meetings defined by  majorEventIDs by default or conference.menus
+//checks is conference has major meetings defined by  majorEventIds by default or conference.menus
 function hasMeetings (docs){
 
   for (let i = 0; i < docs.length; i++){
@@ -244,11 +245,11 @@ const MEETING_QUERY_PARAMS = {
   f: { EVT_CD: 1, title: 1, EVT_UN_CD: 1, links: 1, EVT_INFO_PART_URL: 1, insession: 1, agenda: 1 }
 }
 
-function generateParamsById(majorEventIDs=[]){
+function generateParamsById(majorEventIds=[]){
   const oids = []
 
-  for (let i = 0; i < majorEventIDs.length; i++)
-    oids.push({ $oid: majorEventIDs[i] })
+  for (let i = 0; i < majorEventIds.length; i++)
+    oids.push({ $oid: majorEventIds[i] })
   
   return Object.assign({}, { q: { _id: { $in: oids } } }, MEETING_QUERY_PARAMS)
 }
@@ -264,9 +265,9 @@ function generateParamsByMenu(menus){
   return Object.assign({}, { q: { code: { $in: codes } } }, MEETING_QUERY_PARAMS)
 }
 
-function dataExists({ conference, majorEventIDs }, useMenus=false){
+function dataExists({ conference, majorEventIds }, useMenus=false){
   if(useMenus && !conference.menus) return false
-  if(!useMenus && !majorEventIDs)   return false
+  if(!useMenus && !majorEventIds)   return false
 
   return true
 }
@@ -274,16 +275,17 @@ function dataExists({ conference, majorEventIDs }, useMenus=false){
 
 //MEETINGS
 function queryMeetings ($axios, selected, locale='en'){
-  const { conference, majorEventIDs, apps } = selected
+  const { conference, majorEventIds, apps } = selected
   const { useMenus }                        = apps.cbdEvents
 
 
   if(!dataExists(selected, useMenus)) return []
 
-  const params = queryFilter(useMenus? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIDs))
+  const url    = `${ process.env.NUXT_ENV_API }/api/v2016/meetings`
+  const params = queryFilter(useMenus? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIds))
 
-  return HTTP.sendRequest(`${ process.env.NUXT_ENV_API }/api/v2016/meetings`, { method: 'get', responseType: 'json', params })
-    .then(({ data }) => {
+  return useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
+    .then((data) => {
       if(!Array.isArray(data)) data = [ data ]
       return normalizeApiResponse(data, locale)
     })

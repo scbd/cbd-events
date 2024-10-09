@@ -25,7 +25,7 @@ export default class {
   weekIterations(weekDateTime){
     weekDateTime.setLocale(this.locale)
 
-    this.weekDateTime  = weekDateTime.startOf('week') || DateTime.local().startOf('week')
+    this.weekDateTime  = weekDateTime.startOf('week') 
     this.startWeek     = weekDateTime.minus({ weeks: 7 }).startOf('week')
     this.endWeek       = weekDateTime.plus({ weeks: 7 }).startOf('week')
 
