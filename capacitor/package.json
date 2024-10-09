@@ -1,7 +1,7 @@
 {
   "name": "UNBiodiversityEvents",
   "displayName": "UNBiodiversityEvents",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "Capacitor wrapper for CBD/UN Biodiversity Events",
   "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
