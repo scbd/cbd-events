@@ -81,7 +81,7 @@ function getQuery(code){
   tags[0] = encodeURIComponent('cbd-events')
   tags[1] = encodeURIComponent(code)
 
-  const match = { 'adminTags.title.en': { $all: tags } }
+  const match = { 'adminTags': { $all: tags } }
 
   ag.push({ $match: match })
   ag.push({ $project: { title: 1, summary: 1, content: 1, coverImage: 1 } })
