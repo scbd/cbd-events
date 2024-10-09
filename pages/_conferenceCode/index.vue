@@ -34,13 +34,13 @@
           <Icon name="calendar-o"  in-text="true"/> Calendar
         </nuxt-link>
       </div>
-      <div v-on:click="toggleSettings" class="col-6">
-        <div  class="btn btn-secondary btn-index" >
-          <Icon name="cog"  in-text="true"/> Settings
-        </div>
+      <div v-for="(button, index) in buttons" :key="index" :class="{'col-6':button.size!==2, 'col-12':button.size===2,}">
+        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-article-tag',params: { conferenceCode, tag:button.tag }})">
+          <Icon :name="button.icon"  in-text="true"/> {{ button.text }}
+        </nuxt-link>
       </div>
 
-      <div class="col-12">
+      <div v-if="content || blob" class="col-12">
         <ArticleHome :content="content" :blob="blob" :title="title"/>
       </div>
       
@@ -57,22 +57,23 @@ export default {
   name    : 'index',
   components: { ArticleHome },
   methods : { lstring, toggleSettings },
-  computed: { conference, getHeroImage, ...gettersMap(), showAbout },
+  computed: { conference, getHeroImage, ...gettersMap(), showAbout, buttons },
   asyncData
+}
+
+function buttons(){
+  return (this.conference.buttons || []).filter(b=>b.status);
 }
 
 async function asyncData ({ store, params }){
   const { conferenceCode } = params
-
-  const aboutExists = await store.dispatch('about/get')
+  const   aboutExists      = await store.dispatch('about/get')
 
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
+  let  { content, blob, title } = await store.dispatch('article/get',{ force:true,code: conferenceCode, tag:'cbd-events-home'}) || {} ;
 
-  let  { content, blob, title } = await store.dispatch('article/get') || {} ;
-
-  if(blob)
-    blob = URL.createObjectURL(blob)
+  if(blob) blob = URL.createObjectURL(blob);
 
   return { conferenceCode, aboutExists, content, blob, title }
 }
@@ -102,17 +103,17 @@ function getHeroImage(){
 
 function conference(){
   try{
-    const { title, imageBlob, heroImageBlob, heroImage, image, hasAbout } = this.cbdEvents
+    const { title, imageBlob, heroImageBlob, heroImage, image, hasAbout, buttons } = this.cbdEvents;
 
-    return  { title, imageBlob, heroImageBlob, heroImage, image, hasAbout }
+    return  { title, imageBlob, heroImageBlob, heroImage, image, hasAbout, buttons };
   }
-  catch(e){ return {} }
+  catch(e){ return {} };
 }
 
 function showAbout(){
-  const { hasAbout } = this.conference || {}
+  const { hasAbout } = this.conference || {};
 
-  return hasAbout || this.aboutExists
+  return hasAbout || this.aboutExists;
 }
 </script>
 
