@@ -23,7 +23,7 @@
           <svg class="icon"><use xlink:href="#icon-docs" /></svg>
         </nuxt-link>
 
-        <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
+        <nuxt-link v-if="showCalendar" tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
           <svg class="icon"><use xlink:href="#icon-calendar-o" /></svg>
         </nuxt-link>
       </ul>
@@ -55,7 +55,8 @@ function gettersMap(){
     meetingCode : 'conferences/meetingCode',
     hasDownloads: 'files/hasDownloads',
     startDate   : 'conferences/startDate',
-    downloading : 'files/isDownloading'
+    downloading : 'files/isDownloading',
+    showCalendar: 'conferences/showCalendar'
   })
 }
 

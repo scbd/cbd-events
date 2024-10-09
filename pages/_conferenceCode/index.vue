@@ -29,7 +29,7 @@
           <Icon name="docs"  in-text="true"/> Documents
         </nuxt-link>
       </div>
-      <div class="col-6">
+      <div v-if="showCalendar" class="col-6">
         <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
           <Icon name="calendar-o"  in-text="true"/> Calendar
         </nuxt-link>
@@ -84,7 +84,8 @@ function gettersMap(){
     hasDownloads : 'files/hasDownloads',
     startDate    : 'conferences/startDate',
     conferenceCal: 'conferences/conferenceCal',
-    cbdEvents    : [ 'conferences/selectedApp' ]
+    cbdEvents    : [ 'conferences/selectedApp' ],
+    showCalendar: 'conferences/showCalendar'
   })
 }
 
