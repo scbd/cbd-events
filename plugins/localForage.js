@@ -17,6 +17,7 @@ const createVueIntance = function (options){
     },
     methods: {
       getItem (key) {
+        if(!key) return Promise.reject('Key is required')
         return new Promise((resolve, reject) => {
           lf.getItem(key).then((value) => {
             resolve(value)
@@ -26,6 +27,7 @@ const createVueIntance = function (options){
         })
       },
       setItem (key, value) {
+        if(!key) return Promise.reject('Key is required')
         return new Promise((resolve, reject) => {
           lf.setItem(key, value).then((value) => {
             resolve(value)
@@ -35,6 +37,7 @@ const createVueIntance = function (options){
         })
       },
       removeItem (key) {
+        if(!key) return Promise.reject('Key is required')
         return new Promise((resolve, reject) => {
           lf.removeItem(key).then(() => {
             resolve()
@@ -62,6 +65,7 @@ const createVueIntance = function (options){
         })
       },
       key (keyIndex) {
+        if(!keyIndex) return Promise.reject('Key is required')
         return new Promise((resolve, reject) => {
           lf.key(keyIndex).then((keyName) => {
             resolve(keyName)
