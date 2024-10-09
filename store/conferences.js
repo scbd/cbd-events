@@ -64,6 +64,20 @@ function conference (state){
   catch(e){ return {} }
 }
 
+function showCalendar (state){
+  try{ 
+      const { hideCalendar } = state.selected?.apps?.cbdEvents
+
+    return !hideCalendar
+  }
+  catch(e){ 
+    console.error(e); 
+    
+    return true; // defautl show
+  }
+}
+
+
 function conferenceCal(state){
   try{ return state.selected.apps.conferenceCal }
   catch(e){ return undefined }
@@ -137,7 +151,7 @@ function setMeetings        (state, payLoad = {}){ state.meetings = payLoad }
 
 export const state     = () => ({ docs: [], selected: false, selectedMeeting: false, meetings: [] })
 export const actions   = { get: getConferences, getMeetings }
-export const getters   = { conferenceCal, conference, meeting, byCode, selectedApp, meetingCode, startDate, isInSession, forceDate, agendaItems, agenda, agendaPrefix, conferenceId }
+export const getters   = { showCalendar, conferenceCal, conference, meeting, byCode, selectedApp, meetingCode, startDate, isInSession, forceDate, agendaItems, agenda, agendaPrefix, conferenceId }
 export const mutations = { setDeleteAll, setSelected, setSelectedMeeting, setConferences, setMeetings }
 
 
