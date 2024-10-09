@@ -23,7 +23,8 @@ let config = {
   },
   css: [
     { src: '~assets/app.scss'  },
-    { src: '~assets/app.css' }
+    { src: '~assets/app.css' },
+    { src: '~assets/content-style.css' }
   ],
   modules: [
     [ 'nuxt-i18n', {
