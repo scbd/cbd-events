@@ -24,7 +24,7 @@ let config = {
   css: [
     { src: '~assets/app.scss'  },
     { src: '~assets/app.css' },
-    { src: '~assets/content-style.css' }
+    { src: '@scbd/ckeditor5-build-inline-full/build/content-style.css' }
   ],
   modules: [
     [ 'nuxt-i18n', {

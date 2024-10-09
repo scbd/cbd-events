@@ -1,6 +1,6 @@
 {
   "name": "cbd-events",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "cbd-events app",
   "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
@@ -25,6 +25,7 @@
     "@ionic-native/core": "5.36.0",
     "@ionic-native/http": "5.36.0",
     "@nuxtjs/axios": "5.13.6",
+    "@scbd/ckeditor5-build-inline-full": "35.0.0",
     "@scbd/conference-cal": "1.0.3",
     "bootstrap": "4.6.2",
     "camelcase-keys": "9.1.3",
