@@ -50,10 +50,10 @@
   dependencies:
     tslib "^2.1.0"
 
-"@capacitor/device@6.1.2":
-  version "7.0.0-nightly-20241004T150510.0"
-  resolved "https://registry.yarnpkg.com/@capacitor/device/-/device-7.0.0-nightly-20241004T150510.0.tgz#58a181d7f2560302b4a75baec32195307192c9cc"
-  integrity sha512-opQtPmjOVncCTRP1TxNruhuYbdAfBXsAmAuA0oGDlrlN3csukonogp8R+ZQAYVs3XJ4P//Vy7/SLzwQHJ8SVZQ==
+"@capacitor/device@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@capacitor/device/-/device-6.0.1.tgz#bb5cb2b9e9c37142b71d51e4c6eed84625ce821e"
+  integrity sha512-Tlz67DAO5GKb5YAfupXiENZxDww6mHnG9iKI+8D5SVF82VLpEv5r9qwKtiounuQB2y2HWiHV8tlOk7DqnLVUqQ==
 
 "@capacitor/filesystem@6.0.1":
   version "6.0.1"
@@ -85,10 +85,10 @@
   resolved "https://registry.yarnpkg.com/@capacitor/status-bar/-/status-bar-6.0.1.tgz#27cef2560cdefb8e14d2cecc976056ede7b822ef"
   integrity sha512-Usd9hZZQVAqy+jJfL7jRcYI7dcsxN09Na1yttwdl+F1bk3Ztoukk7CGPDm5VgKUSs53ihQBOy1+sczCACxhNiw==
 
-"@capgo/capacitor-updater@6.2.9":
-  version "6.2.9"
-  resolved "https://registry.yarnpkg.com/@capgo/capacitor-updater/-/capacitor-updater-6.2.9.tgz#0ad121a6d9b7f7adc3adffb612c459aa9db17202"
-  integrity sha512-jJ/tDyvWWc203NXQNkROIipaJniYgKbWkYMNctLunXlEZalSx8o7fdyEyT5kTiEolV/Yarfw1KDt0rq9C6bUYA==
+"@capgo/capacitor-updater@6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@capgo/capacitor-updater/-/capacitor-updater-6.3.0.tgz#f158259efd811acec98163daff1a09f84cd2cfbb"
+  integrity sha512-/rAzHWg2KRgwdVJbLxSv+ZqLLdJ6nm50kAwq4vHO8WrmDBu2Zm44+DukXGIxD/3XGCSRUKRzfFIkZPN3PLG5kg==
 
 "@ionic-native/http@5.36.0":
   version "5.36.0"
@@ -239,9 +239,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "22.7.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.7.4.tgz#e35d6f48dca3255ce44256ddc05dee1c23353fcc"
-  integrity sha512-y+NPi1rFzDs1NdQHHToqeiX2TIS79SWEAw9GYhkkx8bD0ChpfqC+n2j5OXOCpzfojBEBt6DnEnnG9MY0zk1XLg==
+  version "22.7.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.7.5.tgz#cfde981727a7ab3611a481510b473ae54442b92b"
+  integrity sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==
   dependencies:
     undici-types "~6.19.2"
 
