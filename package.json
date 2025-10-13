@@ -5,7 +5,7 @@
   "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
   "scripts": {
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --open",
     "build:a": "NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
     "build:i": "NODE_ENV=ios nuxt generate && cd capacitor && yarn cap sync ios",
     "build": "nuxt build",

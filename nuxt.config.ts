@@ -96,6 +96,14 @@ export default defineNuxtConfig({
   vite: {
     build: {
       target: 'es2015'
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+          silenceDeprecations: ['color-functions', 'mixed-decls', 'abs-percent']
+        }
+      }
     }
   },
 
