@@ -7,7 +7,7 @@
 <script>
 import useHttp from '~/composables/http';
 import { mapGetters          } from 'vuex'
-import { sanitizeIndexResult } from '~/modules/apiNormalize'
+import { sanitizeIndexResult } from '~/utils/apiNormalize'
 import   Calendar              from '~/components/Calender/src/components/'
 
 export default {

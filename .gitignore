@@ -78,3 +78,8 @@ typings/
 .dynamodb/
 .vscode/
 capacitor/www
+
+# Personal configuration
+.github/personal.md
+.yarn*
+.yarnrc*

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import documentDownloadMixin    from '~/modules/documentDownloadMixin'
+import documentDownloadMixin    from '~/utils/documentDownloadMixin'
 import Offline                  from '~/components/Offline'
   
 export default {

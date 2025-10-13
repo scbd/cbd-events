@@ -1,0 +1,7 @@
+# Nuxt build
+.nuxt
+.output
+.nitro
+
+# Old config
+nuxt.config.js

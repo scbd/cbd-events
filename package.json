@@ -5,9 +5,13 @@
   "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
   "scripts": {
-    "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt --open",
-    "build:a": "rm -rf .nuxt && NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
-    "build:i": "rm -rf .nuxt && NODE_ENV=ios nuxt generate && cd capacitor && yarn cap sync ios",
+    "dev": "nuxt dev",
+    "build:a": "NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
+    "build:i": "NODE_ENV=ios nuxt generate && cd capacitor && yarn cap sync ios",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
     "clean-reinstall": "rm -f yarn.lock && rm -f package-lock.json &&  rm -rf node_modules && CXXFLAGS=\"--std=c++17\" yarn install --force"
   },
   "dependencies": {
@@ -24,7 +28,8 @@
     "@capgo/capacitor-updater": "6.3.0",
     "@ionic-native/core": "5.36.0",
     "@ionic-native/http": "5.36.0",
-    "@nuxtjs/axios": "5.13.6",
+    "@nuxtjs/i18n": "^8.5.5",
+    "@pinia/nuxt": "^0.5.5",
     "@scbd/ckeditor5-build-inline-full": "35.0.0",
     "@scbd/conference-cal": "1.0.3",
     "bootstrap": "4.6.2",
@@ -32,23 +37,24 @@
     "localforage": "1.10.0",
     "lodash.debounce": "4.0.8",
     "luxon": "3.5.0",
-    "nuxt": "2.18.1",
-    "nuxt-i18n": "6.28.1",
+    "nuxt": "^4.0.0",
     "object-sizeof": "2.6.5",
+    "pinia": "^2.2.6",
+    "rxjs": "^7.8.2",
     "semver": "7.6.3",
     "sweetalert2": "11.14.1",
     "velocity-animate": "1.5.2",
+    "vue": "^3.5.12",
     "vue-cordova": "0.1.2",
-    "vue-notifications": "1.0.2"
+    "vue-notifications": "1.0.2",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
-    "babel-eslint": "10.1.0",
+    "@nuxt/eslint": "^0.5.7",
     "eslint": "8.57.1",
-    "eslint-friendly-formatter": "4.0.1",
-    "eslint-loader": "4.0.2",
-    "eslint-plugin-vue": "9.28.0",
     "replace": "1.2.2",
     "sass": "1.79.4",
-    "sass-loader": "10.5.2"
+    "sass-loader": "10.5.2",
+    "vite": "^5.4.11"
   }
 }

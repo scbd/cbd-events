@@ -1,6 +1,10 @@
-
+import { defineNuxtPlugin } from '#app'
 import swal from 'sweetalert2'
 
-export default (ctx, inject) => {
-  inject('swal', swal)
-}
+export default defineNuxtPlugin((nuxtApp) => {
+  return {
+    provide: {
+      swal
+    }
+  }
+})

@@ -1,27 +1,36 @@
-import Vue        from 'vue'
-import VueCordova from 'vue-cordova'
+import { defineNuxtPlugin } from '#app'
 import { Capacitor } from '@capacitor/core';
 
-if(Capacitor.getPlatform() !== 'web')
-  Vue.use(VueCordova)
-
-export default ({app}, inject) => {
-
-
-  const  localePath = (link) => {
-    return app.localePath(link).replace('#', '')
+export default defineNuxtPlugin((nuxtApp) => {
+  const localePath = (link) => {
+    // In Nuxt 3, use the i18n plugin's localePath
+    const i18n = nuxtApp.$i18n
+    if (i18n && i18n.localePath) {
+      return i18n.localePath(link).replace('#', '')
+    }
+    return link.replace('#', '')
   }
 
-  inject('localePath', localePath)
+  // Provide localePath helper
+  return {
+    provide: {
+      localePath
+    }
+  }
 
-  if(Capacitor.getPlatform() === 'web') return
+  // Cordova/Capacitor is only available in native environments
+  if (Capacitor.getPlatform() === 'web') return
 
-  inject('cordova', Vue.cordova)
-
-  Vue.cordova.on('deviceready', async () => {
-    const { cordova }  = window;
-    const { file }     = cordova;
-
-    Vue.cordova.file = file
-  })
-}
+  // Additional Capacitor setup for native platforms
+  if (typeof window !== 'undefined' && window.cordova) {
+    window.addEventListener('deviceready', async () => {
+      const { cordova } = window;
+      const { file } = cordova;
+      
+      // Store file reference for later use
+      if (file) {
+        window.cordovaFile = file
+      }
+    })
+  }
+})
