@@ -8,10 +8,10 @@
 import useHttp from '~/composables/http';
 import { mapGetters          } from 'vuex'
 import { sanitizeIndexResult } from '~/modules/apiNormalize'
-import   Calendar              from '~/components/Calender/src/components/'
+import   Calendar              from '~/components/Calendar/src/components/'
 
 export default {
-  name      : 'Calender',
+  name      : 'Calendar',
   components: { Calendar },
   methods   : { getEvents, genQuery, getQueryUrl },
   computed  : { ...gettersMap() },
@@ -56,7 +56,7 @@ async function getEvents(query){
 
   return events
   }catch(e){
-    console.error('Calender.getEvents', e.message)
+    console.error('Calendar.getEvents', e.message)
     console.error(e.message)
     console.error(e)
   }
