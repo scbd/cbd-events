@@ -68,6 +68,7 @@ function showCalendar (state){
   try{ 
       const { hideCalendar } = state.selected?.apps?.cbdEvents
 
+      return true;
     return !hideCalendar
   }
   catch(e){ 
