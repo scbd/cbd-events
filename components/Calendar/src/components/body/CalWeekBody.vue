@@ -6,7 +6,7 @@
       :y-index="index"
       :day="d"
       :day-events="getDayEvents(d)"
-      :conference:="conference"
+      :conference="conference"
     />
   </div>
 </template>

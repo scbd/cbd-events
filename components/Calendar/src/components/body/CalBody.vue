@@ -8,7 +8,7 @@
         v-if="isWeek && !selectedIteration.loading"
         :week="selectedIteration"
         :events-by-week="selectEvents"
-        :conference:="conference"
+        :conference="conference"
         keep-alive
       />
     </transition>

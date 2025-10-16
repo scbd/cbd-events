@@ -33,7 +33,7 @@
       ref="day"
     >
       <CalEvent
-        :conference:="conference"
+        :conference="conference"
         :ref="`calEvent${yIndex}`"
         :key="evnt.identifier"
         :event="evnt"
