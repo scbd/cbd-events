@@ -78,3 +78,7 @@ typings/
 .dynamodb/
 .vscode/
 capacitor/www
+
+# Personal configurations
+.github/personal.md
+.env*
