@@ -4,7 +4,7 @@
 import { version } from './package.json'
 
 let config = {
-  mode: 'spa',
+  ssr: false,
   env:{
     NUXT_ENV_BASE_URL   : 'https://cbd-events.cbd.int' ,
     NUXT_ENV_IFRAME_HOST: 'https://www.cbd.int'        ,
@@ -66,7 +66,17 @@ let config = {
   ],
   loading: { color: '#009b48' },
   router : { linkActiveClass: 'active-link', middleware: [ 'redirects' ] },
-  build  : { transpile: [ 'camelcase-keys', '@awesome-cordova-plugins/file-opener', 'consola' ] },
+  build  : { 
+    transpile: [ 'camelcase-keys', '@awesome-cordova-plugins/file-opener', 'consola' ],
+    loaders: {
+      scss: {
+        sassOptions: {
+          api: 'modern-compiler',
+          silenceDeprecations: ['legacy-js-api', 'color-functions', 'mixed-decls', 'abs-percent']
+        }
+      }
+    }
+  },
   cache  : { max: 1000, maxAge: 900000 },
   render : { http2: { push: true }, static: { maxAge: '1y', setHeaders } },
   generate: { dir: 'capacitor/www' }
