@@ -91,11 +91,11 @@
 
 <script>
 
-import events               from '../../modules/Bus'
-import AgendaItem           from './AgendaItem'
-import FileStatus           from './CalEventDetailsFileStatus'
+import events               from '../../modules/bus'
+import AgendaItem           from './agenda-item'
+import FileStatus           from './cal-event-details-file-status'
 import { DateTime }           from 'luxon'
-import CalEventDetailsFile  from './CalEventDetailsFile'
+import CalEventDetailsFile  from './cal-event-details-file'
 // import { Calendar } from '@awesome-cordova-plugins/calendar'
 
 export default {

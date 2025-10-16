@@ -73,7 +73,7 @@
 <script>
 
 
-import events from '../../modules/Bus'
+import events from '../../modules/bus'
 import axios from 'axios'
 
 export default {

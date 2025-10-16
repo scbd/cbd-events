@@ -36,7 +36,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name      : 'Navigation',
-  components: { Spinner: () => import('../Spinner') },
+  components: { Spinner: () => import('../spinner') },
   computed  : { showNavs, ...gettersMap() },
   methods   : { onScroll, hasScrolled, closeSettings },
   data,

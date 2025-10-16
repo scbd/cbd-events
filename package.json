@@ -28,7 +28,7 @@
     "@capgo/capacitor-updater": "6.3.0",
     "@ionic-native/core": "5.36.0",
     "@ionic-native/http": "5.36.0",
-    "@nuxtjs/i18n": "^8.5.5",
+    "@nuxtjs/i18n": "^10.1.1",
     "@pinia/nuxt": "^0.5.5",
     "@scbd/ckeditor5-build-inline-full": "35.0.0",
     "@scbd/conference-cal": "1.0.3",

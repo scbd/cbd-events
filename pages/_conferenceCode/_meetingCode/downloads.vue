@@ -35,8 +35,8 @@
 import { mapGetters } from 'vuex'
 
 import { isIOSCordova, isIpad                    } from '~/utils/Device'
-import { isPDF,    isMsWord                      } from '~/utils/MimeTypes'
-import { openFile, shareFile,   setOpenSafariFn  } from '~/utils/CordovaFiles'
+import { isPDF,    isMsWord                      } from '~/utils/mime-types'
+import { openFile, shareFile,   setOpenSafariFn  } from '~/utils/cordova-files'
 import { lstring, trimName, timeDisplay, formatBytes      } from '~/plugins/filters'
 
 export default {
@@ -75,7 +75,7 @@ function mounted (){
 }
 
 function openSafari({ blob }){
-  const name       = 'conferenceCode-fileView'
+  const name       = 'conferenceCode-file-view'
   const params     = { conferenceCode: this.conferenceCode }
   const routerPath = this.localePath({ name, params })
   const blobUrl    = window.URL.createObjectURL(blob)

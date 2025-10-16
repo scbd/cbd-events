@@ -98,14 +98,14 @@ See: `store/files.js` line 7-9
 ### Download & Open Flow
 1. Download file → Store blob in LocalForage (`store/files.js`)
 2. Save to device filesystem using Capacitor Filesystem API (`composables/file-system.js`)
-3. Open with native viewer using FileOpener (`utils/CordovaFiles.js`)
+3. Open with native viewer using FileOpener (`utils/cordova-files.js`)
 
 **iOS Share Pattern**: Use `@capacitor/share` for iOS file sharing:
 ```javascript
 import { Share } from '@capacitor/share'
 await Share.share({ title: file.baseName, url, dialogTitle: `Share ${file.baseName}` })
 ```
-See: `utils/CordovaFiles.js` line 93
+See: `utils/cordova-files.js` line 93
 
 ## Dynamic Routing & Conference Selection
 
@@ -160,7 +160,7 @@ process.env.NUXT_ENV_API
 
 **All API responses use camelCase conversion**:
 ```javascript
-import { normalizeApiResponse, normalizeSolrResponse } from '~/utils/apiNormalize'
+import { normalizeApiResponse, normalizeSolrResponse } from '~/utils/api-normalize'
 
 // Converts snake_case API responses to camelCase
 const data = normalizeApiResponse(response)

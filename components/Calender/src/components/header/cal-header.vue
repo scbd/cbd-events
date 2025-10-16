@@ -17,7 +17,7 @@
 
 <script>
 
-import events from '../../modules/Bus'
+import events from '../../modules/bus'
 
 export default {
   name   : 'CalHeader',

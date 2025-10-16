@@ -19,7 +19,7 @@ import { Capacitor } from '@capacitor/core';
 
 export default {
   name      : 'Default',
-  components: { Header, Nav, Loading: () => import('~/components/Loading')  },
+  components: { Header, Nav, Loading: () => import('~/components/loading')  },
   methods   : { toggleConnection, onProgress, onResume },
   beforeMount, mounted, data
 }
@@ -42,7 +42,7 @@ function beforeMount(){
   window.addEventListener('online', this.toggleConnection)
   window.addEventListener('offline', this.toggleConnection)
   
-  this.$store.commit('offLine/SET', window.navigator.onLine)
+  this.$store.commit('off-line/SET', window.navigator.onLine)
 }
 
 function onProgress (info){
@@ -59,5 +59,5 @@ function onProgress (info){
 
 function syncError       (e){ console.error(`OTA Error: ${e.message}`) }
 function onResume        (){ setTimeout(() => { updateOTA(this.onProgress, syncError) }, 0) }
-function toggleConnection(){ this.$store.commit('offLine/TOGGLE') }
+function toggleConnection(){ this.$store.commit('off-line/TOGGLE') }
 </script>

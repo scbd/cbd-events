@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import CalWeekBody  from './CalWeekBody'
-import Details      from '../event/CalEventDetails'
-import EventsBus    from '../../modules/Bus'
-import CalFilter    from './CalFilter'
+import CalWeekBody  from './cal-week-body'
+import Details      from '../event/cal-event-details'
+import EventsBus    from '../../modules/bus'
+import CalFilter    from './cal-filter'
 
 
 export default {

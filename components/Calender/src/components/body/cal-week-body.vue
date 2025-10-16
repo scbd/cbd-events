@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import CalWeekRow from './CalWeekRow'
+import CalWeekRow from './cal-week-row'
 
 export default {
   name      : 'CalWeekBody',

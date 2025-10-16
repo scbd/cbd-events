@@ -56,7 +56,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/i18n',
     '@pinia/nuxt',
-    '~/utils/nuxtModules/localForage.ts'
+    '~/utils/nuxt-modules/local-forage.ts'
   ],
 
   i18n: {
@@ -70,7 +70,7 @@ export default defineNuxtConfig({
     ],
     strategy: 'prefix_except_default',
     lazy: true,
-    langDir: 'locales/',
+    langDir: 'locales',
     vueI18n: './i18n.config.ts'
   },
 

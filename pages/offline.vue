@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Offline from '~/components/Offline'
+import Offline from '~/components/offline'
 
 
 export default {

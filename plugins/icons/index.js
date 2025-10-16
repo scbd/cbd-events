@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from '#app'
-import Icons from './Icons.vue'
-import Icon  from './Icon.vue'
+import Icons from './icons.vue'
+import Icon  from './icon.vue'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Register components globally

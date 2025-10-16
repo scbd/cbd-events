@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import documentDownloadMixin    from '~/utils/documentDownloadMixin'
-import Offline                  from '~/components/Offline'
+import documentDownloadMixin    from '~/utils/document-download-mixin'
+import Offline                  from '~/components/offline'
   
 export default {
   name      : 'DocumentsPage',

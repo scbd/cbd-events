@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import CalEvent     from '../event/CalEvent'
+import CalEvent     from '../event/cal-event'
 
 export default {
   name: 'CalWeekRow',

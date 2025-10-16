@@ -83,3 +83,5 @@ capacitor/www
 .github/personal.md
 .yarn*
 .yarnrc*
+*.bak
+*.backup

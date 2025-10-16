@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import SideMenu from './SideMenu.vue'
+import SideMenu from './side-menu.vue'
 
 export default {
   name      : 'Header',

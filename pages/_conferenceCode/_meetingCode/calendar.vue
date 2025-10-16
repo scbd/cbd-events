@@ -7,11 +7,11 @@
 <script>
 import useHttp from '~/composables/http';
 import { mapGetters          } from 'vuex'
-import { sanitizeIndexResult } from '~/utils/apiNormalize'
-import   Calendar              from '~/components/Calender/src/components/'
+import { sanitizeIndexResult } from '~/utils/api-normalize'
+import   Calendar              from '~/components/calendar/src/components/'
 
 export default {
-  name      : 'Calender',
+  name      : 'Calendar',
   components: { Calendar },
   methods   : { getEvents, genQuery, getQueryUrl },
   computed  : { ...gettersMap() },

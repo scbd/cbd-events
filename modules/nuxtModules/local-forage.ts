@@ -14,7 +14,7 @@ export default defineNuxtModule({
 
     // Add plugin
     addPlugin({
-      src: resolver.resolve('../../plugins/localForage.js'),
+      src: resolver.resolve('../../plugins/local-forage.ts'),
       mode: 'client'
     })
 

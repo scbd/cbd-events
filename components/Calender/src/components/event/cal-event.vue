@@ -19,8 +19,8 @@
 
 <script>
 import { DateTime }   from 'luxon'
-import lineClamp    from '../../directives/LineClamp'
-import events       from '../../modules/Bus'
+import lineClamp    from '../../directives/line-clamp'
+import events       from '../../modules/bus'
 import debounce     from 'lodash.debounce'
 
 export default {

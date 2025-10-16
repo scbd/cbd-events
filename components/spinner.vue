@@ -1,17 +1,32 @@
 
-<template functional>
+<template>
 <div class="cont">
-  <div class="lds-ring" :style="{width:`${Number(props.size)+5}px`, height:`${Number(props.size)+5}px`}">
-    <div :style="{'border-width':`${(props.size/100)*3}px`,'border-top-color':props.color}"/>
-    <div :style="{'border-width':`${(props.size/100)*3}px`,'border-top-color':props.color}"/>
-    <div :style="{'border-width':`${(props.size/100)*3}px`,'border-top-color':props.color}"/>
-    <div :style="{'border-width':`${(props.size/100)*3}px`,'border-top-color':props.color}"/>
+  <div class="lds-ring" :style="{width:`${Number(size)+5}px`, height:`${Number(size)+5}px`}">
+    <div :style="{'border-width':`${(size/100)*3}px`,'border-top-color':color}"/>
+    <div :style="{'border-width':`${(size/100)*3}px`,'border-top-color':color}"/>
+    <div :style="{'border-width':`${(size/100)*3}px`,'border-top-color':color}"/>
+    <div :style="{'border-width':`${(size/100)*3}px`,'border-top-color':color}"/>
   </div>
   <div class="slot-hold">
     <slot/>
   </div>
 </div>
 </template>
+
+<script>
+export default {
+  props: {
+    size: {
+      type: [Number, String],
+      default: 30
+    },
+    color: {
+      type: String,
+      default: '#fff'
+    }
+  }
+}
+</script>
 
 
 <style scoped>

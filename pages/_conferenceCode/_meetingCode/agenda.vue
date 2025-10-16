@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import   documentDownloadMixin   from '~/utils/documentDownloadMixin'
-import   Offline                 from '~/components/Offline'
+import   documentDownloadMixin   from '~/utils/document-download-mixin'
+import   Offline                 from '~/components/offline'
 import { mapGetters            } from 'vuex'
 
 export default {
@@ -50,7 +50,7 @@ function asyncData ({  params, query }){
 function gettersMap(){
   return mapGetters({
     isInSession : 'conferences/isInSession',
-    offLine     : 'offLine/isOffLine',
+    offLine     : 'off-line/isOffLine',
     forceDate   : 'conferences/forceDate',
     agendaItems : 'conferences/agendaItems',
     agendaPrefix: 'conferences/agendaPrefix'
