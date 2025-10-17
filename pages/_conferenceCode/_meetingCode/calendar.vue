@@ -1,5 +1,5 @@
 <template>
-  <Calendar
+  <CalendarWidget
     :options="{ queryFn:getEvents, conference:conference, height:'80vh' }"
   />
 </template>
@@ -8,11 +8,11 @@
 import useHttp from '~/composables/http';
 import { mapGetters          } from 'vuex'
 import { sanitizeIndexResult } from '~/modules/apiNormalize'
-import   Calendar              from '~/components/Calendar/src/components/'
+import   CalendarWidget        from '~/components/Calendar/src/components/'
 
 export default {
-  name      : 'Calendar',
-  components: { Calendar },
+  name      : 'CalendarPage',
+  components: { CalendarWidget },
   methods   : { getEvents, genQuery, getQueryUrl },
   computed  : { ...gettersMap() },
   asyncData
