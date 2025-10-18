@@ -76,21 +76,21 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
-  Capacitor: 679f9673fdf30597493a6362a5d5bf233d46abc2
-  CapacitorApp: 0bc633b4eae40a1f32cd2834788fad3bc42da6a1
+  Capacitor: 69c7f687aabb8d85e543497411e40638b5cc08c0
+  CapacitorApp: f51c08c64df914fc934239fd1b3fc809d62a02f6
   CapacitorCordova: f48c89f96c319101cd2f0ce8a2b7449b5fb8b3dd
-  CapacitorDevice: 7097a1deb4224b77fd13a6e60a355d0062a5d772
-  CapacitorFilesystem: 37fb3aa5c945b4539ab11c74a5c57925a302bf24
-  CapacitorLocalNotifications: 6bac9e948b2b8852506c6d74abb2cde140250f86
-  CapacitorShare: 591ae4693d85686ceb590db8e8b44aa014ec6490
-  CapacitorSplashScreen: 250df9ef8014fac5c7c1fd231f0f8b1d8f0b5624
-  CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
-  CapgoCapacitorUpdater: 1d281f3dd4d4f2aa7512f2aa95f0fc1ed1988dd2
-  CordovaPlugins: 44b1cac7fe25ddd1e415250b40d5ef97c0ffb6cd
+  CapacitorDevice: da1884f895e17992648b27f6c8ee2be72cd0ce2e
+  CapacitorFilesystem: 30941c0fea0773fcaedab18e262b339f5b9c06bc
+  CapacitorLocalNotifications: 6003db784d552d39055b4401c138e2971c2d831b
+  CapacitorShare: 5d49f1b220e991372b4d5d34be9a6080a042bae4
+  CapacitorSplashScreen: b46e61cc4345d73d510530b0c845a30e3602db40
+  CapacitorStatusBar: 9ed7f06318fd436917072a9bf60fda56d12c8bdb
+  CapgoCapacitorUpdater: 15abe816da8366a075746edb7b9f35bb84aab2c4
+  CordovaPlugins: d95eb6be1df2d4b3eec7bb8b5362a019e661a27b
   CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
 PODFILE CHECKSUM: c38c712ce80bf17dd0b017c53a6e354ef8ce97cf
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
