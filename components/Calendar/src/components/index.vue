@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { DateTime }       from 'luxon'
+import { DateTime, IANAZone } from 'luxon'
 import events             from '../modules/Bus'
 import CalBody            from './body/CalBody'
 import CalHeader          from './header/CalHeader'
@@ -22,8 +22,8 @@ export default {
   name      : 'Calendar',
   props     : [ 'options' ],
   components: { CalBody, CalHeader, WeekSelect },
-  computed  : { iterations, selectedIteration, queryObject },
-  methods   : { changeDateTime, setIterationsService, getEvents, setQueryString, applyFilter },
+  computed  : { iterations, selectedIteration, queryObject, conferenceTimeZone },
+  methods   : { mapByDay, mapByWeek, changeDateTime, setIterationsService, getEvents, setQueryString, applyFilter },
   data,
   mounted,
   created,
@@ -45,14 +45,14 @@ function mounted(){
 }
 
 function beforeCreate(){
-  const { $i18n } = this
+  const { $i18n } = this;
   
   if(!$i18n) throw new Error('$i18n must be installed')
 
   for (const locale in messages){
-    const msgs = $i18n.getLocaleMessage(locale)
+    const msgs = $i18n.getLocaleMessage(locale);
 
-    $i18n.setLocaleMessage(locale, Object.assign(msgs, messages[locale]))
+    $i18n.setLocaleMessage(locale, Object.assign(msgs, messages[locale]));
   }
 }
 
@@ -60,7 +60,8 @@ function created(){
   const { $route, $router, $i18n } = this
   const { query } = $route
   const initStart = this.conference?.apps?.cbdEvents?.start || this.conference.startDate
-  const start = initStart? DateTime.fromISO(initStart) : DateTime.local()
+  const timeZone = this.conferenceTimeZone
+  const start = initStart? DateTime.fromISO(initStart, { zone: timeZone }) : DateTime.local()
   const route = { query: { selected: start.toFormat('yyyy-MM-dd') } }
 
   if(!query || !query.selected)
@@ -76,8 +77,8 @@ function getEvents(){
   const { queryFn } = this.options
 
   return queryFn(this.queryObject)
-    .then(mapByDay)
-    .then(mapByWeek)
+    .then(this.mapByDay)
+    .then(this.mapByWeek)
     .then((e) => { this.events = e })
 }
 
@@ -167,13 +168,14 @@ function setIterationsService($i18n, date, type='week'){
 
 function mapByDay(events){
   const { raw } = events
+  const conferenceTimeZone = this.conferenceTimeZone
   const days = {}
 
   for (let i = raw.length-1; i >=0; i--){ //backrards so days are in order in object from push
     const { hasOwnProperty } = Object.prototype
-    const   dayStart         = DateTime.fromISO(raw[i].start).startOf('day')
-    const   dayEnd           = DateTime.fromISO(raw[i].start).endOf('day')
-    const   start            = DateTime.fromISO(raw[i].start)
+    const   dayStart         = DateTime.fromISO(raw[i].start, { zone: conferenceTimeZone }).startOf('day')
+    const   dayEnd           = DateTime.fromISO(raw[i].start, { zone: conferenceTimeZone }).endOf('day')
+    const   start            = DateTime.fromISO(raw[i].start, { zone: conferenceTimeZone })
     const   dayStartText     = dayStart.toISODate({includeOffset:false})
 
 
@@ -192,10 +194,11 @@ function mapByWeek(events){
   const { days } = events
   const { hasOwnProperty } = Object.prototype
   const weeks = {}
-
+  const timeZone = this.conferenceTimeZone
+  
   for (const day in days){
-    const year       = DateTime.fromISO(day).year
-    const weekNumber = DateTime.fromISO(day).weekNumber
+    const year       = DateTime.fromISO(day, { zone: timeZone }).year
+    const weekNumber = DateTime.fromISO(day, { zone: timeZone }).weekNumber
     const weekText   = `${year}-${weekNumber}`
 
     if(!hasOwnProperty.call(weeks, weekText)) weeks[weekText]={}
@@ -218,6 +221,16 @@ function createLinkedList(weeks){
       weekArr[i].prev = weekArr[i+1]
   }
   return weeks
+}
+
+function conferenceTimeZone(){
+  const timeZone = this.conference?.timeZone
+  
+  if (timeZone && IANAZone.isValidZone(timeZone)) {
+    return timeZone
+  }
+  
+  return 'America/Montreal'
 }
 </script>
 <style>

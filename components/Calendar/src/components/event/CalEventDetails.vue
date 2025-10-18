@@ -31,7 +31,7 @@
         <div >
           <span class="eco-location" /> {{ location }}
         </div>
-        <div v-if="(organizer || organizerEmail) && $isStaff">
+        <div v-if="(organizer || organizerEmail) ">
           <span class="eco-address-card" />
           <a :href="`${organizerEmail}`">{{ organizer || organizerEmail }}</a>
           <div
@@ -70,7 +70,7 @@
                     </td>
                     <td>
                       <FileStatus
-                        v-if="files(index)._id && $isStaff"
+                        v-if="files(index)._id"
                         :file="files(index)"
                       />
                     </td>
