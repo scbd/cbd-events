@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Spinner from './Spinner'
+import Spinner from './spinner'
 
 export default {
   name      : 'Loading',

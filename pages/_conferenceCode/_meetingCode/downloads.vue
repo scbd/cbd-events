@@ -34,7 +34,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import { isIOSCordova, isIpad                    } from '~/utils/Device'
+import { isIOSCordova, isIpad                    } from '~/utils/device'
 import { isPDF,    isMsWord                      } from '~/utils/mime-types'
 import { openFile, shareFile,   setOpenSafariFn  } from '~/utils/cordova-files'
 import { lstring, trimName, timeDisplay, formatBytes      } from '~/plugins/filters'

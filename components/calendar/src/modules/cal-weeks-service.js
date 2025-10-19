@@ -1,11 +1,10 @@
 import { DateTime } from 'luxon'
-import   Vue        from 'vue'
 
 export default class {
   constructor($i18n, weekDateTime){
     this._initI18n($i18n)
 
-    Vue.set(this, 'iterations', [])
+    this.iterations = []
     this.weekIterations(weekDateTime)
     this.loading = false
   }
