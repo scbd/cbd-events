@@ -4,6 +4,9 @@ import { version } from './package.json'
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
   
+  // Keep root directory structure instead of app/
+  srcDir: '.',
+  
   // Enable SPA mode (equivalent to mode: 'spa' in Nuxt 2)
   ssr: false,
 
