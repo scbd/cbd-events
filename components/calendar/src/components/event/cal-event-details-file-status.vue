@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import querystring from 'querystring'
 
 export default {
@@ -68,7 +67,7 @@ export default {
   created(){
     this.get(this.genFilePath(this.symbol))
       .then((res) => {
-        this.fullFile = res.data
+        this.fullFile = res
       })
   }
 }
@@ -125,9 +124,8 @@ function genFilesParams(){
   )
 }
 
-function get(path, params={}){
-  const response = axios.get(path, params)
-
+async function get(path, params={}){
+  const response = await $fetch(path, { params })
   return response
 }
 </script>

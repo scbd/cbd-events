@@ -23,11 +23,11 @@ async function get({ dispatch }, { force, code, tag:passedTag } = {}){
     return exists
   }
 
-  const  article = await loadArticle(cCode, tag, this.$axios)
+  const  article = await loadArticle(cCode, tag)
   
   if(!article) return undefined
 
-  article.blob = await getBlob(article.coverImage || {}, this.$axios)
+  article.blob = await getBlob(article.coverImage || {})
 
   await dispatch('save', { conferenceCode:cCode, tag,  article })
   
@@ -64,21 +64,21 @@ function set(state, { conferenceCode, article, tag }){
   state.docs[`${conferenceCode}-${tag}`] = article 
 }
 
-function getBlob({ url }, $axios){
+function getBlob({ url }){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return useHttp(restParams, $axios)
+  return useHttp(restParams)
 }
 
 
-function loadArticle(conferenceCode, tag, $axios){
+function loadArticle(conferenceCode, tag){
   try{
     const url        = `${process.env.NUXT_ENV_API}/api/v2017/articles`;
     const restParams = { url,  method: 'get',  responseType: 'json', params: getQuery(conferenceCode, tag) };
 
-    return useHttp(restParams, $axios).then((data) => data[0])
+    return useHttp(restParams).then((data) => data[0])
   }
   catch(e){
     console.error(e)

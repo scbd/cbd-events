@@ -50,7 +50,7 @@
   function getOembedHtml(el, params, rawUrl){
     const url = `${process.env.NUXT_ENV_API}/api/v2020/oembed`;
 
-      return useHttp({ url, method: 'get', responseType: 'json', params }, this.$axios)
+      return useHttp({ url, method: 'get', responseType: 'json', params })
                 .then((r) => {
                   const  embedHtml = `<div class="ck-media__wrapper text-center">${r?.html}</div>`;
 

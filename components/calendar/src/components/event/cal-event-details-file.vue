@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name : 'CalEventDetailsFile',
   props: [ 'file' ],
@@ -19,7 +17,7 @@ export default {
   created(){
     this.getData(this.genFilePath(this.symbol))
       .then((res) => {
-        this.fullFile = res.data
+        this.fullFile = res
       })
   },
   computed: {
@@ -31,9 +29,8 @@ export default {
     getData
   }
 }
-function getData(path, params={}){
-  const response = axios.get(path, params)
-
+async function getData(path, params={}){
+  const response = await $fetch(path, { params })
   return response
 }
 
