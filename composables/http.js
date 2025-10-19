@@ -40,12 +40,8 @@ function webVersion(restParams){
         
         // Handle different response types
         if (responseType === 'blob') {
-            return $fetch(fullUrl, fetchOptions).then(async (response) => {
-                // For blob responses, we need to handle it differently
-                if (response instanceof Blob) return response
-                // If response is already data, return as is
-                return response
-            })
+            // For blob responses, use responseType option
+            fetchOptions.responseType = 'blob'
         }
         
         // For JSON responses (default), $fetch handles automatically
