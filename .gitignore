@@ -85,3 +85,4 @@ capacitor/www
 .yarnrc*
 *.bak
 *.backup
+.github/todos/*.md
