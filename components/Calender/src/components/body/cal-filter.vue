@@ -126,10 +126,10 @@ function toggleStream (){
   this.showStreamDropdown=!this.showStreamDropdown
 }
 
-async function getPrograms(){
+function getPrograms(){
   const endPoint = `${process.env.NUXT_ENV_API}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
 
-  return await $fetch(endPoint)
+  return $fetch(endPoint)
 }
 
 function mapPrograms (programmes){

@@ -124,8 +124,7 @@ function genFilesParams(){
   )
 }
 
-async function get(path, params={}){
-  const response = await $fetch(path, { params })
-  return response
+function get(path, params={}){
+  return $fetch(path, { params })
 }
 </script>
