@@ -29,9 +29,8 @@ export default {
     getData
   }
 }
-async function getData(path, params={}){
-  const response = await $fetch(path, { params })
-  return response
+function getData(path, params={}){
+  return $fetch(path, { params })
 }
 
 function download(){
