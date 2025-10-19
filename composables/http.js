@@ -23,30 +23,31 @@ function webVersion(restParams){
         // Convert axios-style config to fetch-style config
         const { url, method = 'GET', params, data, responseType, ...config } = restParams
         
-        // Build query string from params if provided
-        const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
-        const fullUrl = url + queryString
-        
-        // Configure fetch options
         const fetchOptions = {
             method: method.toUpperCase(),
             ...config
         }
         
-        // Add body if provided
+        // Handle query parameters
+        if (params) {
+            fetchOptions.params = params
+        }
+        
+        // Handle request body
         if (data) {
             fetchOptions.body = data
         }
         
-        // Handle different response types
+        // Handle response type
         if (responseType === 'blob') {
-            // For blob responses, use responseType option
             fetchOptions.responseType = 'blob'
+        } else if (responseType === 'json') {
+            // $fetch returns JSON by default, no explicit action needed
         }
         
-        // For JSON responses (default), $fetch handles automatically
-        return $fetch(fullUrl, fetchOptions)
+        return $fetch(url, fetchOptions)
     } catch (error) {
         console.error(error);
+        throw error;
     }
 }
