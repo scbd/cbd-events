@@ -74,7 +74,6 @@
 
 
 import events from '../../modules/bus'
-import axios from 'axios'
 
 export default {
   name: 'Details',
@@ -96,7 +95,7 @@ export default {
     const locale = this.$i18n.locale
 
     getPrograms(locale).then((progs) => {
-      progs = mapPrograms(sanitizeResult(progs.data, locale))
+      progs = mapPrograms(sanitizeResult(progs, locale))
       this.$set(this, 'programmes', progs.filter(p => p))
     })
   },
@@ -127,10 +126,10 @@ function toggleStream (){
   this.showStreamDropdown=!this.showStreamDropdown
 }
 
-function getPrograms(){
+async function getPrograms(){
   const endPoint = `${process.env.NUXT_ENV_API}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
 
-  return axios.get(endPoint)
+  return await $fetch(endPoint)
 }
 
 function mapPrograms (programmes){

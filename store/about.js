@@ -18,11 +18,11 @@ async function get({ dispatch }, { force, code } = {}){
     return exists
   }
 
-  const  article = await loadArticle(cCode, this.$axios)
+  const  article = await loadArticle(cCode)
   
   if(!article) return undefined
 
-  article.blob = await getBlob(article.coverImage || {}, this.$axios)
+  article.blob = await getBlob(article.coverImage || {})
   
   dispatch('save', { conferenceCode:cCode, article })
 
@@ -52,21 +52,21 @@ async function existsLocal ({ commit  }){
 
 function set(state, { conferenceCode, article }){ state.docs[conferenceCode] = article }
 
-function getBlob({ url }, $axios){
+function getBlob({ url }){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return useHttp(restParams, $axios)
+  return useHttp(restParams)
 }
 
 
-function loadArticle(conferenceCode, $axios){
+function loadArticle(conferenceCode){
   try{
     const url = `${process.env.NUXT_ENV_API}/api/v2017/articles`;
     const restParams = {url,  method: 'get',  responseType: 'json', params: getQuery(conferenceCode) }
 
-    return useHttp(restParams, $axios)
+    return useHttp(restParams)
       .then((data) => data[0])
   }
   catch(e){

@@ -8,7 +8,7 @@ async function getConferences({ state, dispatch, commit, rootState }){
   if(state.selected) return state.docs
 
   const { conferenceCode } = this.$router.currentRoute.params
-  const   response         = await queryConferences(this.$axios, rootState.i18n)
+  const   response         = await queryConferences(rootState.i18n)
 
   commit('setConferences', response)
   
@@ -18,7 +18,7 @@ async function getConferences({ state, dispatch, commit, rootState }){
 }
 
 async function getMeetings({ state, commit, rootState }){
-  const meetings = await queryMeetings(this.$axios, state.selected, rootState.i18n)
+  const meetings = await queryMeetings(state.selected, rootState.i18n)
 
   commit('setMeetings', meetings)
 
@@ -158,33 +158,33 @@ export const mutations = { setDeleteAll, setSelected, setSelectedMeeting, setCon
 function isValidDate(date){ return !isNaN(new Date(date).getTime()) }
 function getActive (conferences){ return conferences.find((c) => c.active) || conferences[0] }
 
-function queryConferences($axios, { locale='en' }){
+function queryConferences({ locale='en' }){
   const params = queryFilter({
                               q: { 'apps.cbdEvents': { $exists: true } },
                               s: { StartDate: -1 }
                             })
   const url = `${process.env.NUXT_ENV_API}/api/v2016/conferences`;
 
-  return  useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
+  return  useHttp({ url, method: 'get', responseType: 'json', params })
     .then((data) => normalizeApiResponse(data, locale))
     .then((data) => hasMeetings(data))
 }
 
-async function loadBlobs(conference, $axios){
+async function loadBlobs(conference){
   if(!conference?.apps) conference.apps = { cbdEvents: {} }
   if(!conference.apps.cbdEvents) conference.apps.cbdEvents = {}
 
   const { cbdEvents }             = conference?.apps || {}
   const { heroImage, image }      = cbdEvents || {}
 
-  cbdEvents.heroImageBlob = await getBlob(heroImage, $axios)
-  cbdEvents.imageBlob     = await getBlob(image, $axios)
+  cbdEvents.heroImageBlob = await getBlob(heroImage)
+  cbdEvents.imageBlob     = await getBlob(image)
 
   return conference
 }
 
 
-async function initSelectedConference({ $axios, state, commit }, { conferenceCode, response }){
+async function initSelectedConference({ state, commit }, { conferenceCode, response }){
 
   if(state.selected) return
   let conference
@@ -194,17 +194,17 @@ async function initSelectedConference({ $axios, state, commit }, { conferenceCod
   else
     conference = getActive(response)
 
-  conference = await loadBlobs(conference, $axios)
+  conference = await loadBlobs(conference)
 
   commit('setSelected', conference)
 }
 
-function getBlob(url, $axios){
+function getBlob(url){
   if(!url) return undefined
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return useHttp(restParams, $axios)
+  return useHttp(restParams)
 }
 
 function hasNoMenus({ apps, conference, majorEventIds }){
@@ -288,7 +288,7 @@ function dataExists({ conference, majorEventIds }, useMenus=false){
 
 
 //MEETINGS
-function queryMeetings ($axios, selected, locale='en'){
+function queryMeetings (selected, locale='en'){
   const { conference, majorEventIds, apps } = selected
   const { useMenus }                        = apps.cbdEvents
 
@@ -298,7 +298,7 @@ function queryMeetings ($axios, selected, locale='en'){
   const url    = `${ process.env.NUXT_ENV_API }/api/v2016/meetings`
   const params = queryFilter(useMenus? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIds))
 
-  return useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
+  return useHttp({ url, method: 'get', responseType: 'json', params })
     .then((data) => {
       if(!Array.isArray(data)) data = [ data ]
       return normalizeApiResponse(data, locale)
