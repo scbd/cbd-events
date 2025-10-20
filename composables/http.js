@@ -40,7 +40,8 @@ function webVersion(restParams){
         
         // Handle response type
         if (responseType === 'blob') {
-            fetchOptions.responseType = 'blob'
+            // Use $fetch.raw() to get the Response object and extract the blob
+            return $fetch.raw(url, fetchOptions).then(res => res._data);
         } else if (responseType === 'json') {
             // $fetch returns JSON by default, no explicit action needed
         }
