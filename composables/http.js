@@ -28,9 +28,9 @@ function webVersion(restParams){
             ...config
         }
         
-        // Handle query parameters
+        // Handle query parameters - $fetch uses 'query' not 'params'
         if (params) {
-            fetchOptions.params = params
+            fetchOptions.query = params
         }
         
         // Handle request body
