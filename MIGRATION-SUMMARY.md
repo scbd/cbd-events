@@ -22,9 +22,21 @@ The http composable now:
 - Properly converts axios-style params to $fetch format
 
 ### 3. Nuxt 4 Directory Structure
-- **Set**: `srcDir: '.'` in nuxt.config.ts to explicitly keep root directory structure
-- **Reason**: The app already has an established directory structure at root level
-- **Benefit**: Maintains compatibility with existing code while using Nuxt 4
+- **Migrated**: Moved all application code to the new `app/` directory structure
+- **Removed**: `srcDir: '.'` from nuxt.config.ts to use Nuxt 4's default structure
+- **Directories Moved**:
+  - `assets/` → `app/assets/`
+  - `components/` → `app/components/`
+  - `composables/` → `app/composables/`
+  - `layouts/` → `app/layouts/`
+  - `middleware/` → `app/middleware/`
+  - `pages/` → `app/pages/`
+  - `plugins/` → `app/plugins/`
+  - `utils/` → `app/utils/`
+  - `store/` → `app/store/`
+  - `app.vue` → `app/app.vue`
+- **Directories at Root**: `i18n/`, `locales/`, `modules/`, `i18n.config.ts` (configuration files)
+- **Benefit**: Aligns with Nuxt 4's recommended structure for better organization and type safety
 
 ### 4. Component Naming (Normalized)
 - **Verified**: All components already use param-case (kebab-case) naming ✅
@@ -79,7 +91,7 @@ The http composable now:
 - [x] Update all store files using $axios
 - [x] Remove axios from imports
 - [x] Apply Nuxt 4 migration patterns
-- [x] Set srcDir configuration for root directory structure
+- [x] Migrate to app/ directory structure (Nuxt 4 default)
 - [x] Verify component naming follows param-case convention
 - [x] Fix duplicate/incorrect component directories
 - [x] Verify Unhead v2 is in use
@@ -103,7 +115,7 @@ The http composable now:
 ```typescript
 // nuxt.config.ts key changes:
 - compatibilityDate: '2025-01-01' (Nuxt 4+ behavior)
-- srcDir: '.' (explicit root directory)
+- Using default app/ directory structure (Nuxt 4 standard)
 - ssr: false (SPA mode maintained)
 - ESLint using flat config format
 ```
@@ -120,7 +132,7 @@ The http composable now:
 
 2. **Pages API**: Pages still use Options API with asyncData. Consider migrating to Composition API + useAsyncData in future updates.
 
-3. **Directory Structure**: Keeping root structure instead of moving to app/ directory. This is a valid Nuxt 4 approach and maintains backward compatibility.
+3. **Directory Structure**: Using Nuxt 4's default app/ directory structure for better organization and type safety. All application code now resides in the app/ directory.
 
 4. **Native Builds**: The build process remains unchanged:
    - iOS: `yarn build:i` 
