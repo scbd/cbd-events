@@ -82,3 +82,6 @@ capacitor/www
 # Personal configurations
 .github/personal.md
 .env*
+.github/instructions*
+
+.github/agents*
