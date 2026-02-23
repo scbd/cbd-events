@@ -28,11 +28,11 @@ Migrate all layouts, middleware, and page components from Vue 2 Options API to V
 |----------|-------|-------|
 | Layouts | `default.vue`, `bottom-screen.vue` | 2 |
 | Middleware | `redirects.js` | 1 |
-| Conference pages | `index.vue`, `about.vue`, `overview.vue`, `conferences.vue`, `languages.vue`, `fileView.vue` | 6 |
+| Conference pages | `index.vue`, `about.vue`, `overview.vue`, `conferences.vue`, `languages.vue`, `file-view.vue` | 6 |
 | Article page | `article/[tag].vue` | 1 |
-| Meeting pages | `agenda.vue`, `calendar.vue`, `documents.vue`, `downloads.vue`, `meetings.vue`, `WeekSelect.vue` | 6 |
+| Meeting pages | `agenda.vue`, `calendar.vue`, `documents.vue`, `downloads.vue`, `meetings.vue`, `week-select.vue` | 6 |
 | Root pages | `index.vue`, `offline.vue` | 2 |
-| Components | `article.vue`, `Loading.vue`, `Offline.vue`, `Spinner.vue`, `header/`, `navigation/` | ~9 |
+| Components | `article.vue`, `loading.vue`, `offline.vue`, `spinner.vue`, `header/`, `navigation/` | ~9 |
 
 ## Constraints
 

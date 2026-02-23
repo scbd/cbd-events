@@ -8,3 +8,9 @@
 - **i18n v10 breaking changes**: `iso` → `language` in locale config. Full migration deferred to Phase 08.
 - **`generate.dir` → `nitro.output.publicDir`**: Direct mapping for controlling where `nuxt generate` outputs static files.
 - **Peer dep warnings expected**: Vue 3, vite, and other peer deps show warnings because not all migrated code is in place yet — this is normal during incremental migration.
+## p01-02: Directory restructure & file naming
+
+- **File naming convention**: All files use **kebab-case** (lowercase with hyphens). Examples: `api-normalize.js`, `cover-image-mixin.js`, `side-menu.vue`, `cal-event-details.vue`. No PascalCase or camelCase filenames.
+- **macOS case-insensitive FS + git**: On APFS (case-insensitive), renaming files that differ only in case requires a two-step rename through a temp name, or using `mv` on the filesystem then `git add -A` to sync the index. `git mv` with `-f` flag can also work but is unreliable.
+- **`modules/` auto-scan**: Nuxt 4 auto-scans `modules/` at rootDir for Nuxt modules. Non-module utility files MUST be moved to `app/utils/` or they will cause errors. Confirmed from circusliving_amp migration.
+- **Dynamic route param names stay camelCase**: Directory names like `[conferenceCode]` use camelCase because they're JavaScript parameter names, not file names. This is standard Nuxt convention.

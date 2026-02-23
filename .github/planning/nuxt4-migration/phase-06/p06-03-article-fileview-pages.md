@@ -21,7 +21,7 @@ Migrate the article tag page, fileView page, and the article component to `<scri
 
 - Phase context: `phase-06/context.md`
 - `pages/[conferenceCode]/article/[tag].vue` — article display by tag
-- `pages/[conferenceCode]/fileView.vue` — file viewer page (bottom-screen layout)
+- `pages/[conferenceCode]/file-view.vue` — file viewer page (bottom-screen layout)
 - `components/article.vue` — shared article component (unusual: uses asyncData!)
 
 ## Steps
@@ -38,7 +38,7 @@ Migrate the article tag page, fileView page, and the article component to `<scri
    - Dynamic route param: `params.tag` → `useRoute().params.tag`
    - Uses article store: `store.dispatch('article/get', { code, tag })`
 
-3. **Migrate `pages/[conferenceCode]/fileView.vue`**:
+3. **Migrate `pages/[conferenceCode]/file-view.vue`**:
    - `layout: 'bottom-screen'` → `definePageMeta({ layout: 'bottom-screen' })`
    - Uses `this.$root.$on('bottom-screen-done')` → `useBus()`
    - Uses files store for file display/opening
@@ -52,7 +52,7 @@ Migrate the article tag page, fileView page, and the article component to `<scri
 
 ## Outputs
 
-- Updated: `components/article.vue`, `pages/[conferenceCode]/article/[tag].vue`, `pages/[conferenceCode]/fileView.vue`
+- Updated: `components/article.vue`, `pages/[conferenceCode]/article/[tag].vue`, `pages/[conferenceCode]/file-view.vue`
 
 ## Done When
 

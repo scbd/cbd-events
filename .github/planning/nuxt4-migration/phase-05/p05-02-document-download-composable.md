@@ -9,7 +9,7 @@
 
 ## Goal
 
-Convert the most complex mixin (`app/utils/documentDownloadMixin.js`, moved from `modules/` in p01-02) to a `useDocumentDownload()` composable. This handles iframe communication, file downloading, progress tracking, and native file opening.
+Convert the most complex mixin (`app/utils/document-download-mixin.js`, moved from `modules/` in p01-02) to a `useDocumentDownload()` composable. This handles iframe communication, file downloading, progress tracking, and native file opening.
 
 ## Pre-flight
 
@@ -20,8 +20,8 @@ Convert the most complex mixin (`app/utils/documentDownloadMixin.js`, moved from
 ## Inputs
 
 - Phase context: `phase-05/context.md`
-- `app/utils/documentDownloadMixin.js` — full mixin source
-- `app/utils/CordovaFiles.js` — file opening logic (framework-agnostic)
+- `app/utils/document-download-mixin.js` — full mixin source
+- `app/utils/cordova-files.js` — file opening logic (framework-agnostic)
 - `stores/files.js` — Pinia files store
 - `composables/useHttp.js` — HTTP composable
 
@@ -84,7 +84,7 @@ Convert the most complex mixin (`app/utils/documentDownloadMixin.js`, moved from
    - `process.client` → `import.meta.client`
    - `this.$root.$emit()` → `useBus().emit()`
 
-4. **Delete `app/utils/documentDownloadMixin.js`**
+4. **Delete `app/utils/document-download-mixin.js`**
 
 ## Testing
 
@@ -96,7 +96,7 @@ Convert the most complex mixin (`app/utils/documentDownloadMixin.js`, moved from
 ## Outputs
 
 - `app/composables/useDocumentDownload.js` — document download composable
-- `app/utils/documentDownloadMixin.js` — DELETED
+- `app/utils/document-download-mixin.js` — DELETED
 
 ## Done When
 

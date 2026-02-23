@@ -23,9 +23,9 @@ Convert both layouts and the redirects middleware to Nuxt 4 patterns. Also migra
 - `layouts/default.vue` — main layout with Header, Nav, Loading, OTA
 - `layouts/bottom-screen.vue` — simple bottom-screen overlay layout
 - `middleware/redirects.js` — auto-redirect to selected conference
-- `components/header/header.vue`, `components/header/header-bottom-screen.vue`, `components/header/SideMenu.vue`
+- `components/header/header.vue`, `components/header/header-bottom-screen.vue`, `components/header/side-menu.vue`
 - `components/navigation/index.vue`
-- `components/Loading.vue`, `components/Offline.vue`, `components/Spinner.vue`
+- `components/loading.vue`, `components/offline.vue`, `components/spinner.vue`
 
 ## Steps
 
@@ -61,7 +61,7 @@ Convert both layouts and the redirects middleware to Nuxt 4 patterns. Also migra
 4. **Migrate header components** to `<script setup>`:
    - `header.vue`: uses `this.$store`, `this.$root.$emit('side-menu')`, `$filters.lstring`, `$localePath`
    - `header-bottom-screen.vue`: uses `this.$root.$on('bottom-screen-done')`, `this.$router.back()`
-   - `SideMenu.vue`: uses `this.$root.$on('side-menu')`, `$localePath`, `$i18n`
+   - `side-menu.vue`: uses `this.$root.$on('side-menu')`, `$localePath`, `$i18n`
 
 5. **Migrate `navigation/index.vue`**:
    - Convert `<nuxt-link tag="li">` (5 occurrences) to:
@@ -87,7 +87,7 @@ Convert both layouts and the redirects middleware to Nuxt 4 patterns. Also migra
 
 - Updated layouts: `default.vue`, `bottom-screen.vue`
 - Updated middleware: `redirects.js`
-- Updated components: header/*, navigation/index.vue, Loading.vue, Offline.vue, Spinner.vue
+- Updated components: header/*, navigation/index.vue, loading.vue, offline.vue, spinner.vue
 
 ## Done When
 

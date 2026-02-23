@@ -21,7 +21,7 @@ Migrate the files Vuex module to Pinia. This store manages file downloads, stora
 
 - Phase context: `phase-03/context.md`
 - `store/files.js` — current Vuex module
-- `app/composables/useLocalForage.js` — from Phase 02
+- `app/composables/use-local-forage.js` — from Phase 02
 
 ## Steps
 

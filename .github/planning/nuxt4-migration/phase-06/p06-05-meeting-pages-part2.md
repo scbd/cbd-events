@@ -23,7 +23,7 @@ Migrate the remaining meeting pages to `<script setup>`. These pages are less co
 - `pages/[conferenceCode]/[meetingCode]/downloads.vue`
 - `pages/[conferenceCode]/[meetingCode]/meetings.vue`
 - `pages/[conferenceCode]/[meetingCode]/calendar.vue`
-- `pages/[conferenceCode]/[meetingCode]/WeekSelect.vue`
+- `pages/[conferenceCode]/[meetingCode]/week-select.vue`
 
 ## Steps
 
@@ -46,7 +46,7 @@ Migrate the remaining meeting pages to `<script setup>`. These pages are less co
    - Integrates with Calendar component (Phase 07) — ensure props/events interface preserved
    - The Calendar component itself is migrated in Phase 07; this page just passes props to it
 
-4. **Migrate `WeekSelect.vue`**:
+4. **Migrate `week-select.vue`**:
    - `layout: 'bottom-screen'` → `definePageMeta({ layout: 'bottom-screen' })`
    - `this.$root.$on('bottom-screen-done')` → `useBus()`
    - Week selection logic → composition API
@@ -66,7 +66,7 @@ Migrate the remaining meeting pages to `<script setup>`. These pages are less co
 
 ## Outputs
 
-- Updated: `downloads.vue`, `meetings.vue`, `calendar.vue`, `WeekSelect.vue`
+- Updated: `downloads.vue`, `meetings.vue`, `calendar.vue`, `week-select.vue`
 
 ## Done When
 

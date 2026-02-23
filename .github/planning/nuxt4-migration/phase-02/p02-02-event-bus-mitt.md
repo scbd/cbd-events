@@ -20,20 +20,20 @@ Replace all Vue 2 event bus patterns (`this.$root.$on/off/emit` and `new Vue()` 
 ## Inputs
 
 - Phase context: `phase-02/context.md`
-- `components/Calendar/src/modules/Bus.js` — `new Vue()` event bus (used in CalBody.vue)
+- `components/calendar/src/modules/bus.js` — `new Vue()` event bus (used in cal-body.vue)
 - ~20 occurrences of `this.$root.$on/off/emit` across 10+ files
 
 ### Event Bus Usage Inventory
 
 | Event Name | Emitter | Listener |
 |------------|---------|----------|
-| `bottom-screen-done` | `header-bottom-screen.vue`, `CalHeader.vue` | `fileView.vue`, `languages.vue`, `conferences.vue`, `WeekSelect.vue`, `meetings.vue` |
+| `bottom-screen-done` | `header-bottom-screen.vue`, `cal-header.vue` | `file-view.vue`, `languages.vue`, `conferences.vue`, `week-select.vue`, `meetings.vue` |
 | `bottom-screen-cancel` | `header-bottom-screen.vue` | (various) |
 | `toggleSetting` | `_conferenceCode/index.vue` | `header.vue` |
 | `close-setting` | `navigation/index.vue` | `header.vue` |
-| `changeDate` | `Calendar WeekSelect.vue` | `Calendar index.vue` |
-| `EventDetails` | (Calendar) | `CalBody.vue` |
-| `showFilter` | (Calendar) | `CalBody.vue` |
+| `changeDate` | `calendar week-select.vue` | `calendar index.vue` |
+| `EventDetails` | (Calendar) | `cal-body.vue` |
+| `showFilter` | (Calendar) | `cal-body.vue` |
 
 ## Steps
 
@@ -66,7 +66,7 @@ Replace all Vue 2 event bus patterns (`this.$root.$on/off/emit` and `new Vue()` 
    }
    ```
 
-4. **Replace Calendar Bus.js** — `components/Calendar/src/modules/Bus.js`:
+4. **Replace calendar bus.js** — `components/calendar/src/modules/bus.js`:
    ```js
    // Replaced by app-wide mitt bus
    // Import useBus() in components instead
@@ -98,7 +98,7 @@ Replace all Vue 2 event bus patterns (`this.$root.$on/off/emit` and `new Vue()` 
 
 - `app/plugins/01.bus.js` — provides `$bus` (mitt instance)
 - `app/composables/useBus.js` — composable accessor
-- `components/Calendar/src/modules/Bus.js` — updated to re-export mitt bus
+- `components/calendar/src/modules/bus.js` — updated to re-export mitt bus
 
 ## Done When
 

@@ -19,8 +19,8 @@ Convert Vue 2 mixins to Vue 3 Composition API composables. Mixins are removed in
 
 | File | Purpose | Composable |
 |------|---------|------------|
-| `app/utils/CoverImageMixin.js` | Hero image computed properties | `useCoverImage()` |
-| `app/utils/documentDownloadMixin.js` | File download + iframe message handling | `useDocumentDownload()` |
+| `app/utils/cover-image-mixin.js` | Hero image computed properties | `useCoverImage()` |
+| `app/utils/document-download-mixin.js` | File download + iframe message handling | `useDocumentDownload()` |
 
 ## Constraints
 

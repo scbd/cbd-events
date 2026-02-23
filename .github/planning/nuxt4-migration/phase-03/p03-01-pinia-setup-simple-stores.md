@@ -20,7 +20,7 @@ Install and configure Pinia, then migrate the two simplest Vuex modules (`offLin
 ## Inputs
 
 - Phase context: `phase-03/context.md`
-- `store/offLine.js` — 2 state props, 2 mutations, 2 getters
+- `store/off-line.js` — 2 state props, 2 mutations, 2 getters
 - `store/routes.js` — 5 state props, 6 mutations, 2 getters
 
 ## Steps
@@ -30,7 +30,7 @@ Install and configure Pinia, then migrate the two simplest Vuex modules (`offLin
    modules: ['@pinia/nuxt', ...]
    ```
 
-2. **Create `app/stores/offLine.js`**:
+2. **Create `app/stores/off-line.js`**:
    ```js
    import { defineStore } from 'pinia'
    import { ref, computed } from 'vue'
@@ -100,7 +100,7 @@ Install and configure Pinia, then migrate the two simplest Vuex modules (`offLin
    })
    ```
 
-5. **Delete old store files**: `store/offLine.js`, `store/routes.js`
+5. **Delete old store files**: `store/off-line.js`, `store/routes.js`
 
 ## Testing
 
@@ -110,10 +110,10 @@ Install and configure Pinia, then migrate the two simplest Vuex modules (`offLin
 
 ## Outputs
 
-- `app/stores/offLine.js` — Pinia offLine store
+- `app/stores/off-line.js` — Pinia offLine store
 - `app/stores/routes.js` — Pinia routes store
 - `app/plugins/05.router.js` — updated with Pinia wiring
-- `store/offLine.js`, `store/routes.js` — DELETED
+- `store/off-line.js`, `store/routes.js` — DELETED
 
 ## Done When
 

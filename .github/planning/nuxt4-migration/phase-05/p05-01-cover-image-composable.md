@@ -9,7 +9,7 @@
 
 ## Goal
 
-Convert `app/utils/CoverImageMixin.js` (moved from `modules/` in p01-02) to a `useCoverImage()` composable.
+Convert `app/utils/cover-image-mixin.js` (moved from `modules/` in p01-02) to a `useCoverImage()` composable.
 
 ## Pre-flight
 
@@ -20,7 +20,7 @@ Convert `app/utils/CoverImageMixin.js` (moved from `modules/` in p01-02) to a `u
 ## Inputs
 
 - Phase context: `phase-05/context.md`
-- `app/utils/CoverImageMixin.js` — computed: conference, getHeroImage, getImage, title
+- `app/utils/cover-image-mixin.js` — computed: conference, getHeroImage, getImage, title
 - `stores/conferences.js` — provides selected conference data
 
 ## Steps
@@ -53,7 +53,7 @@ Convert `app/utils/CoverImageMixin.js` (moved from `modules/` in p01-02) to a `u
    }
    ```
 
-2. **Delete `app/utils/CoverImageMixin.js`**
+2. **Delete `app/utils/cover-image-mixin.js`**
 
 3. **Note**: Components using this mixin will be updated in Phase 06 when pages are migrated
 
@@ -67,7 +67,7 @@ Convert `app/utils/CoverImageMixin.js` (moved from `modules/` in p01-02) to a `u
 ## Outputs
 
 - `app/composables/useCoverImage.js` — cover image composable
-- `app/utils/CoverImageMixin.js` — DELETED
+- `app/utils/cover-image-mixin.js` — DELETED
 
 ## Done When
 

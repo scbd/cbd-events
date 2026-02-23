@@ -20,17 +20,17 @@ Migrate Calendar's JavaScript modules (services, directives) from Vue 2 patterns
 ## Inputs
 
 - Phase context: `phase-07/context.md`
-- `components/Calendar/src/modules/CalWeeksService.js`
-- `components/Calendar/src/modules/CalFilter.js`
-- `components/Calendar/src/modules/CalEventsService.js`
-- `components/Calendar/src/modules/CalEvent.js`
-- `components/Calendar/src/modules/CalClickOutside.js`
-- `components/Calendar/src/directives/LineClamp.js`
-- `components/Calendar/src/directives/Scroll.js`
+- `components/calendar/src/modules/cal-weeks-service.js`
+- `components/calendar/src/modules/CalFilter.js`
+- `components/calendar/src/modules/CalEventsService.js`
+- `components/calendar/src/modules/CalEvent.js`
+- `components/calendar/src/modules/CalClickOutside.js`
+- `components/calendar/src/directives/line-clamp.js`
+- `components/calendar/src/directives/scroll.js`
 
 ## Steps
 
-1. **Migrate `CalWeeksService.js`** (most complex):
+1. **Migrate `cal-weeks-service.js`** (most complex):
    - `Vue.set(this, 'iterations', [])` → `this.iterations = reactive([])`  or plain `this.iterations = []` if class properties are already reactive
    - `Vue.nextTick(() => ...)` → `import { nextTick } from 'vue'` then `nextTick(() => ...)`
    - Remove `import Vue from 'vue'`
@@ -55,7 +55,7 @@ Migrate Calendar's JavaScript modules (services, directives) from Vue 2 patterns
 6. **Migrate directives** to Vue 3 format:
    - Vue 2 lifecycle: `bind`, `inserted`, `update`, `componentUpdated`, `unbind`
    - Vue 3 lifecycle: `created`, `beforeMount`, `mounted`, `beforeUpdate`, `updated`, `beforeUnmount`, `unmounted`
-   - `LineClamp.js`:
+   - `line-clamp.js`:
      ```js
      // Vue 3 directive format
      export default {
@@ -63,7 +63,7 @@ Migrate Calendar's JavaScript modules (services, directives) from Vue 2 patterns
        updated(el, binding) { /* update line clamp */ }
      }
      ```
-   - `Scroll.js`:
+   - `scroll.js`:
      ```js
      export default {
        mounted(el, binding) { /* attach scroll handler */ },
@@ -71,7 +71,7 @@ Migrate Calendar's JavaScript modules (services, directives) from Vue 2 patterns
      }
      ```
 
-7. **Update Bus.js call sites** in CalFilter and CalEventsService if they use `$on/$off/$emit`:
+7. **Update bus.js call sites** in CalFilter and CalEventsService if they use `$on/$off/$emit`:
    - These should use `on/off/emit` (mitt style) — verify Phase 02 covered all instances
 
 ## Testing
@@ -83,8 +83,8 @@ Migrate Calendar's JavaScript modules (services, directives) from Vue 2 patterns
 
 ## Outputs
 
-- Updated Calendar modules: CalWeeksService.js, CalFilter.js, CalEventsService.js, CalEvent.js, CalClickOutside.js
-- Updated directives: LineClamp.js, Scroll.js
+- Updated Calendar modules: cal-weeks-service.js, CalFilter.js, CalEventsService.js, CalEvent.js, CalClickOutside.js
+- Updated directives: line-clamp.js, scroll.js
 
 ## Done When
 

@@ -26,7 +26,7 @@ Migrate all Vuex store modules to Pinia stores using `defineStore()`. Remove Vue
 | File | Purpose | Pinia Equivalent |
 |------|---------|-----------------|
 | `store/index.js` | Root store (minimal) | DELETE — Pinia auto-registers |
-| `store/offLine.js` | Online/offline state | `stores/offLine.js` |
+| `store/off-line.js` | Online/offline state | `stores/off-line.js` |
 | `store/routes.js` | Route tracking state | `stores/routes.js` |
 | `store/conferences.js` | Conference data + API | `stores/conferences.js` |
 | `store/files.js` | File download/storage | `stores/files.js` |

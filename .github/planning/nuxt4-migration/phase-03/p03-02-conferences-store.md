@@ -22,7 +22,7 @@ Migrate the conferences Vuex module (326 lines, 4 state props, 5 mutations, 2 ac
 - Phase context: `phase-03/context.md`
 - `store/conferences.js` — full file (326 lines)
 - `composables/query-filter.js` — used for building API queries
-- `app/utils/apiNormalize.js` — normalizeApiResponse, normalizeSolrResponse (moved from `modules/` in p01-02)
+- `app/utils/api-normalize.js` — normalizeApiResponse, normalizeSolrResponse (moved from `modules/` in p01-02)
 
 ## Steps
 

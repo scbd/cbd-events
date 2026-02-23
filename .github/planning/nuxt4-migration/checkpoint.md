@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 01 — Project Scaffolding & Config
-**Last completed:** `phase-01/p01-01-nuxt4-config.md`
-**Next task:** `phase-01/p01-02-directory-restructure.md`
-**Updated:** 2026-02-23T20:10:00Z
+**Last completed:** `phase-01/p01-02-directory-restructure.md`
+**Next task:** `phase-01/p01-03-build-scripts-env.md`
+**Updated:** 2026-02-23T21:30:00Z
 
 ## State
 
@@ -12,27 +12,35 @@
 - Research complete (981-line codebase analysis)
 - Memory recall applied: lessons from circusliving_amp Nuxt 4 migration
 - **p01-01 COMPLETE**: nuxt.config.ts, package.json, app/app.vue, tsconfig.json
+- **p01-02 COMPLETE**: directory restructure, kebab-case file naming, dynamic route renames
+
+## p01-02 Summary
+
+- Moved all source dirs into `app/` (srcDir): assets, components, composables, layouts, middleware, pages, plugins, locales, store
+- Moved non-module utility files from `modules/` to `app/utils/` with kebab-case names (api-normalize.js, device.js, mime-types.js, cordova-files.js, local-file-system.js, app-environments-manager.js, cover-image-mixin.js, document-download-mixin.js)
+- Flattened `modules/nuxtModules/localForage.js` → `modules/local-forage.js` (only real Nuxt module remains)
+- **Kebab-case naming convention applied to ALL files** — no PascalCase or camelCase filenames. Component `name` properties still use PascalCase internally.
+- Renamed dynamic route dirs: `_conferenceCode` → `[conferenceCode]`, `_meetingCode` → `[meetingCode]`, `_tag.vue` → `[tag].vue`
+- Updated all import paths across codebase to match new locations and kebab-case names
+- Updated nuxt.config.ts module reference comment
+- Calendar component internal imports updated (19 path changes across 8 files)
 
 ## p01-01 Summary
 
 - Created `nuxt.config.ts` with `defineNuxtConfig()` — SPA mode, runtimeConfig, app.head, i18n module config, vite SCSS preprocessor, nitro output to capacitor/www
-- Updated `package.json`: removed Vue 2/Nuxt 2 deps (vue, vue-template-compiler, vue-server-renderer, vue-cordova, vue-notifications, @nuxtjs/axios, @ionic-native/*, nuxt-i18n, babel-eslint, sass-loader); added Nuxt 4, Pinia, mitt, @nuxtjs/i18n v10, vitest, @vue/test-utils, happy-dom; upgraded Capacitor 6→7, Bootstrap 4→5, eslint 7→9; added `type: "module"`
+- Updated `package.json`: removed Vue 2/Nuxt 2 deps; added Nuxt 4, Pinia, mitt, @nuxtjs/i18n v10, vitest, @vue/test-utils, happy-dom; upgraded Capacitor 6→7, Bootstrap 4→5, eslint 7→9; added `type: "module"`
 - Created `app/app.vue` with NuxtLayout + NuxtPage
 - Created `tsconfig.json` extending `.nuxt/tsconfig.json`
-- Deleted old `nuxt.config.js`
 - `yarn install` succeeds (peer dep warnings expected at this stage)
 
-## Refinements Applied
+## Conventions
 
-- Completed truncated p01-03 task file (was 42 lines, now 170 lines with all sections)
-- Fixed p01-03 Handoff cross-reference (pointed to wrong Phase 02 task)
-- Added CRITICAL `modules/` auto-scan fix to p01-02 (non-Nuxt-module files moved to `app/utils/`)
-- Updated Phase 01 context with auto-scan warning from prior migration lesson
-- Updated path references in Phase 02 (localForage), Phase 03 (apiNormalize), Phase 05 (mixins) to match post-restructure locations
-- Updated index.md status from DRAFT to APPROVED
+- **File naming**: All files use kebab-case (e.g., `api-normalize.js`, `side-menu.vue`, `cal-event-details.vue`)
+- **Dynamic route params**: Use camelCase in brackets (e.g., `[conferenceCode]`) — standard Nuxt convention
+- **Component name property**: PascalCase (e.g., `name: 'CalBody'`) — Vue convention
 
 ## Notes
 
 - localForage module commented out in nuxt.config.ts (Phase 02 will replace)
-- Capacitor plugin versions corrected to match actual npm registry (not all plugins have matching version numbers)
-- Start next with p01-02: Directory restructure
+- Capacitor plugin versions corrected to match actual npm registry
+- Start next with p01-03: Build scripts & environment variables

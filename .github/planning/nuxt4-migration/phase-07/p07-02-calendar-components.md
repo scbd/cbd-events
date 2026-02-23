@@ -21,14 +21,14 @@ Convert all Calendar Vue components from Options API to Composition API with `<s
 
 - Phase context: `phase-07/context.md`
 - All Calendar Vue components:
-  - `components/Calendar/src/components/index.vue` (root)
-  - `components/Calendar/src/components/body/CalBody.vue`
-  - `components/Calendar/src/components/body/CalWeekRow.vue`
-  - `components/Calendar/src/components/body/CalDayCell.vue` (if exists)
-  - `components/Calendar/src/components/event/CalEvent.vue`
-  - `components/Calendar/src/components/event/CalEventDetails.vue`
-  - `components/Calendar/src/components/header/CalHeader.vue`
-  - `components/Calendar/src/components/footer/CalFooter.vue`
+  - `components/calendar/src/components/index.vue` (root)
+  - `components/calendar/src/components/body/cal-body.vue`
+  - `components/calendar/src/components/body/cal-week-row.vue`
+  - `components/calendar/src/components/body/CalDayCell.vue` (if exists)
+  - `components/calendar/src/components/event/cal-event.vue`
+  - `components/calendar/src/components/event/cal-event-details.vue`
+  - `components/calendar/src/components/header/cal-header.vue`
+  - `components/calendar/src/components/footer/cal-footer.vue`
 
 ## Steps
 
@@ -43,7 +43,7 @@ Convert all Calendar Vue components from Options API to Composition API with `<s
    - Register directives locally or via plugin
    - Initialize services in setup
 
-2. **Migrate `CalBody.vue`** (CRITICAL — uses `this.$children`):
+2. **Migrate `cal-body.vue`** (CRITICAL — uses `this.$children`):
    - `this.$children[0].$refs` is **removed in Vue 3**
    - Replace with explicit template refs:
      ```vue
@@ -58,17 +58,17 @@ Convert all Calendar Vue components from Options API to Composition API with `<s
    - Or use provide/inject for parent-child communication
    - Study what `this.$children[0].$refs` accesses and find the minimal replacement
 
-3. **Migrate CalWeekRow.vue**:
+3. **Migrate cal-week-row.vue**:
    - `this.$refs.day` for scroll-to-element
    - Convert to `<script setup>` with template refs
 
-4. **Migrate CalEvent.vue and CalEventDetails.vue**:
+4. **Migrate cal-event.vue and cal-event-details.vue**:
    - `this.$refs.eventCalTitle` for style manipulation
    - Event bus calls → mitt
    - `process.client` → `import.meta.client`
    - Convert to `<script setup>`
 
-5. **Migrate CalHeader.vue and CalFooter.vue**:
+5. **Migrate cal-header.vue and cal-footer.vue**:
    - Simpler components
    - Convert to `<script setup>`
 

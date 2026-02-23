@@ -22,7 +22,7 @@ Migrate the about and article Vuex modules to Pinia stores, then delete the old 
 - Phase context: `phase-03/context.md`
 - `store/about.js` — 1 state prop, 1 mutation, 4 actions
 - `store/article.js` — 1 state prop, 1 mutation, 4 actions
-- `app/composables/useLocalForage.js` — from Phase 02
+- `app/composables/use-local-forage.js` — from Phase 02
 
 ## Steps
 
