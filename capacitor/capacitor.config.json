@@ -2,7 +2,6 @@
   "appId": "io.cbd.unbioevents",
   "appName": "CBD Events",
   "webDir": "www",
-  "bundledWebRuntime": false,
   "loggingBehavior": "production",
   "backgroundColor":"000000",
   "server": {

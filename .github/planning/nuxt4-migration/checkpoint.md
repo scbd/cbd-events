@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 01 — Project Scaffolding & Config
-**Last completed:** `phase-01/p01-02-directory-restructure.md`
-**Next task:** `phase-01/p01-03-build-scripts-env.md`
-**Updated:** 2026-02-23T21:30:00Z
+**Current phase:** Phase 01 — Project Scaffolding & Config — COMPLETE
+**Last completed:** `phase-01/p01-03-build-scripts-env.md`
+**Next task:** `phase-02/p02-01-localforage-plugin.md`
+**Updated:** 2026-02-24T09:25:00Z
 
 ## State
 
@@ -13,6 +13,20 @@
 - Memory recall applied: lessons from circusliving_amp Nuxt 4 migration
 - **p01-01 COMPLETE**: nuxt.config.ts, package.json, app/app.vue, tsconfig.json
 - **p01-02 COMPLETE**: directory restructure, kebab-case file naming, dynamic route renames
+- **p01-03 COMPLETE**: build scripts, env vars, Capacitor unification
+- **Phase 01 COMPLETE** — ready for Phase 02
+
+## p01-03 Summary
+
+- Updated `package.json` scripts: removed `rm -rf .nuxt`, `NODE_ENV=` prefixes, `yarn jetify`; added `build`, `generate`, `preview`, `lint` scripts
+- Removed `@awesome-cordova-plugins/core` from root (only file-opener needed)
+- Unified Capacitor plugin versions between root and `capacitor/package.json` — all `@capacitor/*` packages now match (core 7.5.0, app 7.1.2, device 7.0.4, filesystem 7.1.8, etc.)
+- Updated `@capgo/capacitor-updater` in capacitor/ to 7.43.3 (matching root)
+- Removed deprecated `bundledWebRuntime` from `capacitor/capacitor.config.json`
+- Converted `modules/local-forage.js` from Nuxt 2 (`require`, `this.options`) to no-op ESM stub — prevents auto-scan crash; Phase 02 will implement real replacement
+- Fixed i18n config: `restructureDir: false` + `langDir: 'app/locales'` for correct locale resolution
+- `runtimeConfig.public` already in place (done in p01-01); `nitro.output.publicDir` already set
+- `yarn install` succeeds; `yarn dev` starts cleanly (Vite client+server built, no errors)
 
 ## p01-02 Summary
 
@@ -41,6 +55,8 @@
 
 ## Notes
 
-- localForage module commented out in nuxt.config.ts (Phase 02 will replace)
-- Capacitor plugin versions corrected to match actual npm registry
-- Start next with p01-03: Build scripts & environment variables
+- localForage module is a no-op stub in modules/local-forage.js — auto-scanned by Nuxt 4; Phase 02 will implement
+- Capacitor plugin versions unified; each plugin has its own version scheme (not all 7.4.3)
+- `restructureDir: false` needed in i18n config since locales are in `app/locales/` not `i18n/locales/`
+- `runtimeConfig.public.*` pattern: access via `useRuntimeConfig().public.api` (replaces `process.env.NUXT_ENV_API`)
+- Start next with p02-01: localForage plugin replacement

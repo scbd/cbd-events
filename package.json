@@ -6,15 +6,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev --open",
-    "build:a": "rm -rf .nuxt && NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
-    "build:i": "rm -rf .nuxt && NODE_ENV=ios nuxt generate && cd capacitor && yarn cap sync ios",
-    "clean-reinstall": "rm -f yarn.lock && rm -f package-lock.json && rm -rf node_modules && yarn install --force",
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "build:i": "nuxt generate && cd capacitor && npx cap sync ios",
+    "build:a": "nuxt generate && cd capacitor && npx cap sync android",
+    "preview": "nuxt preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "lint": "eslint app/",
+    "clean-reinstall": "rm -f yarn.lock && rm -f package-lock.json && rm -rf node_modules && yarn install --force"
   },
   "dependencies": {
-    "@awesome-cordova-plugins/core": "6.9.0",
     "@awesome-cordova-plugins/file-opener": "6.9.0",
     "@capacitor/app": "7.1.2",
     "@capacitor/core": "7.5.0",

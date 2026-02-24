@@ -45,12 +45,13 @@ export default defineNuxtConfig({
   ],
 
   i18n: {
+    restructureDir: false,
     defaultLocale: 'en',
     detectBrowserLanguage: { cookieKey: 'localePref', useCookie: true },
     locales: [{ code: 'en', file: 'en.js', language: 'en-US' }],
     strategy: 'prefix_except_default',
     lazy: true,
-    langDir: 'locales/',
+    langDir: 'app/locales',
   },
 
   vite: {

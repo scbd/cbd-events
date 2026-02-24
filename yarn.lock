@@ -2,13 +2,6 @@
 # yarn lockfile v1
 
 
-"@awesome-cordova-plugins/core@6.9.0":
-  version "6.9.0"
-  resolved "https://registry.yarnpkg.com/@awesome-cordova-plugins/core/-/core-6.9.0.tgz#84d50224249fa29008df3f206757d7f178da9cab"
-  integrity sha512-3iO4xth4mVqJB1SMwA72I8Cb6FnCQwHkP2OUXpCxRNvC8ZUswQ+Mqgq2y3nL24sgD0GoybwtysGegM+jF3zteA==
-  dependencies:
-    "@types/cordova" latest
-
 "@awesome-cordova-plugins/file-opener@6.9.0":
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/@awesome-cordova-plugins/file-opener/-/file-opener-6.9.0.tgz#1e04b16b5654cb498cddf7ad3d0e4f9676d7b150"
