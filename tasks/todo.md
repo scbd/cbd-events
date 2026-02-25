@@ -10,11 +10,12 @@
 - [x] p02-01: LocalForage plugin rewrite
 - [x] p02-02: Event bus (mitt)
 - [x] p02-03: Filters, icons, notifications
-- [ ] p02-04: Platform plugin (cordova.js)
-- [ ] p02-05: Router plugin
+- [x] p02-04: Platform plugin (cordova.js)
+- [x] p02-05: Router plugin
 
 ## Phase 03: State Management (Vuex → Pinia)
-- [ ] p03-01 through p03-04
+- [x] p03-01 through p03-02
+- [ ] p03-03, p03-04
 
 ## Phase 04: HTTP & Data Layer
 - [ ] p04-01, p04-02

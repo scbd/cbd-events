@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 03 — State Management (Vuex → Pinia)
-**Last completed:** `phase-03/p03-01-pinia-setup-simple-stores.md`
-**Next task:** `phase-03/p03-02-conferences-store.md`
-**Updated:** 2026-02-25T09:00:00Z
+**Last completed:** `phase-03/p03-02-conferences-store.md`
+**Next task:** `phase-03/p03-03-files-store.md`
+**Updated:** 2026-02-25T09:20:00Z
 
 ## State
 
@@ -22,6 +22,25 @@
 - **p02-05 COMPLETE**: router plugin (shell + router.options.js)
 - **Phase 02 COMPLETE**
 - **p03-01 COMPLETE**: Pinia offLine + routes stores; vitest setup; router plugin wired
+- **p03-02 COMPLETE**: Pinia conferences store; 34 tests pass (48 total)
+
+## p03-02 Summary
+
+- Created `app/stores/conferences.js` — Pinia setup-syntax store migrating all 326 lines of Vuex `store/conferences.js`
+- State: `docs`, `selected`, `selectedMeeting`, `meetings` as `ref()` variables
+- All 12 getters preserved as `computed()` properties: `conference`, `meeting`, `selectedApp`, `conferenceId`, `meetingCode`, `startDate`, `showCalendar`, `conferenceCal`, `agendaItems`, `agendaPrefix`, `agenda`
+- Function-returning helpers: `byCode(code)`, `isInSession(datetime)`, `forceDate(datetime)` — params passed directly instead of via getter factory
+- Actions: `get(conferenceCode)`, `getMeetings()`, `setSelected()`, `setSelectedMeeting()`, `clearAll()`
+- Replaced `this.$router.currentRoute.params` → `conferenceCode` param on `get()`
+- Replaced `this.$axios` → `useNuxtApp().$axios` inside actions
+- Replaced `rootState.i18n.locale` → `useNuxtApp().$i18n.locale.value`
+- Replaced `rootState.routes.route.params.meetingCode` → `useRoutesStore().meetingCode`
+- Applied defensive guards: `meetingCode` returns `{}` when `selectedMeeting` is falsy; `startDate` returns `null` when `selected` is falsy; `isInSession` returns `false` early when `selected` is falsy
+- Added `@ionic-native/http` stub to `tests/__mocks__/` and alias in `vitest.config.ts` (needed for http.js transform in test env)
+- Added `#app` stub to `tests/__mocks__/nuxt-app.js` (Nuxt virtual module)
+- Deleted `app/store/conferences.js` — Vuex module removed
+- Created `tests/stores/conferences.test.js` — 34 tests, all pass
+- 48 total tests passing across all stores
 
 ## p03-01 Summary
 
