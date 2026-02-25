@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 02 — Core Plugins & Infrastructure
-**Last completed:** `phase-02/p02-04-platform-plugin.md`
-**Next task:** `phase-02/p02-05-router-plugin.md`
-**Updated:** 2026-02-25T00:00:00Z
+**Last completed:** `phase-02/p02-05-router-plugin.md`
+**Next task:** `phase-03/p03-01-pinia-setup-simple-stores.md`
+**Updated:** 2026-02-25T01:00:00Z
 
 ## State
 
@@ -19,7 +19,15 @@
 - **p02-02 COMPLETE**: event bus (mitt)
 - **p02-03 COMPLETE**: filters, icons, notifications
 - **p02-04 COMPLETE**: platform plugin (cordova → capacitor)
-- **p02-04 COMPLETE**: platform plugin (cordova → capacitor)
+- **p02-05 COMPLETE**: router plugin (shell + router.options.js)
+- **Phase 02 COMPLETE**
+
+## p02-05 Summary
+
+- Created `app/plugins/05.router.js` — `defineNuxtPlugin()` shell with `router.afterEach()` hook; logs navigation to debug; TODO comment marks Pinia wiring point for p03-01
+- Created `app/router.options.js` — exports `{ linkActiveClass: 'active-link' }`, replaces `router: {}` block in old nuxt.config
+- Deleted `app/plugins/router.js` — Nuxt 2 context-based plugin (`store.commit('routes/SET_ROUTE', ...)`) removed; full store sync deferred to p03-01
+- `yarn dev` starts cleanly: Nuxt 4.3.1, no errors
 
 ## p02-04 Summary
 
