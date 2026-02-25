@@ -1,13 +1,16 @@
 import { defineNuxtPlugin } from '#app'
+import { useRoutesStore } from '~/stores/routes'
 
-// Syncs router state — will be wired to Pinia routes store in Phase 03 (p03-01)
 export default defineNuxtPlugin((nuxtApp) => {
-  const router = nuxtApp.$router
+  const router      = nuxtApp.$router
+  const routesStore = useRoutesStore()
 
   router.afterEach((to) => {
-    // TODO (p03-01): replace with Pinia routes store dispatch
-    // const routesStore = useRoutesStore()
-    // routesStore.setRoute({ name, path, params, fullPath, query })
-    console.debug('[router plugin] navigated to:', to.path)
+    routesStore.setRoute({
+      name  : to.name,
+      path  : to.path,
+      params: { ...to.params },
+      query : { ...to.query },
+    })
   })
 })
