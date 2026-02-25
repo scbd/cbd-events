@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 04 — HTTP & API Layer
-**Last completed:** `phase-03/p03-04-about-article-stores.md`
-**Next task:** `phase-04/p04-01-http-migration.md`
-**Updated:** 2026-02-25T10:05:00Z
+**Last completed:** `phase-04/p04-01-http-migration.md`
+**Next task:** `phase-04/p04-02-ota-updater.md`
+**Updated:** 2026-02-25T10:43:00Z
 
 ## State
 
@@ -26,6 +26,21 @@
 - **p03-03 COMPLETE**: Pinia files store; 28 tests pass (76 total)
 - **p03-04 COMPLETE**: Pinia about + article stores; 26 tests pass (102 total); Vuex `store/` directory deleted
 - **Phase 03 COMPLETE**
+- **p04-01 COMPLETE**: HTTP layer unified; 102 tests pass
+
+## p04-01 Summary
+
+- Created `app/composables/useHttp.js` — `$fetch`-based composable (`get`, `post`, direct `$fetch`); replaces dual axios/ionic-native strategy
+- Deleted `app/composables/http.js` — old Capacitor platform-switching composable removed
+- Updated `stores/conferences.js` — removed `useHttp`/axios; `getBlob`, `loadBlobs`, `queryConferences`, `queryMeetings` now use `$fetch(url, { query: params })` directly; `$axios` removed from action destructuring
+- Updated `stores/about.js` — removed `useHttp`, `useNuxtApp`, axios; `fetchBlob` and `fetchFromApi` use `$fetch` directly; `useNuxtApp` import dropped entirely
+- Updated `stores/article.js` — same pattern as about store
+- Key `$fetch` detail: `responseType: 'blob'` for image fetches; `query:` (not `params:`) for URL query strings
+- Updated `tests/stores/conferences.test.js` — `vi.hoisted()` for `mockFetch`; `vi.mock('ofetch', () => ({ $fetch: mockFetch }))`; removed `$axios` from `#app` mock; removed `http` import
+- Updated `tests/stores/about.test.js` — `vi.mock('ofetch', () => ({ $fetch: mockHttp }))`; removed `$axios` from `#app` mock
+- Updated `tests/stores/article.test.js` — same pattern as about test
+- Updated `vitest.config.ts` — removed `@ionic-native/http` alias (no longer needed)
+- 102 tests passing, all green
 
 ## p03-04 Summary
 
