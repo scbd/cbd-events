@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 06 — Layout & Page Migration
-**Last completed:** `phase-05/p05-02-document-download-composable.md`
-**Next task:** `phase-06/p06-01-layouts-middleware.md`
-**Updated:** 2026-02-25T12:10:00Z
+**Last completed:** `phase-06/p06-01-layouts-middleware.md`
+**Next task:** `phase-06/p06-02-static-conference-pages.md`
+**Updated:** 2026-02-25T12:30:00Z
 
 ## State
 
@@ -32,6 +32,24 @@
 - **p05-01 COMPLETE**: useCoverImage composable; cover-image-mixin.js deleted; 12 tests pass (128 total)
 - **p05-02 COMPLETE**: useDocumentDownload composable; document-download-mixin.js deleted; 11 tests pass (139 total)
 - **Phase 05 COMPLETE**
+- **p06-01 COMPLETE**: layouts, middleware, header components, navigation, utility components migrated; 4 middleware tests; 143 total tests pass
+
+## p06-01 Summary
+
+- **`app/layouts/default.vue`**: `<nuxt />` → `<slot />`; `<script setup>`; `usePlatform()`, `useOffLineStore()`, `updateOTA()` composables; `window` online/offline listeners in `if (import.meta.client)` block; `beforeMount` → setup-level client guard; `beforeDestroy` → `onBeforeUnmount`
+- **`app/layouts/bottom-screen.vue`**: `<nuxt />` → `<slot />`; `<script setup>`; `isMounted` ref + `onMounted`
+- **`app/middleware/redirects.js`**: rewritten as `defineNuxtRouteMiddleware`; Pinia `useConferencesStore()`; `navigateTo()` for redirect; `loadAbout` side-effect removed (belongs in pages)
+- **`app/components/header/header.vue`**: `<script setup>`; `storeToRefs(useConferencesStore())` for `selected`/`selectedMeeting`; `storeToRefs(useRoutesStore())` for `showNavs`/`showMeetingNav`; `useBus()` replaces `this.$root.$on`; `lstring()` replaces `| lstring` pipe; `useRuntimeConfig().public.attachments` replaces `process.env.NUXT_ENV_ATTACHMENTS`; module-level `scrolled`/`lastScrollTop` vars replace instance data
+- **`app/components/header/header-bottom-screen.vue`**: `<script setup>`; `defineProps`; `useBus().emit()` replaces `this.$root.$emit()`
+- **`app/components/header/side-menu.vue`**: `<script setup>`; `defineProps`; `useConferencesStore()`/`useFilesStore()`; `useLocalePath()` replaces `localePath()`; `filesStore.setDownloading(true/false)` + `filesStore.removeAll()` replaces `files/DOWNLOADING` commits; `nuxt-link` → `NuxtLink`; `xlink:href` → `href`
+- **`app/components/navigation/index.vue`**: `<script setup>`; `storeToRefs` for files/conferences/routes; `useBus()` for `closeSettings`; all 5 `nuxt-link tag="li"` → `<li><NuxtLink class="nav-link">` pattern; `mapGetters` removed; `xlink:href` → `href`; `filesStore.load()` on mount
+- **`app/components/loading.vue`**: `<script setup>`; `defineProps(['percent', 'state'])`; explicit `Spinner` import removed (auto-imported)
+- **`app/components/offline.vue`**: empty Options API `export default` block removed entirely
+- **`app/components/spinner.vue`**: `<template functional>` → `<template>`; `props.size`/`props.color` → `size`/`color`; `<script setup>` with `defineProps`
+- **`tests/setup.js`**: global Nuxt stubs (`defineNuxtRouteMiddleware` passthrough, `navigateTo` spy, `useRuntimeConfig`)
+- **`vitest.config.ts`**: added `setupFiles: ['tests/setup.js']`
+- **`tests/middleware/redirects.test.js`**: 4 tests; `vi.hoisted` for mutable store mock; `vi.resetAllMocks()` in `beforeEach` to clear mock implementations between tests; `globalThis.navigateTo` for assertion
+- 143 total tests passing
 
 ## p05-02 Summary
 
