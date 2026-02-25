@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 03 — State Management (Vuex → Pinia)
-**Last completed:** `phase-03/p03-02-conferences-store.md`
-**Next task:** `phase-03/p03-03-files-store.md`
-**Updated:** 2026-02-25T09:20:00Z
+**Last completed:** `phase-03/p03-03-files-store.md`
+**Next task:** `phase-03/p03-04-about-article-stores.md`
+**Updated:** 2026-02-25T09:40:00Z
 
 ## State
 
@@ -23,6 +23,23 @@
 - **Phase 02 COMPLETE**
 - **p03-01 COMPLETE**: Pinia offLine + routes stores; vitest setup; router plugin wired
 - **p03-02 COMPLETE**: Pinia conferences store; 34 tests pass (48 total)
+- **p03-03 COMPLETE**: Pinia files store; 28 tests pass (76 total)
+
+## p03-03 Summary
+
+- Created `app/stores/files.js` — Pinia setup-syntax store migrating all logic from Vuex `store/files.js`
+- State: `data` (array of file objects), `downloading` (boolean), `fileToOpen` (boolean|object) as `ref()` variables
+- Getters as `computed()`: `files`, `hasDownloads`, `isDownloading`, `totalSize`, `getByMeeting(meetingCode)`, `getFileByName(name)`
+- Actions: `load()`, `save({ files, blobs })`, `remove(files)`, `removeAll()`, `setDownloading(val)`, `setFileToOpen(file)`
+- Private helpers: `_pushFile(file)`, `_removeArrayOfFiles(files)`
+- Replaced `this.$localForage` → `useLocalForage()` from `~/composables/use-local-forage.js`
+- Preserved curly bracket iterate pattern: `await filesStore.iterate((value) => { items.push(value) })`
+- Blob/metadata separation maintained: metadata in `files` store, binary in `blobs` store
+- Fixed original Vuex bug: `deleteArrayOfFiles` was passing `{ commit, state }` object as `commit` param; now correctly mutates `data.value` directly
+- Used `vi.hoisted()` in test file to correctly initialize mock stores before `vi.mock` factory hoisting
+- Deleted `app/store/files.js` — Vuex module removed
+- Created `tests/stores/files.test.js` — 28 tests, all pass
+- 76 total tests passing across all stores
 
 ## p03-02 Summary
 
