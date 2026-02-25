@@ -8,8 +8,8 @@
 
 ## Phase 02: Core Plugins & Infrastructure
 - [x] p02-01: LocalForage plugin rewrite
-- [ ] p02-02: Event bus (mitt)
-- [ ] p02-03: Filters, icons, notifications
+- [x] p02-02: Event bus (mitt)
+- [x] p02-03: Filters, icons, notifications
 - [ ] p02-04: Platform plugin (cordova.js)
 - [ ] p02-05: Router plugin
 

@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 02 — Core Plugins & Infrastructure
-**Last completed:** `phase-02/p02-01-localforage-plugin.md`
-**Next task:** `phase-02/p02-02-event-bus-mitt.md`
-**Updated:** 2026-02-24T10:00:00Z
+**Last completed:** `phase-02/p02-03-filters-icons-notifications.md`
+**Next task:** `phase-02/p02-04-platform-plugin.md`
+**Updated:** 2026-02-25T00:00:00Z
 
 ## State
 
@@ -16,6 +16,28 @@
 - **p01-03 COMPLETE**: build scripts, env vars, Capacitor unification
 - **Phase 01 COMPLETE**
 - **p02-01 COMPLETE**: localForage plugin rewrite
+- **p02-02 COMPLETE**: event bus (mitt)
+- **p02-03 COMPLETE**: filters, icons, notifications
+
+## p02-03 Summary
+
+- Created `app/utils/filters.js` — pure exports: `lstring`, `timeDisplay`, `trimName`, `formatBytes`, `globalFilter`, `setLocale`
+- Created `app/plugins/03.filters.js` — `defineNuxtPlugin()` providing `$filters`; watches `$i18n.locale` to keep module-level locale in sync
+- Moved `app/plugins/icons/icon.vue` → `app/components/icon.vue` — converted from Vue 2 `functional` template to Vue 3 Options API component; `xlink:href` → `:href`; `props.x` → `x`
+- Moved `app/plugins/icons/icons.vue` → `app/components/icons.vue` — SVG sprite file, no changes needed
+- Deleted `app/plugins/icons/index.js` (was `Vue.component()` registration — replaced by Nuxt 4 auto-import)
+- Deleted `app/plugins/filters.js` (Vue 2 `Vue.filter()` + `Vue.prototype.$filters`)
+- Deleted `app/plugins/vue-notifications.js` (Vue 2 `inject()`)
+- Created `app/plugins/04.notifications.js` — `defineNuxtPlugin()` providing `$swal`
+- Template `| lstring` pipe syntax not yet updated — deferred to Phase 06
+
+## p02-02 Summary
+
+- Created `app/plugins/02.bus.js` — `defineNuxtPlugin()` providing `$bus` (mitt instance)
+- Created `app/composables/use-bus.js` — `useBus()` composable returning `useNuxtApp().$bus`
+- Updated `app/components/calendar/src/modules/bus.js` — re-exports `useBus()` as bridge for gradual Phase-07 migration
+- Actual `$root.$on/off/emit` replacements deferred to Phase 06/07
+- mitt `off()` requires exact handler reference — noted in composable JSDoc
 
 ## p02-01 Summary
 
