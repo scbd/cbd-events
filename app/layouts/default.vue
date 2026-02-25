@@ -13,7 +13,7 @@
 <script>
 import   Header      from '~/components/header/header'
 import   Nav         from '~/components/navigation/index'
-import { updateOTA } from '~/composables/over-the-air'
+import { updateOTA } from '~/composables/useOta'
 import { StatusBar } from '@capacitor/status-bar'
 import { Capacitor } from '@capacitor/core';
 

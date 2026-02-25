@@ -5,6 +5,16 @@ export const useNuxtApp = () => ({
   $i18n : { locale: { value: 'en' } }
 })
 
+export const useRuntimeConfig = () => ({
+  public: {
+    baseUrl    : 'https://cbd-events.cbd.int',
+    iframeHost : 'https://www.cbd.int',
+    api        : 'https://api.cbd.int',
+    attachments: 'https://attachments.cbd.int',
+    appVersion : '1.0.0',
+  },
+})
+
 export const defineNuxtPlugin  = (fn)  => fn
 export const useRouter         = ()    => ({})
 export const useRoute          = ()    => ({})
