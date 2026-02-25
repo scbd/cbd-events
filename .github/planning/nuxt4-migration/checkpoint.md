@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 03 — State Management (Vuex → Pinia)
-**Last completed:** `phase-03/p03-03-files-store.md`
-**Next task:** `phase-03/p03-04-about-article-stores.md`
-**Updated:** 2026-02-25T09:40:00Z
+**Current phase:** Phase 04 — HTTP & API Layer
+**Last completed:** `phase-03/p03-04-about-article-stores.md`
+**Next task:** `phase-04/p04-01-http-migration.md`
+**Updated:** 2026-02-25T10:05:00Z
 
 ## State
 
@@ -24,6 +24,24 @@
 - **p03-01 COMPLETE**: Pinia offLine + routes stores; vitest setup; router plugin wired
 - **p03-02 COMPLETE**: Pinia conferences store; 34 tests pass (48 total)
 - **p03-03 COMPLETE**: Pinia files store; 28 tests pass (76 total)
+- **p03-04 COMPLETE**: Pinia about + article stores; 26 tests pass (102 total); Vuex `store/` directory deleted
+- **Phase 03 COMPLETE**
+
+## p03-04 Summary
+
+- Created `app/stores/about.js` — Pinia setup-syntax store migrating all logic from Vuex `store/about.js`
+- Created `app/stores/article.js` — Pinia setup-syntax store migrating all logic from Vuex `store/article.js`
+- State: `docs` (`ref({})`) in both stores
+- About actions: `get(code, force)` — checks memory → localForage → API; background refresh on cache hit
+- Article actions: `get({ code, tag }, force)` — same pattern; composite key `${code}-${tag}`
+- Fixed original Vuex bug in article `exists()`: `if(\`${cCode}-${tag}\`)` was always truthy; now correctly checks `docs.value[key]`
+- HTTP via `useHttp()` + `useNuxtApp().$axios`, env via `process.env.NUXT_ENV_API` (consistent with conferences store)
+- Used `vi.hoisted()` in both test files for `mockHttp` AND `mockAboutStore`/`mockArticleStore`
+- Deleted `app/store/about.js`, `app/store/article.js`, `app/store/index.js` and entire `store/` directory
+- Created `tests/stores/about.test.js` — 12 tests, all pass
+- Created `tests/stores/article.test.js` — 14 tests, all pass
+- 102 total tests passing across all stores
+- No Vuex code remains in `app/stores/` or `app/store/`; remaining `this.$store` in pages/components deferred to Phase 06
 
 ## p03-03 Summary
 
