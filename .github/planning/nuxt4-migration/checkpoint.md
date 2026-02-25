@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 04 — HTTP & API Layer
-**Last completed:** `phase-04/p04-01-http-migration.md`
-**Next task:** `phase-04/p04-02-ota-updater.md`
-**Updated:** 2026-02-25T10:43:00Z
+**Current phase:** Phase 05 — Mixin → Composable Conversion
+**Last completed:** `phase-04/p04-02-ota-updater.md`
+**Next task:** `phase-05/p05-01-cover-image-composable.md`
+**Updated:** 2026-02-25T11:35:00Z
 
 ## State
 
@@ -27,6 +27,26 @@
 - **p03-04 COMPLETE**: Pinia about + article stores; 26 tests pass (102 total); Vuex `store/` directory deleted
 - **Phase 03 COMPLETE**
 - **p04-01 COMPLETE**: HTTP layer unified; 102 tests pass
+- **p04-02 COMPLETE**: OTA composable migrated to $fetch; @ionic-native fully removed; 116 tests pass
+- **Phase 04 COMPLETE**
+
+## p04-02 Summary
+
+- Created `app/composables/useOta.js` — replaces `app/composables/over-the-air.js`
+- All `HTTP.sendRequest()` calls replaced:
+  - `getReleaseData()`: `HTTP.sendRequest(url, { method: 'get', responseType: 'json' })` → `await $fetch(url)` (auto JSON parse)
+  - `distFileExists()`: `HTTP.sendRequest(url, { method: 'head' })` → `await fetch(url, { method: 'HEAD' })` (native Fetch API for HEAD)
+- `majorGreaterFilter` refactored to curried form `majorGreaterFilter(currentVersion)` — avoids calling `useRuntimeConfig()` inside callback closure
+- `useRuntimeConfig()` imported from `#app`; provides `public.appVersion` (replaces `process.env.NUXT_ENV_VERSION`)
+- Added `useOta()` composable entry point returning `{ checkForUpdate, applyUpdate }` (named exports retained for backward compat with `default.vue`)
+- Fixed original bug: `return test` on last line of `updateOTA` → removed (undefined variable)
+- Updated `app/layouts/default.vue` import path: `over-the-air` → `useOta`
+- Deleted `app/composables/over-the-air.js`
+- Deleted `tests/__mocks__/ionic-native-http.js` — stub was orphaned (alias removed from vitest.config.ts in p04-01)
+- Updated `tests/__mocks__/nuxt-app.js` — added `useRuntimeConfig()` stub
+- Created `tests/composables/use-ota.test.js` — 14 tests cover: composable API shape, `getVersionOTA` (native vs bundle version), `needsUpdateOTA` (same-major filter, highest pick, error fallback), `updateOTA` (download+apply flow, early exits, listener registration, HEAD check)
+- 116 total tests passing across all files
+- No `@ionic-native/http` references remain anywhere in codebase
 
 ## p04-01 Summary
 
