@@ -40,8 +40,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/i18n',
     '@pinia/nuxt',
-    // TODO [Phase 02]: Replace with Nuxt 4-compatible localForage plugin
-    // './modules/local-forage.js',
   ],
 
   i18n: {

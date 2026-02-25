@@ -3,11 +3,15 @@
 ## Phase 01: Project Scaffolding & Config
 
 - [x] p01-01: Nuxt 4 config & dependency overhaul
-- [ ] p01-02: Directory restructure
-- [ ] p01-03: Build scripts & env
+- [x] p01-02: Directory restructure
+- [x] p01-03: Build scripts & env
 
 ## Phase 02: Core Plugins & Infrastructure
-- [ ] p02-01 through p02-05
+- [x] p02-01: LocalForage plugin rewrite
+- [ ] p02-02: Event bus (mitt)
+- [ ] p02-03: Filters, icons, notifications
+- [ ] p02-04: Platform plugin (cordova.js)
+- [ ] p02-05: Router plugin
 
 ## Phase 03: State Management (Vuex → Pinia)
 - [ ] p03-01 through p03-04

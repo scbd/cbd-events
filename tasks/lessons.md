@@ -23,3 +23,10 @@
 - **modules/ auto-scan crash**: Nuxt 2-style modules using `require`, `this.options`, `this.addPlugin()` crash when Nuxt 4 auto-scans `modules/`. Convert to no-op ESM stub (`export default function () {}`) to prevent errors while preserving file for later phases.
 - **`bundledWebRuntime` deprecated**: Remove from `capacitor.config.json` — no-op since Capacitor 6+.
 - **Jetifier removed**: Android now uses AndroidX natively; `yarn jetify` in build scripts is no longer needed.
+
+## p02-01: LocalForage plugin rewrite
+
+- **Vue instance → plain class**: The old localForage plugin created a `new Vue()` instance per store with methods wrapping every localForage call in manual `new Promise()`. The replacement is a simple class that delegates directly to `localforage.createInstance()` — no Promise wrapping needed since localForage already returns Promises.
+- **Plugin file naming for order**: Use `01.local-forage.js` prefix to control plugin load order in Nuxt 4's auto-discovery. This ensures localForage is available before other plugins that may depend on it.
+- **iterate() curly bracket gotcha preserved**: The `iterate()` method is delegated directly to the localforage instance. The curly bracket requirement (`{ data.push(value) }` not `data.push(value)`) is a localforage behavior, not a wrapper issue — so the plain delegation preserves correct behavior.
+- **Dual access pattern**: Provide both `useLocalForage()` composable (for Pinia stores / script setup) and `$localForage` via plugin provide (for gradual migration of `this.$localForage` usage).

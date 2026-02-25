@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 01 — Project Scaffolding & Config — COMPLETE
-**Last completed:** `phase-01/p01-03-build-scripts-env.md`
-**Next task:** `phase-02/p02-01-localforage-plugin.md`
-**Updated:** 2026-02-24T09:25:00Z
+**Current phase:** Phase 02 — Core Plugins & Infrastructure
+**Last completed:** `phase-02/p02-01-localforage-plugin.md`
+**Next task:** `phase-02/p02-02-event-bus-mitt.md`
+**Updated:** 2026-02-24T10:00:00Z
 
 ## State
 
@@ -14,7 +14,19 @@
 - **p01-01 COMPLETE**: nuxt.config.ts, package.json, app/app.vue, tsconfig.json
 - **p01-02 COMPLETE**: directory restructure, kebab-case file naming, dynamic route renames
 - **p01-03 COMPLETE**: build scripts, env vars, Capacitor unification
-- **Phase 01 COMPLETE** — ready for Phase 02
+- **Phase 01 COMPLETE**
+- **p02-01 COMPLETE**: localForage plugin rewrite
+
+## p02-01 Summary
+
+- Created `app/composables/use-local-forage.js` — plain `LocalForageStore` class wrapping `localforage.createInstance()` for each of the 4 stores (files, blobs, about, article)
+- Created `app/plugins/01.local-forage.js` — `defineNuxtPlugin()` providing `$localForage` via `useNuxtApp()`
+- Exported `useLocalForage()` composable for direct import in Pinia stores (Phase 03)
+- Deleted old Nuxt 2 `app/plugins/local-forage.js` (Vue-instance-based wrapper with `<%= serialize(options) %>`)
+- Deleted `modules/local-forage.js` (no-op stub from p01-03) and removed empty `modules/` directory
+- Removed commented localForage module reference from `nuxt.config.ts` modules array
+- `iterate()` method delegates directly to localforage instance — curly bracket pattern continues to work
+- `yarn dev` starts cleanly: Vite client+server built, Nitro built, no errors
 
 ## p01-03 Summary
 
