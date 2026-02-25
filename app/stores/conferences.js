@@ -2,7 +2,7 @@ import { defineStore    } from 'pinia'
 import { ref, computed  } from 'vue'
 import { useNuxtApp     } from '#app'
 import { DateTime       } from 'luxon'
-import   useHttp          from '~/composables/http'
+import { $fetch         } from 'ofetch'
 import   queryFilter      from '~/composables/query-filter'
 import { normalizeApiResponse } from '~/utils/api-normalize'
 import { useRoutesStore } from '~/stores/routes'
@@ -89,38 +89,38 @@ function dataExists({ conference, majorEventIds }, useMenus = false){
 // HTTP helpers — accept $axios explicitly so they are testable
 // ---------------------------------------------------------------------------
 
-function getBlob(url, $axios){
+function getBlob(url){
   if(!url) return undefined
 
-  return useHttp({ method: 'get', url, responseType: 'blob' }, $axios)
+  return $fetch(url, { responseType: 'blob' })
 }
 
-async function loadBlobs(conference, $axios){
+async function loadBlobs(conference){
   if(!conference?.apps)          conference.apps           = { cbdEvents: {} }
   if(!conference.apps.cbdEvents) conference.apps.cbdEvents = {}
 
   const { cbdEvents }        = conference.apps
   const { heroImage, image } = cbdEvents
 
-  cbdEvents.heroImageBlob = await getBlob(heroImage, $axios)
-  cbdEvents.imageBlob     = await getBlob(image, $axios)
+  cbdEvents.heroImageBlob = await getBlob(heroImage)
+  cbdEvents.imageBlob     = await getBlob(image)
 
   return conference
 }
 
-function queryConferences($axios, locale = 'en'){
+function queryConferences(locale = 'en'){
   const params = queryFilter({
     q: { 'apps.cbdEvents': { $exists: true } },
     s: { StartDate: -1 }
   })
   const url = `${process.env.NUXT_ENV_API}/api/v2016/conferences`
 
-  return useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
+  return $fetch(url, { query: params })
     .then(data => normalizeApiResponse(data, locale))
     .then(data => hasMeetings(data))
 }
 
-function queryMeetings($axios, selected, locale = 'en'){
+function queryMeetings(selected, locale = 'en'){
   const { conference, majorEventIds, apps } = selected
   const { useMenus }                        = apps.cbdEvents
 
@@ -129,7 +129,7 @@ function queryMeetings($axios, selected, locale = 'en'){
   const url    = `${process.env.NUXT_ENV_API}/api/v2016/meetings`
   const params = queryFilter(useMenus ? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIds))
 
-  return useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
+  return $fetch(url, { query: params })
     .then(data => {
       if(!Array.isArray(data)) data = [ data ]
 
@@ -285,17 +285,17 @@ export const useConferencesStore = defineStore('conferences', () => {
   async function get(conferenceCode){
     if(selected.value) return docs.value
 
-    const { $axios, $i18n } = useNuxtApp()
-    const locale            = $i18n?.locale?.value ?? 'en'
+    const { $i18n } = useNuxtApp()
+    const locale    = $i18n?.locale?.value ?? 'en'
 
-    const response = await queryConferences($axios, locale)
+    const response = await queryConferences(locale)
 
     docs.value = response
 
     // Initialise selected conference
     let conf = conferenceCode ? byCode(conferenceCode) : getActive(response)
 
-    conf          = await loadBlobs(conf, $axios)
+    conf          = await loadBlobs(conf)
     selected.value = conf
 
     await getMeetings()
@@ -306,12 +306,12 @@ export const useConferencesStore = defineStore('conferences', () => {
   async function getMeetings(){
     if(!selected.value) return []
 
-    const { $axios, $i18n } = useNuxtApp()
-    const locale            = $i18n?.locale?.value ?? 'en'
-    const routesStore       = useRoutesStore()
-    const mc                = routesStore.meetingCode
+    const { $i18n } = useNuxtApp()
+    const locale    = $i18n?.locale?.value ?? 'en'
+    const routesStore = useRoutesStore()
+    const mc          = routesStore.meetingCode
 
-    const result  = await queryMeetings($axios, selected.value, locale)
+    const result  = await queryMeetings(selected.value, locale)
 
     meetings.value = result
 

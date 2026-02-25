@@ -5,20 +5,17 @@ import { setActivePinia, createPinia          } from 'pinia'
 // Mocks — must be hoisted before store import
 // ---------------------------------------------------------------------------
 
+const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }))
+
+vi.mock('ofetch', () => ({ $fetch: mockFetch }))
+
 vi.mock('#app', () => ({
   useNuxtApp: () => ({
-    $axios: {},
     $i18n : { locale: { value: 'en' } }
   })
 }))
 
-// Mock http composable so no real HTTP calls are made
-vi.mock('~/composables/http', () => ({
-  default: vi.fn()
-}))
-
 import { useConferencesStore } from '~/stores/conferences.js'
-import http from '~/composables/http'
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -284,8 +281,7 @@ describe('useConferencesStore', () => {
   it('get() populates docs and selected when conference code provided', async () => {
     const store = useConferencesStore()
 
-    // First call: conferences API; second call: meetings API
-    http
+    mockFetch
       .mockResolvedValueOnce([MOCK_CONFERENCE])
       .mockResolvedValueOnce([MOCK_MEETING])
 
@@ -302,7 +298,7 @@ describe('useConferencesStore', () => {
 
     const result = await store.get('cop16')
 
-    expect(http).not.toHaveBeenCalled()
+    expect(mockFetch).not.toHaveBeenCalled()
     expect(result).toEqual([MOCK_CONFERENCE])
   })
 
@@ -314,7 +310,7 @@ describe('useConferencesStore', () => {
     const store = useConferencesStore()
     store.selected = MOCK_CONFERENCE
 
-    http.mockResolvedValueOnce([MOCK_MEETING])
+    mockFetch.mockResolvedValueOnce([MOCK_MEETING])
 
     await store.getMeetings()
 
@@ -326,6 +322,6 @@ describe('useConferencesStore', () => {
     const store = useConferencesStore()
     const result = await store.getMeetings()
     expect(result).toEqual([])
-    expect(http).not.toHaveBeenCalled()
+    expect(mockFetch).not.toHaveBeenCalled()
   })
 })

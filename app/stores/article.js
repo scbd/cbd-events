@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref         } from 'vue'
-import { useNuxtApp  } from '#app'
-import   useHttp       from '~/composables/http'
+import { $fetch      } from 'ofetch'
 import { useLocalForage } from '~/composables/use-local-forage'
 
 // ---------------------------------------------------------------------------
@@ -23,19 +22,19 @@ function buildQuery(code, tag) {
   return { ag: JSON.stringify(ag) }
 }
 
-async function fetchBlob(coverImage, $axios) {
+async function fetchBlob(coverImage) {
   const url = coverImage?.url
 
   if (!url) return undefined
 
-  return useHttp({ method: 'get', url, responseType: 'blob' }, $axios)
+  return $fetch(url, { responseType: 'blob' })
 }
 
-async function fetchFromApi(code, tag, $axios) {
+async function fetchFromApi(code, tag) {
   try {
-    const url        = `${process.env.NUXT_ENV_API}/api/v2017/articles`
-    const restParams = { url, method: 'get', responseType: 'json', params: buildQuery(code, tag) }
-    const data       = await useHttp(restParams, $axios)
+    const url    = `${process.env.NUXT_ENV_API}/api/v2017/articles`
+    const params = buildQuery(code, tag)
+    const data   = await $fetch(url, { query: params })
 
     return data?.[0]
   }
@@ -82,12 +81,11 @@ export const useArticleStore = defineStore('article', () => {
   }
 
   async function _fetchAndSave(code, tag) {
-    const { $axios } = useNuxtApp()
-    const article    = await fetchFromApi(code, tag, $axios)
+    const article = await fetchFromApi(code, tag)
 
     if (!article) return undefined
 
-    article.blob = await fetchBlob(article.coverImage || {}, $axios)
+    article.blob = await fetchBlob(article.coverImage || {})
 
     await _save(code, tag, article)
 

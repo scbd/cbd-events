@@ -22,12 +22,12 @@ vi.mock('~/composables/use-local-forage.js', () => ({
   default        : { article: mockArticleStore },
 }))
 
-vi.mock('#app', () => ({
-  useNuxtApp: () => ({ $axios: {} }),
+vi.mock('ofetch', () => ({
+  $fetch: mockHttp,
 }))
 
-vi.mock('~/composables/http', () => ({
-  default: mockHttp,
+vi.mock('#app', () => ({
+  useNuxtApp: () => ({}),
 }))
 
 function resetStores() {
