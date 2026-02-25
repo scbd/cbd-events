@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 05 — Mixin → Composable Conversion
-**Last completed:** `phase-04/p04-02-ota-updater.md`
-**Next task:** `phase-05/p05-01-cover-image-composable.md`
-**Updated:** 2026-02-25T11:35:00Z
+**Current phase:** Phase 06 — Layout & Page Migration
+**Last completed:** `phase-05/p05-02-document-download-composable.md`
+**Next task:** `phase-06/p06-01-layouts-middleware.md`
+**Updated:** 2026-02-25T12:10:00Z
 
 ## State
 
@@ -29,6 +29,44 @@
 - **p04-01 COMPLETE**: HTTP layer unified; 102 tests pass
 - **p04-02 COMPLETE**: OTA composable migrated to $fetch; @ionic-native fully removed; 116 tests pass
 - **Phase 04 COMPLETE**
+- **p05-01 COMPLETE**: useCoverImage composable; cover-image-mixin.js deleted; 12 tests pass (128 total)
+- **p05-02 COMPLETE**: useDocumentDownload composable; document-download-mixin.js deleted; 11 tests pass (139 total)
+- **Phase 05 COMPLETE**
+
+## p05-02 Summary
+
+- Created `app/composables/useDocumentDownload.js` — replaces `app/utils/document-download-mixin.js`
+- Accepts `iframeRef` as a parameter (Vue `ref` to the `<iframe>` element) instead of `this.$refs.docsFrame`
+- Lifecycle hooks: `onMounted` registers `window.addEventListener('message', saveFiles)`, loads files store, starts loading indicator; `onBeforeUnmount` removes listener and finishes loading
+- `saveFiles(event)`: handles `type: 'saveFiles'` postMessages; calls `routesStore.setShowNavs(true)`, `loadingIndicator.start()`, `filesStore.setDownloading(true)`; fetches blobs via `$fetch(url, { responseType: 'blob' })`; converts to base64 via `FileReader`; saves via `filesStore.save()`; finishes loading; calls `closeDialog()`
+- `getFileName(fileUrl)`: uses `_basename()` helper (replaces `path.basename`) + `useRoute().params`
+- `createFileObj(fileData, blob)`: populates `name`, `baseName`, `size` (falls back to `sizeOf(blob)` from `object-sizeof`), `lastModified`
+- `closeDialog()`: postMessages `{ type: 'closeDialogRemote' }` to `iframeRef.value.contentWindow` using `useRuntimeConfig().public.iframeHost`
+- `_basename(url)`: pure helper replacing `path.basename` — splits on `/`, strips query-string
+- `this.$nuxt.$loading` → `useLoadingIndicator()` from `#app`
+- `this.$store.dispatch/commit` → Pinia stores (`useFilesStore`, `useRoutesStore`)
+- `useHttp(restParams)` → `$fetch(url, { responseType: 'blob' })` via `ofetch`
+- `process.env.NUXT_ENV_IFRAME_HOST` → `useRuntimeConfig().public.iframeHost`
+- `process.client` → `import.meta.client`
+- Deleted `app/utils/document-download-mixin.js`
+- Created `tests/composables/use-document-download.test.js` — 11 tests: API shape, lifecycle hook registration, `getFileName` (path + query-strip), `createFileObj` (full props + sizeOf fallback), `saveFiles` (wrong type ignore, null data, full flow), `closeDialog` (postMessage + null-safe)
+- Mocked Vue's `onMounted`/`onBeforeUnmount` via `vi.mock('vue', async (importOriginal) => ...)` to capture callbacks without component mounting
+- `FileReader` stubbed as a class with `queueMicrotask` in `readAsDataURL` to allow `onload` assignment before callback fires
+- 139 total tests passing
+
+## p05-01 Summary
+
+- Created `app/composables/useCoverImage.js` — replaces `app/utils/cover-image-mixin.js`
+- Uses `useConferencesStore().selectedApp` (computed `selected.value.apps.cbdEvents`) instead of buggy `this.$store.state.conferences.selected.app.cbdEvents` path from original mixin
+- `conference` computed: returns `conferencesStore.selected` or falls back to `{}`
+- `getImage` computed: returns `selectedApp.value?.image || false`
+- `getHeroImage` computed: returns `selectedApp.value?.heroImage || getImage.value`
+- `title` computed: returns `lstring(selectedApp.value?.title)` using `lstring` imported from `~/utils/filters`
+- Fixes original mixin bug: `conference` computed used `.app.cbdEvents` (typo) — now correctly uses `selectedApp` which wraps `.apps.cbdEvents`
+- Deleted `app/utils/cover-image-mixin.js`
+- Created `tests/composables/use-cover-image.test.js` — 12 tests: API shape, `conference` (value + error fallback), `getImage` (value + no image + empty store), `getHeroImage` (with/without heroImage + both absent), `title` (lstring applied + no title + store error)
+- Mocked `~/stores/conferences` with getter-style accessors; mocked `~/utils/filters` with `lstring` returning `val['en']`
+- 128 total tests passing
 
 ## p04-02 Summary
 
