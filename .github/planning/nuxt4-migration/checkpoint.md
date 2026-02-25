@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 02 — Core Plugins & Infrastructure
-**Last completed:** `phase-02/p02-05-router-plugin.md`
-**Next task:** `phase-03/p03-01-pinia-setup-simple-stores.md`
-**Updated:** 2026-02-25T01:00:00Z
+**Current phase:** Phase 03 — State Management (Vuex → Pinia)
+**Last completed:** `phase-03/p03-01-pinia-setup-simple-stores.md`
+**Next task:** `phase-03/p03-02-conferences-store.md`
+**Updated:** 2026-02-25T09:00:00Z
 
 ## State
 
@@ -21,6 +21,19 @@
 - **p02-04 COMPLETE**: platform plugin (cordova → capacitor)
 - **p02-05 COMPLETE**: router plugin (shell + router.options.js)
 - **Phase 02 COMPLETE**
+- **p03-01 COMPLETE**: Pinia offLine + routes stores; vitest setup; router plugin wired
+
+## p03-01 Summary
+
+- Created `app/stores/off-line.js` — Pinia setup-syntax store; `isOffLine` ref, `isOnLine` computed, `set()` and `toggle()` actions
+- Created `app/stores/routes.js` — Pinia setup-syntax store; mirrors all original Vuex state (`route`, `prevRoute`, `initialized`, `showMeetingNav`, `showNavs`, `showSettings`, `showMeetings`); `conferenceCode` and `meetingCode` computed from `route.params`; added `showMeetings` as declared ref (was undeclared in original Vuex)
+- Updated `app/plugins/05.router.js` — removed TODO comment; wired `useRoutesStore().setRoute()` in `router.afterEach()`
+- Deleted `app/store/off-line.js`, `app/store/routes.js` — Vuex modules removed
+- Created `vitest.config.ts` — happy-dom environment, `~` alias to `app/`
+- Created `tests/stores/off-line.test.js` — 5 tests, all pass
+- Created `tests/stores/routes.test.js` — 9 tests, all pass (14 total)
+- `@pinia/nuxt` was already registered in `nuxt.config.ts` from p01-01
+- `yarn dev` starts cleanly: Nuxt 4.3.1, no errors
 
 ## p02-05 Summary
 
