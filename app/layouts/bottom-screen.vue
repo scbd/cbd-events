@@ -1,25 +1,18 @@
 <template>
-  <transition name="bottom" v-if="isMounted" >
+  <transition name="bottom" v-if="isMounted">
     <section>
       <Icons />
       <main>
-        <nuxt />
+        <slot />
       </main>
     </section>
   </transition>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
 
-export default {
-  name: 'BottomScreen',
-  data (){
-    return {
-      isMounted: false
-    }
-  },
-  mounted(){
-    this.isMounted=true
-  }
-}
+const isMounted = ref(false)
+
+onMounted(() => { isMounted.value = true })
 </script>

@@ -15,14 +15,8 @@
 </div>
 </template>
 
-<script>
-import Spinner from './Spinner'
-
-export default {
-  name      : 'Loading',
-  components: { Spinner },
-  props     : [ 'percent', 'state' ]
-}
+<script setup>
+defineProps(['percent', 'state'])
 </script>
 
 <style scoped>

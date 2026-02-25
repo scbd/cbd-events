@@ -11,15 +11,15 @@
             
 
             <div class="list-group">
-              <nuxt-link :to="localePath({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
+              <NuxtLink :to="localePath({name:'conferenceCode-conferences', params: { conferenceCode: conferenceCode } })">
                 <button class="list-group-item" >
-                  <svg class="icon"><use xlink:href="#icon-transfer" /></svg> {{ switchConference }}
+                  <svg class="icon"><use href="#icon-transfer" /></svg> {{ switchConference }}
                 </button>
-              </nuxt-link>
+              </NuxtLink>
             </div>
             <div class="list-group" @click="deleteAll()" >
               <button type="button" class="list-group-item" >
-                <svg class="icon"><use xlink:href="#icon-trash-o" /></svg> {{ deleteAllDownloads }}
+                <svg class="icon"><use href="#icon-trash-o" /></svg> {{ deleteAllDownloads }}
               </button>
             </div>
               
@@ -27,13 +27,13 @@
             <div class="list-group">
               <a href="tel:1-514-288-2220">
                 <button type="button" href="tel:1-514-288-2220" class="list-group-item" >
-                <svg class="icon"><use xlink:href="#icon-phone" /></svg>{{ $t('callThe') }} {{ $t('scbd') }} <span class="email">1.514.288.2220</span></button>
+                <svg class="icon"><use href="#icon-phone" /></svg>{{ $t('callThe') }} {{ $t('scbd') }} <span class="email">1.514.288.2220</span></button>
               </a>
             </div>
             <div class="list-group">
               <a href="mailto:secretariat@cbd.int">
                 <button type="button" class="list-group-item" >
-                <svg class="icon"><use xlink:href="#icon-envelope" /></svg>
+                <svg class="icon"><use href="#icon-envelope" /></svg>
                   {{ $t('emailThe') }} {{ $t('scbd') }}
                   <span class="email">secretariat@cbd.int</span>
                 </button>
@@ -42,7 +42,7 @@
             <div class="list-group">
               <a :href="`mailto:${supportEmail}`">
                 <button type="button" class="list-group-item" >
-                <svg class="icon"><use xlink:href="#icon-envelope" /></svg>
+                <svg class="icon"><use href="#icon-envelope" /></svg>
                   {{ $t('IT Support') }}
                   <span class="email">{{supportEmail}}</span>
                 </button>
@@ -53,39 +53,40 @@
   </section>
 </template>
 
-<script>
-export default {
-  name    : 'MainMenu',
-  props   : { isOpen: { type: Boolean, default: false } },
-  computed: { conference, language, deleteAllDownloads, switchConference, supportEmail },
-  methods : { deleteAll },
-  data
-}
+<script setup>
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useConferencesStore } from '~/stores/conferences'
+import { useFilesStore } from '~/stores/files'
 
-function data ({ $route }){
-  const { conferenceCode } = $route.params
-  const  deleteing         = false
+defineProps({ isOpen: { type: Boolean, default: false } })
 
-  return { conferenceCode, deleteing }
-}
+const { t } = useI18n()
+const route = useRoute()
+const localePath = useLocalePath()
 
-function supportEmail(){
-  const { supportEmail } = this.conference?.apps?.cbdEvents || { supportEmail: 'it@cbd.int'}
+const conferencesStore = useConferencesStore()
+const filesStore       = useFilesStore()
 
+const { selected } = storeToRefs(conferencesStore)
+
+const conferenceCode = computed(() => route.params.conferenceCode || '')
+
+const conference = computed(() => selected.value || {})
+
+const supportEmail = computed(() => {
+  const { supportEmail } = conference.value?.apps?.cbdEvents || { supportEmail: 'it@cbd.int' }
   return supportEmail
+})
+
+const switchConference    = computed(() => t('switchConference'))
+const deleteAllDownloads  = computed(() => t('deleteAllDownloads'))
+
+async function deleteAll() {
+  filesStore.setDownloading(true)
+  await filesStore.removeAll()
+  filesStore.setDownloading(false)
 }
-
-async function deleteAll(){
-  this.$store.commit('files/DOWNLOADING')
-  await this.$store.dispatch('files/DELETE_ALL')
-  this.$store.commit('files/DOWNLOADING')
-}
-
-function switchConference   (){ return this.$i18n.t('switchConference') }
-function deleteAllDownloads (){ return this.$i18n.t('deleteAllDownloads') }
-function language           (){ return this.$i18n.t('language') }
-function conference         (){ return this.$store.state.conferences.selected || {} }
-
 </script>
 
 <style scoped>

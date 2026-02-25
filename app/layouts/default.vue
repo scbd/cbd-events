@@ -3,61 +3,67 @@
     <Icons />
     <Header />
     <main class="main-view">
-      <nuxt />
-      <Loading v-if="state" :percent="percent" :state="state"/>
+      <slot />
+      <Loading v-if="state" :percent="percent" :state="state" />
     </main>
     <Nav />
   </div>
 </template>
 
-<script>
-import   Header      from '~/components/header/header'
-import   Nav         from '~/components/navigation/index'
-import { updateOTA } from '~/composables/useOta'
-import { StatusBar } from '@capacitor/status-bar'
-import { Capacitor } from '@capacitor/core';
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { StatusBar }   from '@capacitor/status-bar'
+import { updateOTA }   from '~/composables/useOta'
+import { usePlatform } from '~/composables/use-platform'
+import { useOffLineStore } from '~/stores/off-line'
+import Header  from '~/components/header/header.vue'
+import Nav     from '~/components/navigation/index.vue'
+import Loading from '~/components/loading.vue'
 
-export default {
-  name      : 'Default',
-  components: { Header, Nav, Loading: () => import('~/components/loading')  },
-  methods   : { toggleConnection, onProgress, onResume },
-  beforeMount, mounted, data
+const { isNative } = usePlatform()
+const offLineStore = useOffLineStore()
+
+const percent = ref(null)
+const state   = ref(null)
+
+function onProgress(info) {
+  percent.value = info.percent
+  state.value   = 'downloading'
+
+  if (percent.value !== 100) return
+
+  state.value = 'downloadComplete'
+  setTimeout(() => { state.value = 'installing' }, 750)
+  setTimeout(() => { percent.value = null }, 2000)
+  setTimeout(() => { state.value = null }, 2000)
 }
 
-function data(){ return{ percent: null, state: null } }
+function syncError(e) { console.error(`OTA Error: ${e.message}`) }
 
-async function mounted(){
-  if(Capacitor.getPlatform() === 'web') return
-
-  StatusBar.setBackgroundColor({ color: '#000000'});
-
-  const t = await updateOTA(this.onProgress, syncError)
-
-  document.addEventListener('resume', this.onResume, false)
+function onResume() {
+  setTimeout(() => { updateOTA(onProgress, syncError) }, 0)
 }
 
-function beforeMount(){
-  if(process.server) return
+function toggleConnection() { offLineStore.toggle() }
 
-  window.addEventListener('online', this.toggleConnection)
-  window.addEventListener('offline', this.toggleConnection)
-  
-  this.$store.commit('offLine/SET', window.navigator.onLine)
+if (import.meta.client) {
+  window.addEventListener('online', toggleConnection)
+  window.addEventListener('offline', toggleConnection)
+  offLineStore.set(window.navigator.onLine)
 }
 
-function onProgress (info){
-  this.percent = info.percent
-  this.state   = 'downloading'
+onMounted(async () => {
+  if (!isNative.value) return
 
-  if(this.percent != 100) return
-  
-  this.state = 'downloadComplete'
-  setTimeout(() =>  this.state = 'installing', 750)
-  setTimeout(() =>  this.percent = null, 2000)
-  setTimeout(() =>  this.state = null, 2000)
-}
+  StatusBar.setBackgroundColor({ color: '#000000' })
+  await updateOTA(onProgress, syncError)
+  document.addEventListener('resume', onResume, false)
+})
 
-function syncError       (e){ console.error(`OTA Error: ${e.message}`) }
-function onResume        (){ setTimeout(() => { updateOTA(this.onProgress, syncError) }, 0) }
-function toggleConnection(){ this.$store.commit('offLine/TOGGLE') }
+onBeforeUnmount(() => {
+  if (!import.meta.client) return
+  window.removeEventListener('online', toggleConnection)
+  window.removeEventListener('offline', toggleConnection)
+  document.removeEventListener('resume', onResume)
+})
 </script>

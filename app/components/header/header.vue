@@ -1,22 +1,21 @@
 <template>
   <section>
     <transition name="slide-fade">
-      <nav v-if="showNavs" class="mainn navbar  navbar-default" @click="toggleSideMenu()" >
+      <nav v-if="showNavs" class="mainn navbar  navbar-default" @click="toggleSideMenu()">
         <div class="container pl-1 pr-1">
-    
-          <img :src="`${attachments}/cbd-leaf-green.svg`" class="header-nav-img" :alt="$t('scbdLeafLogo')" >
-        
+          <img :src="`${config.public.attachments}/cbd-leaf-green.svg`" class="header-nav-img" :alt="$t('scbdLeafLogo')">
+
           <div class="title">
-            <b>{{ conference.title | lstring }}</b>
+            <b>{{ lstring(conference.title) }}</b>
           </div>
 
           <SideMenu :is-open="isSideMenuOpen" />
         </div>
-        <div class="sub" v-if="showMeetingNav" >
-          <div class="sub-con" @click="toggle()" >
-            <b v-if="meeting.title"> {{ meeting.evtCd}} </b>
-            <b v-else> {{ meeting.subTitle | lstring}} </b>
-            <Icon name="select-arrows" in-text="true"/>
+        <div class="sub" v-if="showMeetingNav">
+          <div class="sub-con" @click="toggle()">
+            <b v-if="meeting.title"> {{ meeting.evtCd }} </b>
+            <b v-else> {{ lstring(meeting.subTitle) }} </b>
+            <Icon name="select-arrows" in-text="true" />
           </div>
         </div>
       </nav>
@@ -24,133 +23,108 @@
   </section>
 </template>
 
-<script>
-import SideMenu from './SideMenu.vue'
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useConferencesStore } from '~/stores/conferences'
+import { useRoutesStore } from '~/stores/routes'
+import { useBus } from '~/composables/use-bus'
+import { lstring } from '~/utils/filters'
+import SideMenu from '~/components/header/side-menu.vue'
 
-export default {
-  name      : 'Header',
-  components: { SideMenu },
-  computed  : { showMeetingNav, conference, meeting, showNavs },
-  methods   : { offlineNotice, onlineNotice, toggleSideMenu, toggle, onScroll, hasScrolled, closeSideMenu },
-  beforeDestroy,
-  beforeMount,
-  data,
-  mounted
-}
-function mounted(){
-  this.$root.$on('toggleSetting', () => this.toggleSideMenu())
-  this.$root.$on('close-setting', () => this.closeSideMenu())
-}
-function data (){
-  return {
-    showLinks     : false,
-    lastScrollTop : 0,
-    show          : true,
-    isSideMenuOpen: false,
-    attachments   : process.env.NUXT_ENV_ATTACHMENTS
-  }
-}
+const config           = useRuntimeConfig()
+const { $swal }        = useNuxtApp()
+const { t }            = useI18n()
+const router           = useRouter()
+const route            = useRoute()
+const bus              = useBus()
 
-function beforeDestroy (){
-  window.removeEventListener('scroll', this.onScroll)
-  window.removeEventListener('online', this.onlineNotice)
-  window.removeEventListener('offline', this.offlineNotice)
-}
+const conferencesStore = useConferencesStore()
+const routesStore      = useRoutesStore()
 
-function beforeMount (){
-  if(process.server) return
-  window.addEventListener('scroll', this.onScroll)
-  setInterval(() => {
-    if (this.scrolled){
-      this.hasScrolled()
-      this.scrolled = false
-    }
-  }, 250)
-  window.addEventListener('online', this.onlineNotice)
-  window.addEventListener('offline', this.offlineNotice)
+const { showMeetingNav, showNavs } = storeToRefs(routesStore)
+const { selected, selectedMeeting } = storeToRefs(conferencesStore)
+
+const conference = computed(() => {
+  try {
+    if (!selected.value) return {}
+    return selected.value.apps?.cbdEvents || {}
+  } catch (e) { return {} }
+})
+
+const meeting = computed(() => selectedMeeting.value || {})
+
+const isSideMenuOpen = ref(false)
+
+function toggleSideMenu() { isSideMenuOpen.value = !isSideMenuOpen.value }
+function closeSideMenu()  { isSideMenuOpen.value = false }
+
+function toggle() {
+  const { locale } = useI18n()
+  router.push({ name: `conferenceCode-meetingCode-meetings___${locale.value}`, params: route.params })
 }
 
-function showMeetingNav(){
-  return this.$store.state.routes.showMeetingNav
-}
-
-function conference (){
-  try{
-    const conference = this.$store.state.conferences.selected
-
-    if(!conference) return {}
-  
-    const { cbdEvents } = conference.apps
-
-    return cbdEvents || {}
-  }
-  catch(e){ return {} }
-}
-
-function meeting (){
-  return this.$store.state.conferences.selectedMeeting || {}
-}
-
-function onScroll (e){
-  if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0){
-    this.scrolled = false
-    this.show = true
-    e.preventDefault()
-    e.stopPropagation()
-    return
-  }
-  this.scrolled = true
-}
-      
-function toggle(){
-  const { locale } = this.$i18n
-
-  this.$router.push({ name: `conferenceCode-meetingCode-meetings___${locale}`, params: this.$route.params })
-}
-
-function toggleSideMenu(){
-  this.isSideMenuOpen=!this.isSideMenuOpen
-}
-
-function closeSideMenu(){
-  this.isSideMenuOpen= false
-}
-
-function offlineNotice(){
-  this.$swal.fire({
-    title: this.$i18n.t('internetConnectionLost'),
-    text : this.$i18n.t('internetConnectionLostDescription'),
+function offlineNotice() {
+  $swal.fire({
+    title: t('internetConnectionLost'),
+    text : t('internetConnectionLostDescription'),
     icon : 'warning'
   })
 }
 
-function onlineNotice(){
-  this.$swal.fire({
-    title: this.$i18n.t('internetConnectionRestored'),
-    icon : 'success'
-  })
+function onlineNotice() {
+  $swal.fire({ title: t('internetConnectionRestored'), icon: 'success' })
 }
 
-function showNavs(){
-  if(this.$store)
-    return this.$store.state.routes.showNavs
-  else
-    return this.show
+let scrolled      = false
+let lastScrollTop = 0
+
+function onScroll(e) {
+  if ((window.scrollY < 0 || document.documentElement.scrollTop < 0) ||
+      (window.scrollY === 0 && document.documentElement.scrollTop === 0)) {
+    scrolled = false
+    e.preventDefault()
+    e.stopPropagation()
+    return
+  }
+  scrolled = true
 }
 
-function     hasScrolled (){
-  const doc = document.documentElement
-  const top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
-  const diff = Math.abs(top - this.lastScrollTop)
+function hasScrolled() {
+  const doc  = document.documentElement
+  const top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+  const diff = Math.abs(top - lastScrollTop)
 
-  if (top < this.lastScrollTop && diff > 25)
-    this.show = true
-
-  if (top > this.lastScrollTop && diff > 25)
-    this.show = false
-
-  if (diff > 25) this.lastScrollTop = top
+  if (top < lastScrollTop && diff > 25) routesStore.setShowNavs(true)
+  if (top > lastScrollTop && diff > 25) routesStore.setShowNavs(false)
+  if (diff > 25) lastScrollTop = top
 }
+
+onMounted(() => {
+  bus.on('toggleSetting', toggleSideMenu)
+  bus.on('close-setting', closeSideMenu)
+
+  if (!import.meta.client) return
+  window.addEventListener('scroll', onScroll)
+  window.addEventListener('online', onlineNotice)
+  window.addEventListener('offline', offlineNotice)
+  setInterval(() => {
+    if (scrolled) {
+      hasScrolled()
+      scrolled = false
+    }
+  }, 250)
+})
+
+onBeforeUnmount(() => {
+  bus.off('toggleSetting', toggleSideMenu)
+  bus.off('close-setting', closeSideMenu)
+
+  if (!import.meta.client) return
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('online', onlineNotice)
+  window.removeEventListener('offline', offlineNotice)
+})
 </script>
 
 <style scoped>

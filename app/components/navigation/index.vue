@@ -1,119 +1,106 @@
 <template>
   <transition name="slide-up">
-    <nav v-on:click="closeSettings" class="navbar navbar-default menu-gradient">
+    <nav @click="closeSettings" class="navbar navbar-default menu-gradient">
       <ul class="nav nav-pills nav-fill">
-      
-        <nuxt-link tag="li" class="nav-item" :to="localePath({ name: 'conferenceCode', params: { conferenceCode } })">
-          <svg class="icon"><use xlink:href="#icon-home" /></svg>
-        </nuxt-link>
 
-        <nuxt-link tag="li" class="nav-item" :to="localePath({ name: 'conferenceCode-meetingCode-agenda', params: { conferenceCode, meetingCode } })">
-          <svg class="icon"><use xlink:href="#icon-clock-o" /></svg>
-        </nuxt-link>
-
-        <nuxt-link tag="li" class="nav-item" v-if="hasDownloads && !downloading" :to="localePath({ name:'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })" >
-          <svg class="icon"><use xlink:href="#icon-document-download" /></svg>
-        </nuxt-link>
-
-        <li class="nav-item " v-if="downloading">
-          <Spinner/>
+        <li class="nav-item">
+          <NuxtLink :to="localePath({ name: 'conferenceCode', params: { conferenceCode } })" class="nav-link">
+            <svg class="icon"><use href="#icon-home" /></svg>
+          </NuxtLink>
         </li>
 
-        <nuxt-link tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode, meetingCode } })">
-          <svg class="icon"><use xlink:href="#icon-docs" /></svg>
-        </nuxt-link>
+        <li class="nav-item">
+          <NuxtLink :to="localePath({ name: 'conferenceCode-meetingCode-agenda', params: { conferenceCode, meetingCode } })" class="nav-link">
+            <svg class="icon"><use href="#icon-clock-o" /></svg>
+          </NuxtLink>
+        </li>
 
-        <nuxt-link v-if="showCalendar" tag="li" class="nav-item" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
-          <svg class="icon"><use xlink:href="#icon-calendar-o" /></svg>
-        </nuxt-link>
+        <li class="nav-item" v-if="hasDownloads && !isDownloading">
+          <NuxtLink :to="localePath({ name: 'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })" class="nav-link">
+            <svg class="icon"><use href="#icon-document-download" /></svg>
+          </NuxtLink>
+        </li>
+
+        <li class="nav-item" v-if="isDownloading">
+          <Spinner />
+        </li>
+
+        <li class="nav-item">
+          <NuxtLink :to="localePath({ name: 'conferenceCode-meetingCode-documents', params: { conferenceCode, meetingCode } })" class="nav-link">
+            <svg class="icon"><use href="#icon-docs" /></svg>
+          </NuxtLink>
+        </li>
+
+        <li class="nav-item" v-if="showCalendar">
+          <NuxtLink :to="localePath({ name: 'conferenceCode-meetingCode-calendar', params: { conferenceCode, meetingCode }, query: { selected: startDate } })" class="nav-link">
+            <svg class="icon"><use href="#icon-calendar-o" /></svg>
+          </NuxtLink>
+        </li>
+
       </ul>
     </nav>
   </transition>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
+<script setup>
+import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useConferencesStore } from '~/stores/conferences'
+import { useFilesStore }       from '~/stores/files'
+import { useRoutesStore }      from '~/stores/routes'
+import { useBus }              from '~/composables/use-bus'
 
-export default {
-  name      : 'Navigation',
-  components: { Spinner: () => import('../Spinner') },
-  computed  : { showNavs, ...gettersMap() },
-  methods   : { onScroll, hasScrolled, closeSettings },
-  data,
-  beforeMount,
-  beforeDestroy
-}
+const localePath = useLocalePath()
+const route      = useRoute()
+const bus        = useBus()
 
-function data ({ $route }){
-  const   { conferenceCode } = $route.params
+const conferencesStore = useConferencesStore()
+const filesStore       = useFilesStore()
+const routesStore      = useRoutesStore()
 
-  return { conferenceCode, lastScrollTop: 0, show: true }
-}
+const { meetingCode, startDate, showCalendar } = storeToRefs(conferencesStore)
+const { hasDownloads, isDownloading }          = storeToRefs(filesStore)
 
-function gettersMap(){
-  return mapGetters({
-    meetingCode : 'conferences/meetingCode',
-    hasDownloads: 'files/hasDownloads',
-    startDate   : 'conferences/startDate',
-    downloading : 'files/isDownloading',
-    showCalendar: 'conferences/showCalendar'
-  })
-}
+const conferenceCode = computed(() => route.params.conferenceCode || '')
 
-async function  beforeMount (){
-  await this.$store.dispatch('files/LOAD')
-  window.addEventListener('scroll', this.onScroll)
-  setInterval(() => {
-    if (!this.scrolled) return
-    this.hasScrolled()
-    this.scrolled = false
-  }, 250)
-}
+function closeSettings() { bus.emit('close-setting') }
 
-function  onScroll (e){
-  if((window.scrollY<0 || document.documentElement.scrollTop <0) || window.scrollY==0 && document.documentElement.scrollTop==0){
-    this.scrolled = false
-    this.show     = true
+let scrolled      = false
+let lastScrollTop = 0
+
+function onScroll(e) {
+  if ((window.scrollY < 0 || document.documentElement.scrollTop < 0) ||
+      (window.scrollY === 0 && document.documentElement.scrollTop === 0)) {
+    scrolled = false
     e.preventDefault()
     e.stopPropagation()
-    if(this.$store)
-      this.$store.commit('routes/SET_SHOW_NAVS', true)
+    routesStore.setShowNavs(true)
     return
   }
-  this.scrolled = true
+  scrolled = true
 }
 
-function beforeDestroy (){ window.removeEventListener('scroll', this.onScroll) }
-  
-function showNavs(){
-  if(this.$store)
-    return this.$store.state.routes.showNavs
-  else
-    return this.show
-}
-
-function closeSettings(){
-  this.$root.$emit('close-setting')
-}
-
-function hasScrolled (){
+function hasScrolled() {
   const doc  = document.documentElement
   const top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
-  const diff = Math.abs(top - this.lastScrollTop)
+  const diff = Math.abs(top - lastScrollTop)
 
-  if (top < this.lastScrollTop && diff > 25){
-    this.show = true
-    
-    if(this.$store)
-      this.$store.commit('routes/SET_SHOW_NAVS', true)
-  }
-  if (top > this.lastScrollTop && diff > 25){
-    this.show = false
-    if(this.$store)
-      this.$store.commit('routes/SET_SHOW_NAVS', false)
-  }
-  if (diff > 25) this.lastScrollTop = top
+  if (top < lastScrollTop && diff > 25) routesStore.setShowNavs(true)
+  if (top > lastScrollTop && diff > 25) routesStore.setShowNavs(false)
+  if (diff > 25) lastScrollTop = top
 }
+
+onMounted(async () => {
+  await filesStore.load()
+  window.addEventListener('scroll', onScroll)
+  setInterval(() => {
+    if (!scrolled) return
+    hasScrolled()
+    scrolled = false
+  }, 250)
+})
+
+onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll) })
 </script>
 
 <style scoped>

@@ -1,28 +1,15 @@
-export default async function ({ route, redirect, store }){
-  const hasRouteParams     = Object.keys(route.params).length
-  const isConferenceLoaded = store.state.conferences.selected
+import { useConferencesStore } from '~/stores/conferences'
 
-  if(!isConferenceLoaded) 
-    await store.dispatch('conferences/get')
-  
-  await loadAbout(store)
-  store.dispatch('conferences/get')
+export default defineNuxtRouteMiddleware(async (to) => {
+  const conferencesStore = useConferencesStore()
+  const hasRouteParams   = Object.keys(to.params).length
 
-  const { code } = store.state.conferences.selected
-  const isAppFirstLoad = !hasRouteParams && code
+  if (!conferencesStore.selected)
+    await conferencesStore.get()
 
-  if(isAppFirstLoad) redirect(`/${code}`)
-}
+  const { code } = conferencesStore.selected || {}
 
-async function loadAbout(store){
-  const { hasAbout, code } = store.state?.conferences?.selected || {}
-
-  if(!hasAbout) return
-
-  store.dispatch('about/get', { code })
-
-  const article = await store.dispatch('article/get', { code });
-
-  return article;
-}
+  if (!hasRouteParams && code)
+    return navigateTo(`/${code}`)
+})
 

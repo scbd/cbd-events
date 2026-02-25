@@ -7,12 +7,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Offline'
-}
-
-</script>
 <style scoped>
   .main{
     background-color: #d3d3d3;

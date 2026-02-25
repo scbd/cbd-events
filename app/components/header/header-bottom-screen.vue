@@ -10,20 +10,18 @@
   </nav>
 </template>
 
-<script>
-export default {
-  name   : 'HeaderBottomScreen',
-  props  : { title: { type: String }, options: { type: Object } },
-  methods: { close, done }
-}
+<script setup>
+import { useBus } from '~/composables/use-bus'
 
-function close(){
-  this.$root.$emit('bottom-screen-cancel', { something: 'yes' })
-}
+defineProps({
+  title  : { type: String },
+  options: { type: Object }
+})
 
-function done(){
-  this.$root.$emit('bottom-screen-done', { something: 'yes' })
-}
+const bus = useBus()
+
+function close() { bus.emit('bottom-screen-cancel', { something: 'yes' }) }
+function done()  { bus.emit('bottom-screen-done',   { something: 'yes' }) }
 </script>
 
 <style scoped>
