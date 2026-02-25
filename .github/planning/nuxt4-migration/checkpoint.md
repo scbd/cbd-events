@@ -1,8 +1,8 @@
 # Checkpoint
 
 **Current phase:** Phase 02 — Core Plugins & Infrastructure
-**Last completed:** `phase-02/p02-03-filters-icons-notifications.md`
-**Next task:** `phase-02/p02-04-platform-plugin.md`
+**Last completed:** `phase-02/p02-04-platform-plugin.md`
+**Next task:** `phase-02/p02-05-router-plugin.md`
 **Updated:** 2026-02-25T00:00:00Z
 
 ## State
@@ -18,6 +18,16 @@
 - **p02-01 COMPLETE**: localForage plugin rewrite
 - **p02-02 COMPLETE**: event bus (mitt)
 - **p02-03 COMPLETE**: filters, icons, notifications
+- **p02-04 COMPLETE**: platform plugin (cordova → capacitor)
+- **p02-04 COMPLETE**: platform plugin (cordova → capacitor)
+
+## p02-04 Summary
+
+- Created `app/plugins/00.platform.js` — `defineNuxtPlugin()` providing `$platform` and `$isNative` via `Capacitor.getPlatform()`; `00.` prefix ensures first-load ordering
+- Created `app/composables/use-platform.js` — `usePlatform()` composable returning `{ platform, isNative }` from `useNuxtApp()`
+- Deleted `app/plugins/cordova.js` — `vue-cordova` integration, `localePath` injection (now native to `@nuxtjs/i18n`), and `deviceready` listener all removed
+- `vue-cordova` confirmed absent from `package.json` (removed in p01-01)
+- `yarn dev` starts cleanly: Vite client+server built, Nitro built, no errors
 
 ## p02-03 Summary
 
