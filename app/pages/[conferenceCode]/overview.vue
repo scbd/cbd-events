@@ -1,21 +1,18 @@
 <template>
   <div class="container-fluid pb-5">
-    <h3 >Overview Calendar</h3>
-    <overview :code="conferenceCode" :options="{ target:'_blank' }" />
+    <h3>Overview Calendar</h3>
+    <overview :code="conferenceCode" :options="{ target: '_blank' }" />
   </div>
 </template>
 
-<script>
-import overview from '@scbd/conference-cal/dist/src/index'
+<script setup>
+import overview          from '@scbd/conference-cal/dist/src/index'
+import { useRoutesStore } from '~/stores/routes'
 
-export default {
-  name      : 'index',
-  components: { overview },
-  asyncData
-}
-  
-function asyncData ({ store, params }){
-  store.commit('routes/SET_SHOW_MEETING_NAV', false)
-  return { conferenceCode: params.conferenceCode }
-}
+const route       = useRoute()
+const routesStore = useRoutesStore()
+
+routesStore.setShowMeetingNav(false)
+
+const conferenceCode = route.params.conferenceCode
 </script>

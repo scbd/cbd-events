@@ -18,45 +18,28 @@
   </section>
 </template>
 
-<script>
-import Header from '~/components/header/header-bottom-screen'
+<script setup>
+import { onMounted, onBeforeUnmount } from 'vue'
+import { useBus                     } from '~/composables/use-bus'
 
-export default {
-  name      : 'Languages',
-  components: { Header },
-  layout    : 'bottom-screen',
-  methods   : { done, changeLanguage },
-  asyncData,
-  mounted, beforeDestroy
+definePageMeta({ layout: 'bottom-screen' })
+
+const { t, locales, setLocale } = useI18n()
+const router                    = useRouter()
+const bus                       = useBus()
+
+const title = t('language')
+
+async function changeLanguage(localeCode) {
+  await setLocale(localeCode)
 }
 
-function mounted(){
-  this.$root.$on('bottom-screen-done', this.done)
-}
+function done() { router.go(-1) }
 
-function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
-
-function asyncData ({ app }){
-  return {
-    locales: app.i18n.locales,
-    title  : app.i18n.t('language')
-  }
-}
-
-function done(){ this.$router.go(-1) }
-
-function changeLanguage(localeCode){
-  this.switchLocalePath(localeCode)
-  this.$store.commit('i18n/I18N_SET_LOCALE', localeCode)
-  this.$i18n.locale = localeCode
-  this.$forceUpdate()
-  const to = this.$store.state.routes.prevRoute
-  const pathName = to.name.replace(`___${this.$store.state.i18n.prevLocale}`, `___${this.$store.state.i18n.locale}`)
-
-  this.$router.replace({ name: pathName, params: to.params })
-  this.$forceUpdate()
-}
+onMounted(()      => bus.on('bottom-screen-done', done))
+onBeforeUnmount(() => bus.off('bottom-screen-done', done))
 </script>
+
 <style scoped>
-  .page{ margin-top:50px; height:100vh; }
+  .page { margin-top:50px; height:100vh; }
 </style>

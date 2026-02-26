@@ -1,121 +1,128 @@
 <template>
   <div class="container-fluid home">
     <div class="row">
-      <div class="col-12  mb-3">
-        <img  class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${conference.title | lstring} logo`" >
+      <div class="col-12 mb-3">
+        <img class="hero" v-if="getHeroImage" :src="getHeroImage" :alt="`${lstring(conference.title)} logo`">
       </div>
-      <div v-if="showAbout" class="col-6" >
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-about', params: { conferenceCode } })">
-          <Icon name="info-circle"  in-text="true"/> About
-        </nuxt-link>
+      <div v-if="showAbout" class="col-6">
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-about', params: { conferenceCode } })">
+          <Icon name="info-circle" in-text="true" /> About
+        </NuxtLink>
       </div>
       <div v-if="conferenceCal" class="col-6">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-overview', params: { conferenceCode } })">
-          <Icon name="calendar"  in-text="true"/> Overview
-        </nuxt-link>
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-overview', params: { conferenceCode } })">
+          <Icon name="calendar" in-text="true" /> Overview
+        </NuxtLink>
       </div>
       <div class="col-6">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-meetingCode-agenda', params: { conferenceCode, meetingCode } })">
-          <Icon name="clock-o"  in-text="true"/> Agenda
-        </nuxt-link>
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-meetingCode-agenda', params: { conferenceCode, meetingCode } })">
+          <Icon name="clock-o" in-text="true" /> Agenda
+        </NuxtLink>
       </div>
       <div class="col-6" v-if="hasDownloads">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })">
-          <Icon name="document-download"  in-text="true"/> Downloads
-        </nuxt-link>
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-meetingCode-downloads', params: { conferenceCode, meetingCode } })">
+          <Icon name="document-download" in-text="true" /> Downloads
+        </NuxtLink>
       </div>
       <div class="col-6">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-meetingCode-documents',params: { conferenceCode, meetingCode } })">
-          <Icon name="docs"  in-text="true"/> Documents
-        </nuxt-link>
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-meetingCode-documents', params: { conferenceCode, meetingCode } })">
+          <Icon name="docs" in-text="true" /> Documents
+        </NuxtLink>
       </div>
       <div v-if="showCalendar" class="col-6">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-meetingCode-calendar',params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
-          <Icon name="calendar-o"  in-text="true"/> Calendar
-        </nuxt-link>
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-meetingCode-calendar', params: { conferenceCode, meetingCode }, query: { selected: startDate } })">
+          <Icon name="calendar-o" in-text="true" /> Calendar
+        </NuxtLink>
       </div>
-      <div v-for="(button, index) in buttons" :key="index" :class="{'col-6':button.size!==2, 'col-12':button.size===2,}">
-        <nuxt-link  class="btn btn-secondary btn-index" :to="localePath({ name:'conferenceCode-article-tag',params: { conferenceCode, tag:button.tag }})">
-          <Icon :name="button.icon"  in-text="true"/> {{ button.text }}
-        </nuxt-link>
+      <div v-for="(button, index) in buttons" :key="index" :class="{ 'col-6': button.size !== 2, 'col-12': button.size === 2 }">
+        <NuxtLink class="btn btn-secondary btn-index" :to="localePath({ name: 'conferenceCode-article-tag', params: { conferenceCode, tag: button.tag } })">
+          <Icon :name="button.icon" in-text="true" /> {{ button.text }}
+        </NuxtLink>
       </div>
 
-      <div v-if="content || blob" class="col-12">
-        <ArticleHome :content="content" :blob="blob" :title="title"/>
+      <div v-if="content || articleBlob" class="col-12">
+        <Article :content="content" :blob="articleBlob" :title="articleTitle" />
       </div>
-      
     </div>
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'                    ;
-import { lstring    } from '~/plugins/filters'       ;
-import   ArticleHome      from '~/components/article.vue';
+<script setup>
+import { computed, ref                    } from 'vue'
+import { storeToRefs                      } from 'pinia'
+import { useConferencesStore              } from '~/stores/conferences'
+import { useFilesStore                    } from '~/stores/files'
+import { useAboutStore                    } from '~/stores/about'
+import { useArticleStore                  } from '~/stores/article'
+import { useRoutesStore                   } from '~/stores/routes'
+import { useBus                           } from '~/composables/use-bus'
+import { lstring                          } from '~/utils/filters'
 
-export default {
-  name    : 'index',
-  components: { ArticleHome },
-  methods : { lstring, toggleSettings },
-  computed: { conference, getHeroImage, ...gettersMap(), showAbout, buttons },
-  asyncData
-}
+const route            = useRoute()
+const localePath       = useLocalePath()
+const bus              = useBus()
 
-function buttons(){
-  return (this.conference.buttons || []).filter(b=>b.status);
-}
+const conferencesStore = useConferencesStore()
+const filesStore       = useFilesStore()
+const aboutStore       = useAboutStore()
+const articleStore     = useArticleStore()
+const routesStore      = useRoutesStore()
 
-async function asyncData ({ store, params }){
-  const { conferenceCode } = params
-  const   aboutExists      = await store.dispatch('about/get')
+const { conferenceCode } = route.params
 
-  store.commit('routes/SET_SHOW_MEETING_NAV', false)
+const { meetingCode, startDate, conferenceCal, selectedApp, showCalendar } = storeToRefs(conferencesStore)
+const { hasDownloads }                                                      = storeToRefs(filesStore)
 
-  let  { content, blob, title } = await store.dispatch('article/get',{ force:true,code: conferenceCode, tag:'cbd-events-home'}) || {} ;
+routesStore.setShowMeetingNav(false)
 
-  if(blob) blob = URL.createObjectURL(blob);
+// ── async data ──────────────────────────────────────────────────────────────
 
-  return { conferenceCode, aboutExists, content, blob, title }
-}
+const { data: aboutData } = await useAsyncData(
+  `about-${conferenceCode}`,
+  () => aboutStore.get(conferenceCode)
+)
 
-function gettersMap(){
-  return mapGetters({
-    meetingCode  : 'conferences/meetingCode',
-    hasDownloads : 'files/hasDownloads',
-    startDate    : 'conferences/startDate',
-    conferenceCal: 'conferences/conferenceCal',
-    cbdEvents    : [ 'conferences/selectedApp' ],
-    showCalendar: 'conferences/showCalendar'
-  })
-}
+const { data: articleData } = await useAsyncData(
+  `article-home-${conferenceCode}`,
+  () => articleStore.get({ code: conferenceCode, tag: 'cbd-events-home' }, true)
+)
 
-function toggleSettings(){
-  this.$root.$emit('toggleSetting')
-}
+const aboutExists  = ref(Boolean(aboutData.value))
+const content      = ref(articleData.value?.content || null)
+const articleTitle = ref(articleData.value?.title   || null)
+const articleBlob  = ref(
+  articleData.value?.blob ? URL.createObjectURL(articleData.value.blob) : null
+)
 
-function getHeroImage(){
-  try{
-    let blob = this.conference.heroImageBlob || this.conference.imageBlob
+// ── derived from selectedApp ────────────────────────────────────────────────
 
-    return   blob? URL.createObjectURL(blob) :  'https://attachments.cbd.int/cbd-logo-en.svg'
+const conference = computed(() => {
+  try {
+    const { title, imageBlob, heroImageBlob, heroImage, image, hasAbout, buttons } = selectedApp.value
+
+    return { title, imageBlob, heroImageBlob, heroImage, image, hasAbout, buttons }
   }
-  catch(e){ return false }
-}
+  catch { return {} }
+})
 
-function conference(){
-  try{
-    const { title, imageBlob, heroImageBlob, heroImage, image, hasAbout, buttons } = this.cbdEvents;
+const getHeroImage = computed(() => {
+  try {
+    const blob = conference.value.heroImageBlob || conference.value.imageBlob
 
-    return  { title, imageBlob, heroImageBlob, heroImage, image, hasAbout, buttons };
+    return blob ? URL.createObjectURL(blob) : 'https://attachments.cbd.int/cbd-logo-en.svg'
   }
-  catch(e){ return {} };
-}
+  catch { return false }
+})
 
-function showAbout(){
-  const { hasAbout } = this.conference || {};
+const showAbout = computed(() => {
+  const { hasAbout } = conference.value || {}
 
-  return hasAbout || this.aboutExists;
-}
+  return hasAbout || aboutExists.value
+})
+
+const buttons = computed(() => (conference.value.buttons || []).filter(b => b.status))
+
+function toggleSettings() { bus.emit('toggleSetting') }
 </script>
 
 <style scoped>

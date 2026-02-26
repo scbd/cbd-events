@@ -1,29 +1,31 @@
 <template>
   <div v-if="title" class="container-fluid home">
-    <Article :content="content" :blob="blob" :title="title"/>
+    <Article :content="content" :blob="blob" :title="title" />
   </div>
 </template>
 
-<script>
-import Article from '~/components/article.vue';
+<script setup>
+import { ref                } from 'vue'
+import { useAboutStore     } from '~/stores/about'
+import { useRoutesStore    } from '~/stores/routes'
 
-export default {
-  name: 'info',
-  components: { Article },
-  asyncData
-}
-  
-async function asyncData ({ store, params }){
-  const { conferenceCode } = params
-  
-  store.commit('routes/SET_SHOW_MEETING_NAV', false)
+const route       = useRoute()
+const routesStore = useRoutesStore()
+const aboutStore  = useAboutStore()
 
-  let { content, blob, title } = await store.dispatch('about/get', { code: conferenceCode})
+const { conferenceCode } = route.params
 
-  if(blob)
-    blob = URL.createObjectURL(blob)
+routesStore.setShowMeetingNav(false)
 
-  return { content, blob, title }
-}
+const { data: aboutData } = await useAsyncData(
+  `about-${conferenceCode}`,
+  () => aboutStore.get(conferenceCode)
+)
+
+const content = ref(aboutData.value?.content || null)
+const title   = ref(aboutData.value?.title   || null)
+const blob    = ref(
+  aboutData.value?.blob ? URL.createObjectURL(aboutData.value.blob) : null
+)
 </script>
 

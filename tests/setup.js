@@ -1,15 +1,53 @@
 // Global test setup — stubs Nuxt auto-imported globals so middleware/composables
-// that use them can be tested without a running Nuxt instance.
+// and pages that use them can be tested without a running Nuxt instance.
 
-import { vi } from 'vitest'
+import { vi  } from 'vitest'
+import { ref } from 'vue'
 
-// Nuxt route middleware helper (passthrough in tests)
+// ── Nuxt route-middleware helpers ──────────────────────────────────────────
 vi.stubGlobal('defineNuxtRouteMiddleware', (fn) => fn)
-
-// Nuxt navigation helper (spy by default; tests can override)
 vi.stubGlobal('navigateTo', vi.fn())
 
-// Nuxt runtime config helper — thin wrapper so tests don't need to import #app
+// ── Nuxt page/layout macro ─────────────────────────────────────────────────
+vi.stubGlobal('definePageMeta', vi.fn())
+
+// ── Nuxt data-fetching ─────────────────────────────────────────────────────
+vi.stubGlobal('useAsyncData', vi.fn(async (key, fn) => ({
+  data   : ref(fn ? await fn().catch(() => null) : null),
+  pending: ref(false),
+  error  : ref(null),
+})))
+
+// ── Nuxt routing ──────────────────────────────────────────────────────────
+vi.stubGlobal('useRoute', vi.fn(() => ({
+  params: { conferenceCode: 'cbd-test', meetingCode: 'meeting-01' },
+  query : {},
+  name  : 'conferenceCode',
+})))
+
+vi.stubGlobal('useRouter', vi.fn(() => ({
+  push   : vi.fn(),
+  go     : vi.fn(),
+  replace: vi.fn(),
+})))
+
+vi.stubGlobal('useLocalePath', vi.fn(() => (route) => '/' + (route?.name || '')))
+
+// ── i18n ───────────────────────────────────────────────────────────────────
+vi.stubGlobal('useI18n', vi.fn(() => ({
+  t          : (k) => k,
+  locale     : ref('en'),
+  locales    : ref([{ code: 'en' }, { code: 'fr' }]),
+  setLocale  : vi.fn().mockResolvedValue(undefined),
+})))
+
+// ── Nuxt app / runtime config ─────────────────────────────────────────────
+vi.stubGlobal('useNuxtApp', vi.fn(() => ({
+  $swal : { fire: vi.fn().mockResolvedValue({}) },
+  $bus  : { on: vi.fn(), off: vi.fn(), emit: vi.fn() },
+  $axios: {},
+})))
+
 vi.stubGlobal('useRuntimeConfig', () => ({
   public: {
     baseUrl    : 'https://cbd-events.cbd.int',

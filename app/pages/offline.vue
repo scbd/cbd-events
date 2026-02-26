@@ -1,41 +1,27 @@
 <template>
-  <div class="container-fluid home"> <div class="row"> <div class="col-12 "> <Offline v-if="offline" /> </div> </div> </div>
+  <div class="container-fluid home">
+    <div class="row">
+      <div class="col-12">
+        <Offline v-if="offline" />
+      </div>
+    </div>
+  </div>
 </template>
 
-<script>
-import Offline from '~/components/offline'
+<script setup>
+import { ref, onMounted } from 'vue'
 
+const { t }   = useI18n()
+const nuxtApp = useNuxtApp()
+const offline = ref(false)
 
-export default {
-  name      : 'offline',
-  components: { Offline },
-  methods   : { notice }, //, redirect
-  data,
-  mounted
-}
-function data(){
-  return { offline: false }
-}
-async function mounted(){
-  this.offline = true
-  this.notice()
-
-}
-
-function notice(){
-  this.$swal.fire({
-    title            : this.$i18n.t('offline'),
-    text             : this.$i18n.t('offlineMsg'),
+onMounted(async () => {
+  offline.value = true
+  await nuxtApp.$swal.fire({
+    title            : t('offline'),
+    text             : t('offlineMsg'),
     type             : 'error',
-    confirmButtonText: this.$i18n.t('tryAgain'),
-    // onAfterClose     : this.redirect
+    confirmButtonText: t('tryAgain'),
   })
-}
-
-// function redirect(){
-//   const { codePush } = window
-
-//   if(codePush)
-//     codePush.restartApplication()
-// }
+})
 </script>
