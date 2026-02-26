@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 06 — Layout & Page Migration
-**Last completed:** `phase-06/p06-01-layouts-middleware.md`
-**Next task:** `phase-06/p06-02-static-conference-pages.md`
-**Updated:** 2026-02-25T12:30:00Z
+**Last completed:** `phase-06/p06-02-static-conference-pages.md`
+**Next task:** `phase-06/p06-03-article-fileview-pages.md`
+**Updated:** 2026-02-25T15:40:00Z
 
 ## State
 
@@ -33,6 +33,22 @@
 - **p05-02 COMPLETE**: useDocumentDownload composable; document-download-mixin.js deleted; 11 tests pass (139 total)
 - **Phase 05 COMPLETE**
 - **p06-01 COMPLETE**: layouts, middleware, header components, navigation, utility components migrated; 4 middleware tests; 143 total tests pass
+- **p06-02 COMPLETE**: 7 pages migrated; 8 page tests; 151 total tests pass
+
+## p06-02 Summary
+
+- Migrated 7 pages to `<script setup>` Composition API; all Options API and `asyncData` removed
+- **`pages/index.vue`**: empty `<script setup>` — redirect handled by `middleware/redirects.js`
+- **`pages/offline.vue`**: `<script setup>`; explicit `ref`/`onMounted` imports; `useI18n()` + `useNuxtApp().$swal.fire()` replace `this.$i18n.t` and `this.$swal`
+- **`pages/[conferenceCode]/index.vue`**: explicit imports for `ref`/`computed`/`storeToRefs`; `useAsyncData` for about + article home; `storeToRefs(useConferencesStore())` + `storeToRefs(useFilesStore())`; `nuxt-link` → `NuxtLink`; `{{ title | lstring }}` → `{{ lstring(title) }}`; `this.$root.$emit` → `useBus().emit`
+- **`pages/[conferenceCode]/about.vue`**: `useAsyncData` calls `aboutStore.get(conferenceCode)`; explicit `ref` import from 'vue'
+- **`pages/[conferenceCode]/overview.vue`**: `useRoute()` for `conferenceCode`; `routesStore.setShowMeetingNav(false)` replaces `store.commit`; `@scbd/conference-cal` component retained
+- **`pages/[conferenceCode]/conferences.vue`**: `definePageMeta({ layout: 'bottom-screen' })`; `storeToRefs(conferencesStore)` for `docs`; `useBus().on/off` replace `$root.$on/off`; `conferencesStore.clearAll()` + `conferencesStore.get(code)` replace Vuex commits/dispatches; `lstring` imported from `~/utils/filters`; `useLocalePath()` for navigation
+- **`pages/[conferenceCode]/languages.vue`**: `definePageMeta({ layout: 'bottom-screen' })`; `const { t, locales, setLocale } = useI18n()`; `changeLanguage` calls `setLocale(code)` (replaces 7-line Vuex i18n manual locale swap); `useBus().on/off` for `bottom-screen-done`
+- **`vitest.config.ts`**: added `@vitejs/plugin-vue` plugin to enable `.vue` file testing
+- **`tests/setup.js`**: expanded global stubs — `definePageMeta`, `useAsyncData`, `useRoute`, `useRouter`, `useLocalePath`, `useI18n`, `useNuxtApp`; all Nuxt auto-imports now available in test environment
+- **`tests/pages/static-conference-pages.test.js`**: 8 tests; pinia storeToRefs mocked to return properties directly (avoid double-nested refs on plain mock objects); `$t` injected via `global.mocks`; `mockConferenceDocs` declared after imports (not in `vi.hoisted`) since `ref()` is not available at hoist time
+- 151 total tests passing
 
 ## p06-01 Summary
 
