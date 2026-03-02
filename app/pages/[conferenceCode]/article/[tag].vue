@@ -1,31 +1,33 @@
 <template>
-    <div v-if="title" class="container-fluid home">
-        <Article :content="content" :blob="blob" :title="title"/>
-    </div>
-  </template>
-  
-  <script>
-  import   Article from '~/components/article.vue';
+  <div v-if="title" class="container-fluid home">
+    <Article :content="content" :blob="blob" :title="title" />
+  </div>
+</template>
 
-  export default {
-    name: 'tag',
-    components: { Article },
-    asyncData
-  }
-    
-  async function asyncData ({ store, params }){
-    const { conferenceCode, tag } = params
-    
-    store.commit('routes/SET_SHOW_MEETING_NAV', false)
-  
-    let { content, blob, title } = (await store.dispatch('article/get', { code: conferenceCode, tag})) || {}
-  
-    if(blob)
-      blob = URL.createObjectURL(blob)
-  
-    return { content, blob, title }
-  }
-  </script>
+<script setup>
+import { ref              } from 'vue'
+import { useArticleStore } from '~/stores/article'
+import { useRoutesStore  } from '~/stores/routes'
+
+const route        = useRoute()
+const routesStore  = useRoutesStore()
+const articleStore = useArticleStore()
+
+const { conferenceCode, tag } = route.params
+
+routesStore.setShowMeetingNav(false)
+
+const { data: articleData } = await useAsyncData(
+  `article-${conferenceCode}-${tag}`,
+  () => articleStore.get({ code: conferenceCode, tag })
+)
+
+const content = ref(articleData.value?.content || null)
+const title   = ref(articleData.value?.title   || null)
+const blob    = ref(
+  articleData.value?.blob ? URL.createObjectURL(articleData.value.blob) : null
+)
+</script>
   <style>
   h1{
     font-size: 1.75rem;

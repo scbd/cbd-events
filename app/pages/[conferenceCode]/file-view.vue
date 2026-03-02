@@ -7,29 +7,27 @@
   </section>
 </template>
 
-<script>
-import Header from '~/components/header/header-bottom-screen'
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { storeToRefs                     } from 'pinia'
+import { useFilesStore                   } from '~/stores/files'
+import { useBus                          } from '~/composables/use-bus'
 
-export default {
-  name      : 'FileVue',
-  layout    : 'bottom-screen',
-  components: { Header },
-  methods   : { done },
-  asyncData,
-  mounted, beforeDestroy
-}
+definePageMeta({ layout: 'bottom-screen' })
 
-function asyncData ({ app, store }){
-  return {
-    title: app.i18n.t('viewFile'),
-    blob : store.state.files.fileToOpen
-  }
-}
+const { t }  = useI18n()
+const router = useRouter()
+const bus    = useBus()
 
-function mounted(){ this.$root.$on('bottom-screen-done', this.done) }
-function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
-function done(){ this.$router.go(-1) }
+const { fileToOpen } = storeToRefs(useFilesStore())
 
+const title = t('viewFile')
+const blob  = ref(fileToOpen.value || null)
+
+function done() { router.go(-1) }
+
+onMounted(()        => { bus.on('bottom-screen-done', done) })
+onBeforeUnmount(()  => { bus.off('bottom-screen-done', done) })
 </script>
 <style scoped>
 .iframe-container { position: relative; padding-top: 100%; height: 100vh; width:100vw; }

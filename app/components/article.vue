@@ -1,84 +1,68 @@
 <template>
-    <div class="row" v-if="title" >
-        <div v-if="blob" class="col-12">
-          <img class="hero"  :src="blob" :alt="`${title | this.$filters.lstring} logo`" style="width:100%;">
-        </div>
-        <div class="col-12">
-          <div class="ck-content">
-            <div ref="article" v-html="this.$options.filters.lstring(this.content)" />
-          </div>
-        </div>
+  <div class="row" v-if="title">
+    <div v-if="blob" class="col-12">
+      <img class="hero" :src="blob" :alt="`${lstring(title)} logo`" style="width:100%;">
     </div>
+    <div class="col-12">
+      <div class="ck-content">
+        <div ref="articleRef" v-html="lstring(content)" />
+      </div>
+    </div>
+  </div>
 </template>
-<script>
-  import useHttp from '~/composables/http';
 
-  export default {
-    name   : 'ArticleHome',
-    props  : ['title', 'content', 'blob', 'tag'],
-    methods: {getOembedHtml, isYoutube, getYoutubeHtml },
-    mounted,
-    asyncData 
-  }
+<script setup>
+import { ref, onMounted } from 'vue'
+import { $fetch         } from 'ofetch'
+import { lstring        } from '~/utils/filters'
 
-  async function asyncData ({ store, params }){
-    const { conferenceCode, tag:pa } = params
-    const   aboutExists      = await store.dispatch('about/get')
+const props = defineProps(['title', 'content', 'blob', 'tag'])
 
-    store.commit('routes/SET_SHOW_MEETING_NAV', false)
+const articleRef = ref(null)
 
-    let  { content, blob, title } = await store.dispatch('article/get', { force:true, code: conferenceCode, tag:'cbd-events-home' }) || {} ;
+onMounted(async () => {
+  if (!articleRef.value) return
 
-    if(blob) blob = URL.createObjectURL(blob);
+  const oembeds = articleRef.value.querySelectorAll('oembed[url]')
 
-    return { conferenceCode, aboutExists, content, blob, title }
-  }
+  if (oembeds.length)
+    for (const el of oembeds) {
+      const rawUrl = el.getAttribute('url')
+      await getOembedHtml(el, { url: encodeURI(rawUrl) }, rawUrl)
+    }
+})
 
-  async function mounted(){
-    const oembeds = this.$refs.article.querySelectorAll( 'oembed[url]' );
+async function getOembedHtml(el, params, rawUrl) {
+  const url = `${process.env.NUXT_ENV_API}/api/v2020/oembed`
 
-    if(oembeds.length)
-      for (const el of oembeds) {
-        const rawUrl = el.getAttribute('url');
-        const url    = encodeURI(rawUrl);
-        const params = { url };
+  const r = await $fetch(url, { query: params }).catch(() => null)
 
-        await this.getOembedHtml(el, params, rawUrl);
-      }
-  }
+  if (!r) return
 
-  function getOembedHtml(el, params, rawUrl){
-    const url = `${process.env.NUXT_ENV_API}/api/v2020/oembed`;
+  const embedHtml = `<div class="ck-media__wrapper text-center">${r?.html}</div>`
 
-      return useHttp({ url, method: 'get', responseType: 'json', params }, this.$axios)
-                .then((r) => {
-                  const  embedHtml = `<div class="ck-media__wrapper text-center">${r?.html}</div>`;
+  if (!isYoutube(rawUrl)) el.insertAdjacentHTML('afterend', embedHtml)
+  else getYoutubeHtml(el, r)
+}
 
-                  
-                  if(!this.isYoutube(rawUrl)) el.insertAdjacentHTML("afterend", embedHtml);
+function getYoutubeHtml(el, ombedData) {
+  const ombedHtml = ombedData.html
+  const pattern   = /src="https:\/\/www.youtube.com\/embed\/([^?]+)\?feature=oembed"/
+  const matches   = ombedHtml.match(pattern)
+  const match     = matches ? matches[1] : null
 
-                  else this.getYoutubeHtml(el, r);
-                })
-  }
+  if (!match) return
 
-  function getYoutubeHtml(el, ombedData){
-    const ombedHtml = ombedData.html;
-    const pattern   = /src="https:\/\/www.youtube.com\/embed\/([^?]+)\?feature=oembed"/;
-    const matches   = ombedHtml.match(pattern);
-    const match     = matches? matches[1] : null;
+  const html = `<div class="ck-media__wrapper text-center"><iframe class="youtube-video" src="https://www.youtube.com/embed/${match}?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="${ombedData.title}"></iframe></div>`
 
-    if(!match) return '';
+  el.insertAdjacentHTML('afterend', html)
+}
 
-    const html = `<div class="ck-media__wrapper text-center"><iframe  class="youtube-video"  src="https://www.youtube.com/embed/${match}?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="${ombedData.title}"></iframe></div>`
+function isYoutube(url) {
+  const regx = /^https?:\/\/(?:www\.)?(youtube\.com|youtu.be).*$/i
 
-    el.insertAdjacentHTML("afterend", html);
-  }
-
-  function isYoutube(url){
-    const regx = /^https?:\/\/(?:www\.)?(youtube\.com|youtu.be).*$/i
-
-    return regx.test(url)
-  }
+  return regx.test(url)
+}
 </script>
 <style>
   h1{
