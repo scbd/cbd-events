@@ -30,3 +30,15 @@
 - **Plugin file naming for order**: Use `01.local-forage.js` prefix to control plugin load order in Nuxt 4's auto-discovery. This ensures localForage is available before other plugins that may depend on it.
 - **iterate() curly bracket gotcha preserved**: The `iterate()` method is delegated directly to the localforage instance. The curly bracket requirement (`{ data.push(value) }` not `data.push(value)`) is a localforage behavior, not a wrapper issue — so the plain delegation preserves correct behavior.
 - **Dual access pattern**: Provide both `useLocalForage()` composable (for Pinia stores / script setup) and `$localForage` via plugin provide (for gradual migration of `this.$localForage` usage).
+
+## p07-01/02: Calendar Widget Migration
+
+- **`$children` removal in Vue 3**: `this.$children` is completely removed. Replace with `useTemplateRef()` and access child elements via `$el.children` or expose child methods with `defineExpose()`.
+- **Directive lifecycle hook mapping**: `bind` → `beforeMount`, `inserted` → `mounted`, `componentUpdated` → `updated`. The `unbind` hook becomes `unmounted`.
+- **`Vue.set()` is unnecessary in Vue 3**: Vue 3 reactivity system tracks property additions automatically. Replace `Vue.set(this, 'prop', val)` with direct assignment `this.prop = val` (for class instances) or `ref.value = val` (for refs).
+- **`require()` in Vue components**: Not available in ESM. Replace with `await import()` in `onMounted` or top-level await.
+- **debounce handler identity**: When using `addEventListener`/`removeEventListener`, store a single `const debouncedFn = debounce(fn, ms)` — don't create new debounce wrappers on each call, or `removeEventListener` won't match the handler.
+- **`$fetch` vs `axios` response shape**: `$fetch` from ofetch auto-parses JSON and returns data directly. `axios.get()` wraps in `{ data: ... }`. When migrating, remove `.data` access.
+- **mitt bus `off()` requires exact reference**: Always store event handler in a named const so the same reference can be passed to both `bus.on(event, handler)` and `bus.off(event, handler)`.
+- **Calendar component `events` naming conflict**: The root Calendar uses `events` as both an import (bus) and a data/prop name. Renamed data to `calEvents` to avoid shadowing.
+- **`process.server` → `import.meta.server`**: Nuxt 4 tree-shaking replacement. Same for `process.client` → `import.meta.client`.

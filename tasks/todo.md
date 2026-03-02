@@ -14,20 +14,20 @@
 - [x] p02-05: Router plugin
 
 ## Phase 03: State Management (Vuex → Pinia)
-- [x] p03-01 through p03-02
-- [ ] p03-03, p03-04
+- [x] p03-01 through p03-04
 
 ## Phase 04: HTTP & Data Layer
-- [ ] p04-01, p04-02
+- [x] p04-01, p04-02
 
 ## Phase 05: Mixins → Composables
-- [ ] p05-01, p05-02
+- [x] p05-01, p05-02
 
 ## Phase 06: Layouts, Middleware & Pages
-- [ ] p06-01 through p06-05
+- [x] p06-01 through p06-05
 
 ## Phase 07: Calendar Widget
-- [ ] p07-01, p07-02
+- [x] p07-01: Calendar core modules & directives
+- [x] p07-02: Calendar components (14 .vue files → script setup)
 
 ## Phase 08: Bootstrap 5, i18n, Cleanup & Verification
 - [ ] p08-01 through p08-04

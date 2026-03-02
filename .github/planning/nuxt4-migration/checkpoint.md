@@ -1,9 +1,9 @@
 # Checkpoint
 
-**Current phase:** Phase 07 — Calendar Widget Migration
-**Last completed:** `phase-06/p06-05-meeting-pages-part2.md`
-**Next task:** `phase-07/p07-01-calendar-core.md`
-**Updated:** 2026-03-02T00:00:00Z
+**Current phase:** Phase 08 — Bootstrap 5, i18n, Cleanup & Verification
+**Last completed:** `phase-07/p07-02-calendar-components.md`
+**Next task:** `phase-08/p08-01-i18n-upgrade.md`
+**Updated:** 2026-03-02T12:00:00Z
 
 ## State
 
@@ -38,9 +38,33 @@
 - **p06-04 COMPLETE**: agenda & documents pages already migrated; 13 page tests; 174 total tests pass
 - **p06-05 COMPLETE**: downloads, meetings, calendar, week-select pages migrated; 17 page tests; 191 total tests pass
 - **Phase 06 COMPLETE**
+- **p07-01 COMPLETE**: cal-weeks-service.js cleaned (Vue.set/nextTick removed), directives migrated to Vue 3 hooks; 213 tests pass
+- **p07-02 COMPLETE**: all 14 calendar Vue components migrated to `<script setup>`; 22 new calendar tests; 213 total tests pass
+- **Phase 07 COMPLETE**
 
-- **p06-05 COMPLETE**: downloads, meetings, calendar, week-select pages migrated; 17 page tests; 191 total tests pass
-- **Phase 06 COMPLETE**
+## p07-02 Summary
+
+- Migrated all 14 calendar Vue components from Options API to `<script setup>` Composition API
+- **`index.vue` (root Calendar)**: `beforeCreate` i18n injection → setup-level `useI18n().setLocaleMessage()`; `this.$i18n` → `useI18n()`; `this.$route`/`this.$router` → `useRoute()`/`useRouter()`; `this.$root.$on('changeDate')` → `bus.on('changeDate')`; `events.$on('showFilter')` → `bus.on('showFilter')`; data `events` renamed to `calEvents` ref to avoid bus naming conflict; bus listeners cleaned up in `onBeforeUnmount`
+- **`cal-body.vue`**: CRITICAL — `this.$children[0].$refs` (removed in Vue 3) → `useTemplateRef('weekBody')` + `weekBodyRef.value?.$el.children` iteration; `EventsBus.$on` → `bus.on` with cleanup in `onBeforeUnmount`
+- **`cal-filter.vue`**: `axios` → `$fetch` from ofetch; `process.env.NUXT_ENV_API` → `useRuntimeConfig().public.api`; `this.$set(this, 'programmes', ...)` → `programmes.value = ...`; `events.$emit('showFilter')` → `bus.emit('showFilter')`
+- **`cal-event.vue`**: debounce fix (single `debouncedResize` const, not new instances); `this.$refs` → `useTemplateRef`; `this.$nextTick` → `nextTick` from vue; `destroyed` → `onUnmounted`; directive as `const vClamp = lineClamp`
+- **`cal-event-details-file.vue`**: `axios.get(path)` → `$fetch(genFilePath())`; `process.env.NUXT_ENV_API` → `useRuntimeConfig().public.api`; added optional chaining `file?.url || '#'`
+- **`cal-event-details-file-status.vue`**: `axios` + `querystring` removed → `$fetch` with query params; `process.env.NUXT_ENV_API` → `useRuntimeConfig().public.api`
+- **`cal-header.vue`**: `this.$root.$emit('bottom-screen-done')` → `bus.emit('bottom-screen-done')`; `events.$emit('showFilter')` → `bus.emit('showFilter')`
+- **`cal-footer.vue`**: `require('velocity-animate')` → `await import('velocity-animate')` in `onMounted`; `this.$emit('action')` → `emit('action')` via `defineEmits`
+- **`week-select.vue`**: `this.$root.$on/off/emit` → `bus.on/off/emit`; named handler reference for proper `off()` cleanup; `beforeDestroy` → `onBeforeUnmount`
+- **`cal-week-body.vue`**, **`cal-week-row.vue`**, **`cal-event-details.vue`**, **`agenda-item.vue`**, **`cal-day-row.vue`**, **`cal-meeting-row.vue`**: standard `<script setup>` conversions
+- **`tests/setup.js`**: added `getLocaleMessage`, `setLocaleMessage`, `mergeLocaleMessage` to useI18n global stub
+- **`tests/calendar/calendar-core.test.js`**: 22 tests covering cal-weeks-service (no Vue imports, iterations, selected, add), directives (Vue 3 hooks), component structure (all `<script setup>`, no Vue 2 patterns), bus module, shallow-mount tests for CalHeader/CalBody/AgendaItem/CalWeekBody, source verification for $fetch/useRuntimeConfig/defineEmits/useBus
+- 213 total tests passing
+
+## p07-01 Summary
+
+- **`cal-weeks-service.js`**: `import Vue from 'vue'` removed; `Vue.set(this, 'iterations', [])` → `this.iterations = []`; `Vue.nextTick(() => ...)` → `nextTick(() => ...)` with `import { nextTick } from 'vue'`; `this.$i18n` references retained as plain class properties (not Vue patterns)
+- **`line-clamp.js` directive**: `bind` → `beforeMount`; `inserted` → `mounted`; `componentUpdated` merged into `updated`; Vue 2 hooks completely removed
+- **`scroll.js` directive**: `inserted` → `mounted`
+- **`bus.js`**: already migrated in Phase 02 — re-exports `useBus()` composable
 
 ## p06-05 Summary
 
