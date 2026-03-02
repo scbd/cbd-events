@@ -73,9 +73,9 @@ export const useFilesStore = defineStore('files', () => {
     const length  = isArray ? files.length : 0
     const isAll   = isArray && data.value.length === length
 
-    if (isAll || !isArray) return removeAll()
+    if (isAll || !isArray) return await removeAll()
 
-    return _removeArrayOfFiles(files)
+    return await _removeArrayOfFiles(files)
   }
 
   async function removeAll() {

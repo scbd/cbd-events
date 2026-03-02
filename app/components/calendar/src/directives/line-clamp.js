@@ -17,7 +17,6 @@ function defaultFallbackFunc(el, bindings, lines){
     el.style.lineHeight = lineHeight+'px' // to ensure consistency
   }
   else {
-    //eslint-disable-next-line
     el.style.maxHeight = el.style.overflowX = ''
   }
 }

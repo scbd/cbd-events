@@ -42,6 +42,8 @@ const selectEvents = computed(() => {
 
   if (isWeek.value && props.events.weeks) return props.events.weeks[weekText]
   if (isDay.value && props.events.days)   return props.events.days[dayText]
+
+  return undefined
 })
 
 function filter(e) {
@@ -63,7 +65,7 @@ function leave() {
     for (let i = 0; i < children.length; i++)
       children[i].style.display = 'block'
   }
-  setTimeout(() => { props.selectedIteration.loading = false }, 400)
+  setTimeout(() => { props.selectedIteration.loading = false }, 400) // eslint-disable-line vue/no-mutating-props
 }
 
 onMounted(() => {

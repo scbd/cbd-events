@@ -70,7 +70,7 @@ const queryObject = computed(() => {
   const { id } = conf
   const locale = props.options.locale || i18nLocale.value || 'en'
   const q = Object.assign(query.value, { locale, conference: id })
-  query.value = q
+  query.value = q // eslint-disable-line vue/no-side-effects-in-computed-properties
   return q
 })
 

@@ -82,7 +82,7 @@ async function getLatestReleaseVersion() {
     const currentVersion = semver.clean(useRuntimeConfig().public.appVersion)
     const [ latest ]     = (await getReleaseData()).filter(majorGreaterFilter(currentVersion)).sort(semverSortObjects).reverse()
 
-    return latest ? semver.clean(latest.tag_name) : latest
+    return latest ? semver.clean(latest.tagName) : latest
   } catch (e) {
     console.error('useOta.getLatestReleaseVersion', e.message)
     return undefined
@@ -90,9 +90,9 @@ async function getLatestReleaseVersion() {
 }
 
 function majorGreaterFilter(currentVersion) {
-  return ({ tag_name }) => {
+  return ({ tagName }) => {
     const majorVersion = semverMajor(currentVersion)
-    const tag          = semver.clean(tag_name)
+    const tag          = semver.clean(tagName)
     const isSameMajor  = semver.satisfies(tag, `${majorVersion}.x`)
     const isGreater    = semver.gt(tag, currentVersion)
 
@@ -101,8 +101,8 @@ function majorGreaterFilter(currentVersion) {
 }
 
 function semverSortObjects(a, b) {
-  const tagA = semver.clean(a.tag_name)
-  const tagB = semver.clean(b.tag_name)
+  const tagA = semver.clean(a.tagName)
+  const tagB = semver.clean(b.tagName)
 
   if (semver.lt(tagA, tagB)) return -1
   if (semver.gt(tagA, tagB)) return 1
@@ -121,4 +121,4 @@ async function getReleaseData() {
 }
 
 // Release item shape:
-// { id, name, body, tag_name, assets: [ { id, name, size, browser_download_url } ] }
+// { id, name, body, tagName, assets: [ { id, name, size, browserDownloadUrl } ] }

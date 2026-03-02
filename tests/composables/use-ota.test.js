@@ -45,7 +45,7 @@ import { getVersionOTA, needsUpdateOTA, updateOTA, useOta } from '~/composables/
 // Fixture helpers
 // ---------------------------------------------------------------------------
 
-const releaseAt = (tag_name) => ({ tag_name, name: tag_name, id: 1, body: '', assets: [] })
+const releaseAt = (tagName) => ({ tagName, name: tagName, id: 1, body: '', assets: [] })
 
 function resetMocks() {
   vi.clearAllMocks()

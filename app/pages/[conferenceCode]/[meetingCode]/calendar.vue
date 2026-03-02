@@ -33,7 +33,7 @@ function genFields(query) {
   return fields + itemFields + organizerFields + locationFields + localizedFields + metaFields
 }
 
-function genQuery(query) {
+function genQuery(query) { // eslint-disable-line complexity
   const { start, end, selectedStream, keyWordFilter, selectedProgramme } = query
   const { start: startOverride, end: endOverride } = conference.value?.apps?.cbdEvents || {}
   const { startDate, endDate, id }                  = conference.value

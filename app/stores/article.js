@@ -22,7 +22,7 @@ function buildQuery(code, tag) {
   return { ag: JSON.stringify(ag) }
 }
 
-async function fetchBlob(coverImage) {
+function fetchBlob(coverImage) {
   const url = coverImage?.url
 
   if (!url) return undefined
@@ -70,7 +70,7 @@ export const useArticleStore = defineStore('article', () => {
 
     if (docs.value[key]) return docs.value[key]
 
-    return _existsLocal(code, tag)
+    return await _existsLocal(code, tag)
   }
 
   async function _save(code, tag, article) {

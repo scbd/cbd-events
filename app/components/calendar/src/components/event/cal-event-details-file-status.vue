@@ -59,6 +59,8 @@ const getWorkflow = computed(() => {
     const step = fullFile.value.workflow.steps.find((s) => s.status === 'active')
     return step?.status
   }
+
+  return undefined
 })
 
 const download = computed(() => {

@@ -120,9 +120,8 @@ export function useDocumentDownload(iframeRef) {
     filesStore.load()
     window.addEventListener('message', saveFiles)
 
-    if (iframeRef?.value) {
+    if (iframeRef?.value)
       iframeRef.value.onload = () => loadingIndicator.finish()
-    }
 
     loadingIndicator.start()
   })

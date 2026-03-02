@@ -1,11 +1,11 @@
 import { $fetch } from 'ofetch'
 
 export function useHttp() {
-  async function get(url, options = {}) {
+  function get(url, options = {}) {
     return $fetch(url, { method: 'GET', ...options })
   }
 
-  async function post(url, body, options = {}) {
+  function post(url, body, options = {}) {
     return $fetch(url, { method: 'POST', body, ...options })
   }
 

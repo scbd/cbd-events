@@ -112,7 +112,7 @@ function toggleStream() {
   showStreamDropdown.value = !showStreamDropdown.value
 }
 
-async function getPrograms() {
+function getPrograms() {
   const endPoint = `${config.public.api}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
   return $fetch(endPoint)
 }

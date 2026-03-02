@@ -28,8 +28,6 @@
     "@capacitor/splash-screen": "7.0.5",
     "@capacitor/status-bar": "7.0.5",
     "@capgo/capacitor-updater": "7.43.3",
-    "@ionic-native/http": "5.36.0",
-    "cordova-plugin-advanced-http": "3.3.1",
     "cordova-plugin-file": "8.1.0",
     "cordova-plugin-file-opener2": "github:pwlin/cordova-plugin-file-opener2#0b15d93b4f0c5a70206fe276f7aa956f754c3ca3"
   },
