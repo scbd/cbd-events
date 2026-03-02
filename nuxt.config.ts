@@ -50,6 +50,9 @@ export default defineNuxtConfig({
     strategy: 'prefix_except_default',
     lazy: true,
     langDir: 'app/locales',
+    bundle: {
+      compositionOnly: true,
+    },
   },
 
   vite: {

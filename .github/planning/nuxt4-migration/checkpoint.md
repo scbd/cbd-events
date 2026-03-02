@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 08 — Bootstrap 5, i18n, Cleanup & Verification
-**Last completed:** `phase-07/p07-02-calendar-components.md`
-**Next task:** `phase-08/p08-01-i18n-upgrade.md`
-**Updated:** 2026-03-02T12:00:00Z
+**Last completed:** `phase-08/p08-01-i18n-upgrade.md`
+**Next task:** `phase-08/p08-02-bootstrap5.md`
+**Updated:** 2026-03-02T13:00:00Z
 
 ## State
 
@@ -41,6 +41,17 @@
 - **p07-01 COMPLETE**: cal-weeks-service.js cleaned (Vue.set/nextTick removed), directives migrated to Vue 3 hooks; 213 tests pass
 - **p07-02 COMPLETE**: all 14 calendar Vue components migrated to `<script setup>`; 22 new calendar tests; 213 total tests pass
 - **Phase 07 COMPLETE**
+- **p08-01 COMPLETE**: i18n locale file simplified to plain object export; `compositionOnly: true` bundle config added; `viewFile` key added; typo `Serivce` → `Service` fixed; 213 tests pass
+
+## p08-01 Summary
+
+- **`app/locales/en.js`**: Converted from `export default () => new Promise(resolve => { resolve({...}) })` to plain `export default { ... }` — compatible with `@nuxtjs/i18n` v10 lazy loading
+- Added missing `viewFile` translation key (used by `pages/[conferenceCode]/file-view.vue`)
+- Fixed typo: `Serivce Unavailable` → `Service Unavailable`
+- **`nuxt.config.ts`**: Added `bundle: { compositionOnly: true }` — enforces Composition API i18n usage (no legacy Options API `this.$i18n` support needed outside calendar internals which use `useI18n()`)
+- No `nuxt-i18n` v6 references remain in codebase (only in research docs)
+- All i18n patterns verified: `$t()` in templates, `useI18n()` in `<script setup>`, `useLocalePath()` for route generation, `setLocaleMessage()` for calendar locale merging
+- 213 total tests passing
 
 ## p07-02 Summary
 
