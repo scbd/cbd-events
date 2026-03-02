@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 08 — Bootstrap 5, i18n, Cleanup & Verification
-**Last completed:** `phase-08/p08-01-i18n-upgrade.md`
-**Next task:** `phase-08/p08-02-bootstrap5.md`
-**Updated:** 2026-03-02T13:00:00Z
+**Last completed:** `phase-08/p08-02-bootstrap5.md`
+**Next task:** `phase-08/p08-03-dependency-cleanup.md`
+**Updated:** 2026-03-02T13:30:00Z
 
 ## State
 
@@ -42,6 +42,19 @@
 - **p07-02 COMPLETE**: all 14 calendar Vue components migrated to `<script setup>`; 22 new calendar tests; 213 total tests pass
 - **Phase 07 COMPLETE**
 - **p08-01 COMPLETE**: i18n locale file simplified to plain object export; `compositionOnly: true` bundle config added; `viewFile` key added; typo `Serivce` → `Service` fixed; 213 tests pass
+- **p08-02 COMPLETE**: Bootstrap 4→5 utility classes (`pl/pr`→`ps/pe`, `form-group`→`mb-3`, `input-sm`→`form-control-sm`, `form-control`→`form-select` on selects); `xlink:href`→`href`; Vue 3 transition classes (`-enter`→`-enter-from`, `-leave`→`-leave-from`); 213 tests pass
+
+## p08-02 Summary
+
+- **Bootstrap 5 utility classes**:
+  - `header.vue`: `pl-1 pr-1` → `ps-1 pe-1`
+  - `downloads.vue`: `pl-3 pr-3` → `ps-3 pe-3`
+  - `cal-filter.vue`: `form-group form-group-sm` → `mb-3`; `input-sm` → `form-control-sm` on `<input>`; `form-control input-sm` → `form-select form-select-sm` on all `<select>` elements (3 instances)
+- **SVG cleanup**: `xlink:href` → `href` in `offline.vue` and `header-bottom-screen.vue` (SVG2/Vue 3 standard)
+- **Vue 3 transition class renames** in `app.css`: `.page-enter` → `.page-enter-from`; `.bottom-enter` → `.bottom-enter-from`; `.bottom-leave` → `.bottom-leave-from`; `.slide-fade-enter` → `.slide-fade-enter-from`; `.slide-left-enter` → `.slide-left-enter-from`; `.slide-right-enter` → `.slide-right-enter-from`; `.slide-up-enter` → `.slide-up-enter-from`
+- **Verification**: no `data-toggle/target/dismiss`, no `pl-/pr-/ml-/mr-`, no `text-left/right`, no `float-left/right`, no `form-group`, no `input-sm`, no `xlink:href`, no Vue 2 transition classes remain
+- Bootstrap 5.3 already in `package.json` from p01-01; SCSS import unchanged (`@import "bootstrap/scss/bootstrap"`)
+- 213 total tests passing
 
 ## p08-01 Summary
 

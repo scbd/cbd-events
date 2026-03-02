@@ -2,7 +2,7 @@
   <nav class="mainn navbar  navbar-default">
     <div class="col-3" @click="close" >
       <svg class="icon-clock-o" v-if="options && options.cancel" >
-        <use xlink:href="#icon-close" />
+        <use href="#icon-close" />
       </svg>
     </div>
     <div class="col-6 mid"> {{ title }} </div>

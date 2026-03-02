@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <section v-for="(file, $index) in files" :key="file.name">
-      <div class="row file pl-3 pr-3">
+      <div class="row file ps-3 pe-3">
         <div class="col-1 paddingless" @click="handleOpenFile(file)">
           <Icon v-if="isMsWord(file.type)" name="file-word-o" x="2" in-text="true"/>
           <Icon v-else-if="isPDF(file.type)" name="file-pdf-o" x="2" in-text="true"/>

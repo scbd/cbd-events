@@ -2,7 +2,7 @@
   <section>
     <transition name="slide-fade">
       <nav v-if="showNavs" class="mainn navbar  navbar-default" @click="toggleSideMenu()">
-        <div class="container pl-1 pr-1">
+        <div class="container ps-1 pe-1">
           <img :src="`${config.public.attachments}/cbd-leaf-green.svg`" class="header-nav-img" :alt="$t('scbdLeafLogo')">
 
           <div class="title">

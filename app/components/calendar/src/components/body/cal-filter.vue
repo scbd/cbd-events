@@ -8,13 +8,13 @@
         </span>
       </div>
       <div :class="[$style.filterRow]">
-        <div :class="[$style.formGroup]" class="form-group form-group-sm" >
-          <input :placeholder="$t('keyWord')" type="input" class="form-control input-sm" v-model="keyWordFilter" @click.stop="" >
+        <div :class="[$style.formGroup]" class="mb-3" >
+          <input :placeholder="$t('keyWord')" type="input" class="form-control form-control-sm" v-model="keyWordFilter" @click.stop="" >
         </div>
       </div>
       <hr style="margin-top:0;">
       <div :class="[$style.filterRow]">
-        <select v-model="selectedStream" class="form-control input-sm" @click.stop="" >
+        <select v-model="selectedStream" class="form-select form-select-sm" @click.stop="" >
           <option :value="$t('stream')" selected >
             {{ $t('stream') }}
           </option>
@@ -43,7 +43,7 @@
       </div>
       <hr style="margin-top:0;">
       <div :class="[$style.filterRow]" v-if="false" >
-        <select v-model="selectedProgramme" class="form-control input-sm" @click.stop="" >
+        <select v-model="selectedProgramme" class="form-select form-select-sm" @click.stop="" >
           <option :value="$t('programme')" selected >
             {{ $t('programme') }}
           </option>
@@ -56,7 +56,7 @@
       </div>
       <hr style="margin-top:0;">
       <div :class="[$style.filterRow]" v-if="false" >
-        <select v-model="selectedAgendaItem" class="form-control input-sm" @click.stop="" >
+        <select v-model="selectedAgendaItem" class="form-select form-select-sm" @click.stop="" >
           <option :value="$t('agendaItem')" selected >
             {{ $t('agendaItem') }}
           </option>

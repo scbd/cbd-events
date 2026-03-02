@@ -31,6 +31,6 @@
 
 ## Phase 08: Bootstrap 5, i18n, Cleanup & Verification
 - [x] p08-01: i18n upgrade
-- [ ] p08-02: Bootstrap 5
+- [x] p08-02: Bootstrap 5
 - [ ] p08-03: Dependency cleanup
 - [ ] p08-04: Integration testing
