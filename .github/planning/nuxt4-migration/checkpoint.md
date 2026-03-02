@@ -1,8 +1,8 @@
 # Checkpoint
 
-**Current phase:** Phase 06 — Layout & Page Migration
-**Last completed:** `phase-06/p06-04-meeting-pages-part1.md`
-**Next task:** `phase-06/p06-05-meeting-pages-part2.md`
+**Current phase:** Phase 07 — Calendar Widget Migration
+**Last completed:** `phase-06/p06-05-meeting-pages-part2.md`
+**Next task:** `phase-07/p07-01-calendar-core.md`
 **Updated:** 2026-03-02T00:00:00Z
 
 ## State
@@ -36,8 +36,22 @@
 - **p06-02 COMPLETE**: 7 pages migrated; 8 page tests; 151 total tests pass
 - **p06-03 COMPLETE**: article component, article [tag] page, file-view page migrated; 10 page tests; 161 total tests pass
 - **p06-04 COMPLETE**: agenda & documents pages already migrated; 13 page tests; 174 total tests pass
+- **p06-05 COMPLETE**: downloads, meetings, calendar, week-select pages migrated; 17 page tests; 191 total tests pass
+- **Phase 06 COMPLETE**
 
-- **p06-04 COMPLETE**: agenda & documents pages already migrated; 13 page tests; 174 total tests pass
+- **p06-05 COMPLETE**: downloads, meetings, calendar, week-select pages migrated; 17 page tests; 191 total tests pass
+- **Phase 06 COMPLETE**
+
+## p06-05 Summary
+
+- **`pages/[conferenceCode]/[meetingCode]/downloads.vue`**: `<script setup>`; `mapGetters` → `storeToRefs(useFilesStore())` for `files` + `storeToRefs(useConferencesStore())` for `meeting`; `filters: { trimName, timeDisplay, formatBytes, lstring }` removed — imported from `~/utils/filters` and called as functions in template; `isIOSCordova(this.$cordova.device)` → `usePlatform().platform === 'ios'`; `isIpad` imported from `~/utils/device`; `openFile`/`shareFile` receive `{ file: {} }` stub (writeFile handles Capacitor natively); `this.localePath` → `useLocalePath()`; `this.$store.commit('files/SET_FILE_TO_OPEN')` → `filesStore.setFileToOpen()`; `this.$router.push` → `router.push`; `xlink:href` → `href`
+- **`pages/[conferenceCode]/[meetingCode]/meetings.vue`**: `<script setup>`; `layout: 'bottom-screen'` → `definePageMeta({ layout: 'bottom-screen' })`; `$root.$on/$off('bottom-screen-done')` → `useBus().on/off` with exact handler reference for cleanup; `this.$store.state.routes.showMeetingNav.agendasOnly` → `storeToRefs(useRoutesStore()).showMeetingNav`; `this.$store.state.routes.prevRoute` → `storeToRefs(useRoutesStore()).prevRoute`; `this.$store.commit('conferences/setSelectedMeeting')` → `conferencesStore.setSelectedMeeting()`; `app.i18n.t` → `useI18n().t`; `Header` → `HeaderBottomScreen` with `.vue` extension
+- **`pages/[conferenceCode]/[meetingCode]/calendar.vue`**: `<script setup>`; `mapGetters` → `storeToRefs(useConferencesStore())` for `conference`; `useHttp(...)` → `$fetch(url)` from `ofetch`; `process.env.NUXT_ENV_API` → `useRuntimeConfig().public.api`; `this.$i18n.locale` → `useI18n().locale`; `this.$store.commit('routes/SET_SHOW_MEETING_NAV')` → `routesStore.setShowMeetingNav()`; CalendarWidget import updated with explicit `.vue` extension
+- **`pages/[conferenceCode]/[meetingCode]/week-select.vue`**: identical migration to `meetings.vue`
+- **`vitest.config.ts`**: added `resolve.extensions` with `.vue` to resolve extensionless Vue imports in Calendar component chain
+- **`tests/pages/meeting-pages-part2.test.js`**: 17 tests; CalendarWidget deep imports mocked via `vi.mock`; `usePlatform` mocked for iOS detection; `cordova-files` utilities mocked; downloads: files load, meetingNav, openSafari registration, file list rendering, iOS share; meetings: bottom-screen layout, visible meetings, bus listener lifecycle, changeMeeting store+router calls; calendar: meetingNav, widget render; week-select: layout, meetings, bus cleanup
+- **Codebase-wide verification**: no `mapGetters`/`mapState`/`mapActions`, no `asyncData` option, no `this.$` references, no `vuex` imports, no `| filter` pipe syntax in any page or layout; remaining Vue 2 patterns only in Calendar widget components (Phase 07 scope)
+- 191 total tests passing
 
 ## p06-04 Summary
 

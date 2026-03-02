@@ -1,16 +1,16 @@
 <template>
   <section>
-    <Header :title="title" />
+    <HeaderBottomScreen :title="title" />
     <div class="page container-fluid">
       <div class="row">
         <div
           class="block gradient col-12"
           @click="changeMeeting(meeting)"
-          v-for="(meeting,index) in visibleMeetings"
+          v-for="(meeting, index) in visibleMeetings"
           :key="index"
         >
           <div>
-            <h4>{{ meeting.evtCd}}</h4>
+            <h4>{{ meeting.evtCd }}</h4>
           </div>
         </div>
       </div>
@@ -18,56 +18,55 @@
   </section>
 </template>
 
-<script>
-import Header from '~/components/header/header-bottom-screen'
+<script setup>
+import { computed, onBeforeUnmount } from 'vue'
+import { storeToRefs               } from 'pinia'
+import { useConferencesStore       } from '~/stores/conferences'
+import { useRoutesStore            } from '~/stores/routes'
+import { useBus                    } from '~/composables/use-bus'
+import   HeaderBottomScreen          from '~/components/header/header-bottom-screen.vue'
 
-export default {
-  name      : 'Meetings',
-  layout    : 'bottom-screen',
-  components: { Header },
-  methods   : { hasAgenda, done, changeMeeting },
-  computed  : { agendasOnly, visibleMeetings },
-  asyncData, mounted, beforeDestroy
+definePageMeta({ layout: 'bottom-screen' })
+
+const { t }    = useI18n()
+const route    = useRoute()
+const router   = useRouter()
+const bus      = useBus()
+
+const conferencesStore = useConferencesStore()
+const routesStore      = useRoutesStore()
+
+const { meetings }                  = storeToRefs(conferencesStore)
+const { showMeetingNav, prevRoute } = storeToRefs(routesStore)
+
+const title = t('meetings')
+const { conferenceCode } = route.params
+
+const agendasOnly = computed(() => {
+  try { return showMeetingNav.value?.agendasOnly ?? false }
+  catch(e) { return false }
+})
+
+const visibleMeetings = computed(() => {
+  if (!meetings.value) return []
+
+  return meetings.value.filter(m => (hasAgenda(m) || (!agendasOnly.value && m.id)))
+})
+
+function hasAgenda({ agenda }) { return agendasOnly.value && agenda }
+
+function done() { router.go(-1) }
+
+function changeMeeting(meeting) {
+  const { name } = prevRoute.value
+  const params   = { conferenceCode, meetingCode: meeting.evtCd }
+
+  conferencesStore.setSelectedMeeting(meeting)
+  router.push({ name, params })
 }
 
-function asyncData ({ app, store }){
-  const title = app.i18n.t('meetings')
-  const { meetings } = store.state.conferences
-
-  return  { title, meetings }
-}
-
-function mounted(){ this.$root.$on('bottom-screen-done', this.done) }
-function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
-
-function visibleMeetings(){
-  const { meetings } = this
-
-  if(!meetings) return []
-
-  return meetings.filter(m => (this.hasAgenda(m) ||(!this.agendasOnly && m.id)))
-}
-
-function agendasOnly(){
-  try{
-    const { showMeetingNav } = this.$store.state.routes
-
-    return showMeetingNav.agendasOnly
-  }
-  catch(e){ return false }
-}
-
-function hasAgenda({ agenda }){ return this.agendasOnly && agenda }
-function done(){ this.$router.go(-1) }
-  
-function changeMeeting(meeting){
-  const { name }           = this.$store.state.routes.prevRoute
-  const { conferenceCode } = this.$route.params
-  const   params           = { conferenceCode, meetingCode: meeting.evtCd }
-
-  this.$store.commit('conferences/setSelectedMeeting', meeting)
-  this.$router.push({ name, params })
-}
+bus.on('bottom-screen-done', done)
+onBeforeUnmount(() => { bus.off('bottom-screen-done', done) })
 </script>
 
 <style scoped>

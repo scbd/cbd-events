@@ -1,89 +1,89 @@
 <template>
   <div class="container">
-    <section v-for="(file, $index) in files" :key="file.name" >
+    <section v-for="(file, $index) in files" :key="file.name">
       <div class="row file pl-3 pr-3">
-        <div class="col-1 paddingless" @click="openFile(file, $cordova)" >
+        <div class="col-1 paddingless" @click="handleOpenFile(file)">
           <Icon v-if="isMsWord(file.type)" name="file-word-o" x="2" in-text="true"/>
           <Icon v-else-if="isPDF(file.type)" name="file-pdf-o" x="2" in-text="true"/>
           <Icon v-else name="file-empty" x="2" in-text="true"/>
         </div>
         <div
-          :class="{'col-10':(isIOS && !isIpad), 'col-11':(!isIOS || isIpad)}"
-          @click="openFile(file, $cordova)"
+          :class="{'col-10':(isIOS && !isIpadDevice), 'col-11':(!isIOS || isIpadDevice)}"
+          @click="handleOpenFile(file)"
         >
-          {{ file.baseName | trimName }}<br>
-          {{ file.lastModified | timeDisplay }}
-          <span class="point">●</span> {{ file.size | formatBytes }}
+          {{ trimName(file.baseName) }}<br>
+          {{ timeDisplay(file.lastModified) }}
+          <span class="point">●</span> {{ formatBytes(file.size) }}
         </div>
-        <div v-if="isIOS" class="col-1 paddingless text-center" @click="shareFile(file, $cordova)" >
-          <svg class="icon x2"><use xlink:href="#icon-share-alternitive" /></svg>
+        <div v-if="isIOS" class="col-1 paddingless text-center" @click="handleShareFile(file)">
+          <svg class="icon x2"><use href="#icon-share-alternitive" /></svg>
         </div>
       </div>
-      <hr class="hr" v-if="$index != files.length-1" >
+      <hr class="hr" v-if="$index != files.length-1">
     </section>
 
     <section v-if="!files.length">
       <div class="text-center">
         <br><br><br><br>
-        <span>No files downloaded for the <br><b>{{ meeting.title | lstring}}</b></span>
+        <span>No files downloaded for the <br><b>{{ lstring(meeting.title) }}</b></span>
       </div>
     </section>
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
+<script setup>
+import { computed, onMounted } from 'vue'
+import { storeToRefs         } from 'pinia'
+import { useFilesStore       } from '~/stores/files'
+import { useConferencesStore } from '~/stores/conferences'
+import { useRoutesStore      } from '~/stores/routes'
+import { usePlatform         } from '~/composables/use-platform'
+import { isIpad              } from '~/utils/device'
+import { isPDF, isMsWord     } from '~/utils/mime-types'
+import { openFile, shareFile, setOpenSafariFn } from '~/utils/cordova-files'
+import { lstring, trimName, timeDisplay, formatBytes } from '~/utils/filters'
 
-import { isIOSCordova, isIpad                    } from '~/utils/device'
-import { isPDF,    isMsWord                      } from '~/utils/mime-types'
-import { openFile, shareFile,   setOpenSafariFn  } from '~/utils/cordova-files'
-import { lstring, trimName, timeDisplay, formatBytes      } from '~/plugins/filters'
+const route      = useRoute()
+const router     = useRouter()
+const localePath = useLocalePath()
 
-export default {
-  name    : 'Downloads',
-  methods : {  isPDF, isMsWord, openFile, shareFile, openSafari },
-  computed: { isIOS, isIpad, ...gettersMap() },
-  filters : { trimName, timeDisplay, formatBytes, lstring },
-  asyncData,
-  mounted
-}
+const filesStore       = useFilesStore()
+const conferencesStore = useConferencesStore()
+const routesStore      = useRoutesStore()
+const { platform }     = usePlatform()
 
-function gettersMap(){
-  return mapGetters({
-    meeting: 'conferences/meeting',
-    files  : 'files/all'
-  })
-}
+const { conferenceCode } = route.params
 
-async function asyncData ({ store, params }){
-  const { conferenceCode } = params
+const { files }   = storeToRefs(filesStore)
+const { meeting } = storeToRefs(conferencesStore)
 
-  await store.dispatch('files/LOAD')
-  store.commit('routes/SET_SHOW_MEETING_NAV', false)
+const isIOS        = computed(() => platform === 'ios')
+const isIpadDevice = computed(() => isIpad())
 
-  return { conferenceCode }
-}
+// Capacitor stub — openFile/shareFile still expect a $cordova-shaped arg
+// but only use $cordova.file for directory paths that writeFile() no longer needs
+const cordovaStub = { file: {} }
 
-function isIOS(){
-  try{ return isIOSCordova(this.$cordova.device) }
-  catch(e){ return {} }
-}
+function handleOpenFile(file)  { openFile(file, cordovaStub) }
+function handleShareFile(file) { shareFile(file, cordovaStub) }
 
-function mounted (){
-  if(!this.$cordova) this.$cordova = null
-  setOpenSafariFn(this.openSafari)
-}
-
-function openSafari({ blob }){
+function openSafari({ blob }) {
   const name       = 'conferenceCode-fileView'
-  const params     = { conferenceCode: this.conferenceCode }
-  const routerPath = this.localePath({ name, params })
+  const params     = { conferenceCode }
+  const routerPath = localePath({ name, params })
   const blobUrl    = window.URL.createObjectURL(blob)
 
-  this.$store.commit('files/SET_FILE_TO_OPEN', blobUrl)
-  this.$router.push(routerPath)
+  filesStore.setFileToOpen(blobUrl)
+  router.push(routerPath)
 }
 
+// Setup
+filesStore.load()
+routesStore.setShowMeetingNav(false)
+
+onMounted(() => {
+  setOpenSafariFn(openSafari)
+})
 </script>
 
 <style scoped>

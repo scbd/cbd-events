@@ -1,101 +1,82 @@
 <template>
   <CalendarWidget
-    :options="{ queryFn:getEvents, conference:conference, height:'80vh' }"
+    :options="{ queryFn: getEvents, conference: conference, height: '80vh' }"
   />
 </template>
 
-<script>
-import useHttp from '~/composables/http';
-import { mapGetters          } from 'vuex'
+<script setup>
+import { storeToRefs         } from 'pinia'
+import { $fetch              } from 'ofetch'
+import { useConferencesStore } from '~/stores/conferences'
+import { useRoutesStore      } from '~/stores/routes'
 import { sanitizeIndexResult } from '~/utils/api-normalize'
-import   CalendarWidget        from '~/components/calendar/src/components/'
+import   CalendarWidget        from '~/components/calendar/src/components/index.vue'
 
-export default {
-  name      : 'CalendarPage',
-  components: { CalendarWidget },
-  methods   : { getEvents, genQuery, getQueryUrl },
-  computed  : { ...gettersMap() },
-  asyncData
-}
+const config           = useRuntimeConfig()
+const { locale }       = useI18n()
+const conferencesStore = useConferencesStore()
+const routesStore      = useRoutesStore()
 
-function gettersMap(){
-  return mapGetters({
-    meeting     : 'conferences/meeting',
-    conference  : 'conferences/conference',
-    conferenceId: 'conferences/conferenceId'
-  })
-}
+const { conference } = storeToRefs(conferencesStore)
 
-function asyncData ({ store }){
-  store.commit('routes/SET_SHOW_MEETING_NAV', false)
-  return { }
-}
+routesStore.setShowMeetingNav(false)
 
-function genFields(query){
-  const locale          = query.locale.toUpperCase()|| 'EN'
+function genFields(query) {
+  const loc             = (query.locale || '').toUpperCase() || 'EN'
   const fields          = 'identifier_s,conference_s,timezone_s,start_dt,end_dt,'
   const itemFields      = 'itemShowFiles_ss,itemFiles_ss,itemText_ss,item_ss,itemMeeting_ss,stream_ss,'
   const organizerFields = 'organizers_ss,organizer_s,organizerEmail_s,'
   const locationFields  = 'roomTitle_s,roomLocation_s,roomLocalName_s,'
-  const localizedFields = `description_${locale}_t,title_${locale}_t,`
+  const localizedFields = `description_${loc}_t,title_${loc}_t,`
   const metaFields      = 'createdBy_s,createdByEmail_s,createdDate_dt,modifiedBy_s,modifiedByEmail_s,updatedDate_dt'
 
   return fields + itemFields + organizerFields + locationFields + localizedFields + metaFields
 }
 
-async function getEvents(query){
-  this.$store.commit('routes/SET_SHOW_MEETING_NAV', false)
-  try{
-  if(!query.conference) query.conference = this.conference.id
-  
-  const events   = {}
-  const url      = this.getQueryUrl(query)
-  const docs     = await useHttp( { url, method: 'get', responseType: 'json' }).then((data) => data.response.docs)
+function genQuery(query) {
+  const { start, end, selectedStream, keyWordFilter, selectedProgramme } = query
+  const { start: startOverride, end: endOverride } = conference.value?.apps?.cbdEvents || {}
+  const { startDate, endDate, id }                  = conference.value
 
-  events.raw     = sanitizeIndexResult(docs)
+  let qStart = `+AND+(start_s:[ ${startOverride || startDate} TO *])`
+  let qEnd   = `+AND+(end_s:[ * TO ${endOverride || endDate}])`
+  let q      = `schema_s:reservation+AND+conference_s:${id}`
 
-  return events
-  }catch(e){
-    console.error('Calendar.getEvents', e.message)
-    console.error(e.message)
-    console.error(e)
-  }
+  if (start) qStart = `+AND+(start_s:[ ${start} TO *])`
+  if (end)   qEnd   = `+AND+(end_s:[ * TO ${end}])`
+
+  q += qStart + qEnd
+
+  if (selectedStream)    q += `+AND+(stream_ss:${selectedStream})`
+  if (selectedProgramme) q += `+AND+(thematicAreas_ss:${selectedProgramme})`
+  if (keyWordFilter)     q += `+AND+(text_${locale.value.toUpperCase()}_txt:"${keyWordFilter}*")`
+
+  return q
 }
 
-function getQueryUrl(query){
-  const endPoint = `${process.env.NUXT_ENV_API}/api/v2013/index/select`
+function getQueryUrl(query) {
+  const endPoint = `${config.public.api}/api/v2013/index/select`
   const f        = genFields(query)
-  const q        = this.genQuery(query)
+  const q        = genQuery(query)
 
   return encodeURI(`${endPoint}?fl=${f}&q=${q}&sort=start_dt+DESC&start=0&wt=json&rows=5000`)
 }
 
+async function getEvents(query) {
+  routesStore.setShowMeetingNav(false)
+  try {
+    if (!query.conference) query.conference = conference.value.id
 
-function genQuery(query){
+    const events = {}
+    const url    = getQueryUrl(query)
+    const data   = await $fetch(url)
 
-  const { start, end, selectedStream, keyWordFilter, selectedProgramme } = query
-  const { start: startOverride, end:endOverride } = this.conference?.apps?.cbdEvents || {}
-  const { startDate, endDate, id                    } = this.conference
-  const { locale } = this.$i18n
+    events.raw = sanitizeIndexResult(data.response.docs)
 
-  const qStartDate = startOverride || startDate
-  const qEndDate   = endOverride   || endDate
-
-  let qStart = `+AND+(start_s:[ ${qStartDate} TO *])`
-  let qEnd   = `+AND+(end_s:[ * TO ${qEndDate}])`
-
-  let q      = `schema_s:reservation+AND+conference_s:${id}`
-  
-  // if user passes start end over write default
-  if(start) qStart = `+AND+(start_s:[ ${start} TO *])`
-  if(end)   qEnd   = `+AND+(end_s:[ * TO ${end}])`
-  
-  q += qStart + qEnd
-
-  if(selectedStream)    q += `+AND+(stream_ss:${selectedStream})`
-  if(selectedProgramme) q += `+AND+(thematicAreas_ss:${selectedProgramme})`
-  if(keyWordFilter)     q += `+AND+(text_${locale.toUpperCase()}_txt:"${keyWordFilter}*")`
-
-  return q
+    return events
+  } catch(e) {
+    console.error('Calendar.getEvents', e.message)
+    console.error(e)
+  }
 }
 </script>
