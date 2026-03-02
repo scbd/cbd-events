@@ -1,8 +1,8 @@
 # Checkpoint
 
 **Current phase:** Phase 06 — Layout & Page Migration
-**Last completed:** `phase-06/p06-03-article-fileview-pages.md`
-**Next task:** `phase-06/p06-04-meeting-pages-part1.md`
+**Last completed:** `phase-06/p06-04-meeting-pages-part1.md`
+**Next task:** `phase-06/p06-05-meeting-pages-part2.md`
 **Updated:** 2026-03-02T00:00:00Z
 
 ## State
@@ -35,8 +35,16 @@
 - **p06-01 COMPLETE**: layouts, middleware, header components, navigation, utility components migrated; 4 middleware tests; 143 total tests pass
 - **p06-02 COMPLETE**: 7 pages migrated; 8 page tests; 151 total tests pass
 - **p06-03 COMPLETE**: article component, article [tag] page, file-view page migrated; 10 page tests; 161 total tests pass
+- **p06-04 COMPLETE**: agenda & documents pages already migrated; 13 page tests; 174 total tests pass
 
-- **p06-03 COMPLETE**: article component, article [tag] page, file-view page migrated; 10 page tests; 161 total tests pass
+- **p06-04 COMPLETE**: agenda & documents pages already migrated; 13 page tests; 174 total tests pass
+
+## p06-04 Summary
+
+- **`pages/[conferenceCode]/[meetingCode]/agenda.vue`**: already `<script setup>`; `useDocumentDownload(docsFrame)` with `ref(null)`; `storeToRefs(useConferencesStore())` for `agendaItems`/`agendaPrefix`; `storeToRefs(useOffLineStore())` for `offLine`; `computed(() => conferencesStore.isInSession(datetime))` and `forceDate(datetime)`; `useRuntimeConfig().public.iframeHost`; conditional `routesStore.setShowMeetingNav()` based on session state
+- **`pages/[conferenceCode]/[meetingCode]/documents.vue`**: already `<script setup>`; `useDocumentDownload(docsFrame)` with `ref(null)`; `storeToRefs(useOffLineStore())` for `offLine`; `routesStore.setShowMeetingNav(true)`; iframe src includes `conferenceCode`/`meetingCode`
+- **`tests/pages/meeting-pages-part1.test.js`**: 13 tests; `vi.hoisted` for mocks; `storeToRefs` passthrough mock; agenda tests: `useDocumentDownload` called with ref, meetingNav agendasOnly vs false, agenda items rendered, iframe rendered in session, `not-in-session` class, forceDate in src; documents tests: `useDocumentDownload` called with ref, meetingNav enabled, iframe rendered, src includes codes, offline wiring
+- 174 total tests passing
 
 ## p06-03 Summary
 
