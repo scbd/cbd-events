@@ -1,9 +1,9 @@
 # Checkpoint
 
 **Current phase:** Phase 06 — Layout & Page Migration
-**Last completed:** `phase-06/p06-02-static-conference-pages.md`
-**Next task:** `phase-06/p06-03-article-fileview-pages.md`
-**Updated:** 2026-02-25T15:40:00Z
+**Last completed:** `phase-06/p06-03-article-fileview-pages.md`
+**Next task:** `phase-06/p06-04-meeting-pages-part1.md`
+**Updated:** 2026-03-02T00:00:00Z
 
 ## State
 
@@ -34,6 +34,17 @@
 - **Phase 05 COMPLETE**
 - **p06-01 COMPLETE**: layouts, middleware, header components, navigation, utility components migrated; 4 middleware tests; 143 total tests pass
 - **p06-02 COMPLETE**: 7 pages migrated; 8 page tests; 151 total tests pass
+- **p06-03 COMPLETE**: article component, article [tag] page, file-view page migrated; 10 page tests; 161 total tests pass
+
+- **p06-03 COMPLETE**: article component, article [tag] page, file-view page migrated; 10 page tests; 161 total tests pass
+
+## p06-03 Summary
+
+- **`app/components/article.vue`**: `<script setup>` + `defineProps`; `asyncData` removed (never ran on components in Nuxt 2 — was dead code); `mounted` → `onMounted`; `this.$refs.article` → `const articleRef = ref(null)` with `ref="articleRef"`; `this.$options.filters.lstring()` → `lstring()` imported from `~/utils/filters`; `useHttp({...}, this.$axios)` → `$fetch` from `ofetch` directly; `getOembedHtml`/`isYoutube`/`getYoutubeHtml` become plain functions in script setup scope
+- **`pages/[conferenceCode]/article/[tag].vue`**: `<script setup>`; `useArticleStore().get({ code, tag })`; `useAsyncData` keyed as `article-${conferenceCode}-${tag}`; `route.params.tag` from `useRoute()`; `routesStore.setShowMeetingNav(false)` replaces `store.commit`; blob converted with `URL.createObjectURL`
+- **`pages/[conferenceCode]/file-view.vue`**: `<script setup>`; `definePageMeta({ layout: 'bottom-screen' })`; `storeToRefs(useFilesStore()).fileToOpen` replaces `store.state.files.fileToOpen`; `useI18n().t('viewFile')` replaces `app.i18n.t`; `useBus().on/off` replace `$root.$on/off`; named `done` handler stored for proper `bus.off` cleanup; `beforeDestroy` → `onBeforeUnmount`
+- **`tests/pages/article-fileview-pages.test.js`**: 10 tests; pinia storeToRefs mocked to avoid double-wrapping; `useRoute` overridden to include `tag` param; bus `on`/`off` handler verified by identity (same reference across mount/unmount calls)
+- 161 total tests passing
 
 ## p06-02 Summary
 
