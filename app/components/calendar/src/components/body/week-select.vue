@@ -39,32 +39,28 @@
 
 </template>
 
-<script>
-import Header    from '~/components/header/header-bottom-screen'
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useBus } from '~/composables/use-bus'
+import Header from '~/components/header/header-bottom-screen.vue'
 
-export default {
-  name      : 'WeekSelect',
-  props     : [ 'iteration' ],
-  components: { Header },
-  methods   : { changeDate },
-  data,
-  mounted, beforeDestroy 
+const props = defineProps(['iteration'])
+
+const { t } = useI18n()
+const bus = useBus()
+
+const title = t('weekSelect')
+const hide  = ref(false)
+
+function changeDate(index) {
+  bus.emit('changeDate', index)
+  hide.value = !hide.value
 }
 
-function data(){
-  const title = this.$t('weekSelect')
-  const hide  = false
+const toggleHide = () => { hide.value = !hide.value }
 
-  return { title, hide }
-}
-
-function changeDate(index){
-  this.$root.$emit('changeDate', index)
-  this.hide = !this.hide
-}
-
-function mounted(){ this.$root.$on('bottom-screen-done', () =>  this.hide = !this.hide) }
-function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
+onMounted(() => { bus.on('bottom-screen-done', toggleHide) })
+onBeforeUnmount(() => { bus.off('bottom-screen-done', toggleHide) })
 </script>
 
 <style scoped>

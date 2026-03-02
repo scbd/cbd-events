@@ -2,59 +2,39 @@
   <span><a :href="download">{{ symbol }}</a></span>
 </template>
 
-<script>
-import axios from 'axios'
+<script setup>
+import { ref, computed } from 'vue'
+import { $fetch } from 'ofetch'
 
-export default {
-  name : 'CalEventDetailsFile',
-  props: [ 'file' ],
-  data(){
-    return{
-      symbol  : this.file.symbol,
-      id      : this.file._id,
-      title   : this.file.title?this.file.title.en:'',
-      fullFile: {}
-    }
-  },
-  created(){
-    this.getData(this.genFilePath(this.symbol))
-      .then((res) => {
-        this.fullFile = res.data
-      })
-  },
-  computed: {
-    download
-  },
-  methods: {
-    genFilePath,
-    genMeetingFromSymbol,
-    getData
-  }
-}
-function getData(path, params={}){
-  const response = axios.get(path, params)
+const props = defineProps(['file'])
+const config = useRuntimeConfig()
 
-  return response
-}
+const symbol   = ref(props.file.symbol)
+const id       = ref(props.file._id)
+const title    = ref(props.file.title ? props.file.title.en : '')
+const fullFile = ref({})
 
-function download(){
-  if(!this.fullFile.files) return '#'
-  const file = this.fullFile.files.find((f) => ((f.language === 'en' && f.type === 'application/msword') ||
-              (f.language === 'en' && f.type === 'application/pdf'))
-  )
-
-  return file.url
-}
-function genMeetingFromSymbol(){
-  if (!this.symbol) return false
-  const symbolArr = this.symbol.split('/')
-
+function genMeetingFromSymbol() {
+  if (!symbol.value) return false
+  const symbolArr = symbol.value.split('/')
   return `${symbolArr[1]}-${symbolArr[2]}`
 }
-function genFilePath(){
-  return  `${process.env.NUXT_ENV_API}/api/v2016/meetings/${this.genMeetingFromSymbol()}/documents/${this.id}`
+
+function genFilePath() {
+  return `${config.public.api}/api/v2016/meetings/${genMeetingFromSymbol()}/documents/${id.value}`
 }
 
+const download = computed(() => {
+  if (!fullFile.value.files) return '#'
+  const file = fullFile.value.files.find((f) =>
+    (f.language === 'en' && f.type === 'application/msword') ||
+    (f.language === 'en' && f.type === 'application/pdf')
+  )
+  return file?.url || '#'
+})
+
+// created logic
+$fetch(genFilePath()).then((data) => { fullFile.value = data })
 </script>
 
 <style module>

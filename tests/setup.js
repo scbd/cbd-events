@@ -35,10 +35,13 @@ vi.stubGlobal('useLocalePath', vi.fn(() => (route) => '/' + (route?.name || ''))
 
 // ── i18n ───────────────────────────────────────────────────────────────────
 vi.stubGlobal('useI18n', vi.fn(() => ({
-  t          : (k) => k,
-  locale     : ref('en'),
-  locales    : ref([{ code: 'en' }, { code: 'fr' }]),
-  setLocale  : vi.fn().mockResolvedValue(undefined),
+  t               : (k) => k,
+  locale          : ref('en'),
+  locales         : ref([{ code: 'en' }, { code: 'fr' }]),
+  setLocale       : vi.fn().mockResolvedValue(undefined),
+  getLocaleMessage: vi.fn(() => ({})),
+  setLocaleMessage: vi.fn(),
+  mergeLocaleMessage: vi.fn(),
 })))
 
 // ── Nuxt app / runtime config ─────────────────────────────────────────────

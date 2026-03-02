@@ -4,12 +4,5 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CalDayRow'
-}
+<script setup>
 </script>
-
-<style>
-
-</style>

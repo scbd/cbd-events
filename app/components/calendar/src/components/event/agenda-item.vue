@@ -4,17 +4,12 @@
   </span>
 </template>
 
-<script>
-export default {
-  name   : 'AgendaItem',
-  props  : [ 'body', 'item' ],
-  methods: {
-    mapBody(){
-      if(~this.body.indexOf('COP'))
-        return 'CBD'
-      return this.body.slice(0, this.body.indexOf('-'))
-    }
-  }
+<script setup>
+const props = defineProps(['body', 'item'])
+
+function mapBody() {
+  if (~props.body.indexOf('COP')) return 'CBD'
+  return props.body.slice(0, props.body.indexOf('-'))
 }
 </script>
 

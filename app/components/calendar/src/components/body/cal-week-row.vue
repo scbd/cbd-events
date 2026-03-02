@@ -61,75 +61,53 @@
   </div>
 </template>
 
-<script>
-import CalEvent     from '../event/cal-event'
+<script setup>
+import { ref, computed, onMounted, useTemplateRef } from 'vue'
+import CalEvent from '../event/cal-event.vue'
 
-export default {
-  name: 'CalWeekRow',
-  data(){
-    return{
-      scrollPosition: 0,
-      hasMoreL      : false
-    }
-  },
-  props     : [ 'day', 'dayEvents', 'yIndex', 'conference' ],
-  components: { CalEvent },
-  methods   : {
-    onScroll,
-    scrollForward,
-    scrollBack
-  },
-  computed: {
-    hasMoreRight,
-    hasMoreLeft
-  },
-  mounted (){
-    const el = this.$refs.day
+const props = defineProps(['day', 'dayEvents', 'yIndex', 'conference'])
 
-    if(el.addEventListener)
-      el.addEventListener('scroll', this.onScroll)
-    else
-      el.onscroll = this.onScroll
-  }
-}
+const scrollPosition = ref(0)
+const hasMoreL       = ref(false)
+const dayRef         = useTemplateRef('day')
 
-function hasMoreRight(){
-  if(!this.dayEvents) return false
-  const eventSizePercent = 100/this.dayEvents.length
-
-  if(this.scrollPosition + eventSizePercent >=100) return false
+const hasMoreRight = computed(() => {
+  if (!props.dayEvents) return false
+  const eventSizePercent = 100 / props.dayEvents.length
+  if (scrollPosition.value + eventSizePercent >= 100) return false
   return (eventSizePercent < 20)
+})
+
+const hasMoreLeft = computed(() => hasMoreL.value)
+
+function xPercentage(el) {
+  return 100 * el.scrollLeft / (el.scrollWidth - el.clientWidth)
 }
 
-function hasMoreLeft(){
-  return this.hasMoreL
-}
-
-function onScroll(e){
-  if(!this.dayEvents){
-    this.hasMoreL = 0
+function onScroll(e) {
+  if (!props.dayEvents) {
+    hasMoreL.value = 0
     return
   }
-
-  this.hasMoreL  = (xPercentage(e.target) >0)
-  this.scrollPosition = (xPercentage(e.target))
+  hasMoreL.value = (xPercentage(e.target) > 0)
+  scrollPosition.value = xPercentage(e.target)
 }
 
-function xPercentage(el){
-  return 100 * el.scrollLeft / (el.scrollWidth-el.clientWidth)
-}
-
-function scrollForward(){
-  const el = this.$refs.day
-
+function scrollForward() {
+  const el = dayRef.value
   el.scrollLeft += el.clientWidth
 }
 
-function scrollBack(){
-  const el = this.$refs.day
-
+function scrollBack() {
+  const el = dayRef.value
   el.scrollLeft -= el.clientWidth
 }
+
+onMounted(() => {
+  const el = dayRef.value
+  if (el.addEventListener) el.addEventListener('scroll', onScroll)
+  else el.onscroll = onScroll
+})
 </script>
 <style>
   .fader-enter-active {

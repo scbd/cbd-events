@@ -16,42 +16,37 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const props = defineProps(['iterations'])
+const emit  = defineEmits(['action'])
+
 let Velocity = {}
+const change = ref(true)
 
-export default {
-  name : 'CalFooter',
-  props: [ 'iterations' ],
-  mounted(){
-    //eslint-disable-next-line
-    Velocity = require('velocity-animate')
-  },
-  methods: {
-    changeDate,
-    handlers(){ return{ left: this.left, right: this.right } },
-    inBounds(iteration, index){
-      if(this.iterations && this.iterations.length !== 15) return false
-      if(index > 4 && index < 10) return true
-      return false
-    },
-    leave
-  }
+onMounted(async () => {
+  const mod = await import('velocity-animate')
+  Velocity = mod.default || mod
+})
+
+function changeDate(index) {
+  if (Number(index) === 7) return
+  change.value = ((7 - Number(index)) > 0)
+  return emit('action', 7 - Number(index))
 }
 
-function changeDate(index){
-  if(Number(index) === 7) return
-  this.change = ((7 - Number(index)) >0)
-  return  this.$emit('action', 7 - Number(index))
+function inBounds(iteration, index) {
+  if (props.iterations && props.iterations.length !== 15) return false
+  if (index > 4 && index < 10) return true
+  return false
 }
 
-function leave(el){
-  if(this.iterations && this.iterations.length === 15) return false
-  const change = this.change ? '' : '-'
-
-  Velocity(el, { translateX: `${change}100%`, 'background-color': '#eeeeee', color: 'inherit' }, { duration: 20 })
+function leave(el) {
+  if (props.iterations && props.iterations.length === 15) return false
+  const dir = change.value ? '' : '-'
+  Velocity(el, { translateX: `${dir}100%`, 'background-color': '#eeeeee', color: 'inherit' }, { duration: 20 })
 }
-
-
 </script>
 
 <style>

@@ -11,27 +11,17 @@
   </div>
 </template>
 
-<script>
-import CalWeekRow from './cal-week-row'
+<script setup>
+import { computed } from 'vue'
+import CalWeekRow from './cal-week-row.vue'
 
-export default {
-  name      : 'CalWeekBody',
-  components: { CalWeekRow },
-  props     : [ 'week', 'eventsByWeek', 'conference' ],
-  computed  : {
-    events: getEvents
-  },
-  methods: {
-    getDayEvents
-  }
-}
+const props = defineProps(['week', 'eventsByWeek', 'conference'])
 
-function getDayEvents(d){
-  if(!this.eventsByWeek) return[]
-  return this.eventsByWeek[d.aDateTime.toFormat('yyyy-MM-dd')]
-}
-function getEvents(){
-  return this.eventsByWeek
+const events = computed(() => props.eventsByWeek)
+
+function getDayEvents(d) {
+  if (!props.eventsByWeek) return []
+  return props.eventsByWeek[d.aDateTime.toFormat('yyyy-MM-dd')]
 }
 </script>
 

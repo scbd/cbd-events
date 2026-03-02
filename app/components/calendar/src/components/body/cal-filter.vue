@@ -70,95 +70,84 @@
   </transition>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
+import { $fetch } from 'ofetch'
+import { useBus } from '~/composables/use-bus'
 
+const props = defineProps(['event'])
 
-import events from '../../modules/bus'
-import axios from 'axios'
+const { t, locale: i18nLocale } = useI18n()
+const config = useRuntimeConfig()
+const bus = useBus()
 
-export default {
-  name: 'Details',
-  data(){
-    return{
-      keyWordFilter         : '',
-      showStreamDropdown    : false,
-      showSubjectDropdown   : false,
-      showAgendaItemDropdown: false,
-      selectedStream        : this.$t('stream'),
-      selectedProgramme     : this.$t('programme'),
-      selectedAgendaItem    : this.$t('agendaItem'),
-      streams               : [],
-      agendaItems           : [],
-      programmes            : []
-    }
-  },
-  created(){
-    const locale = this.$i18n.locale
+const keyWordFilter          = ref('')
+const showStreamDropdown     = ref(false)
+const showSubjectDropdown    = ref(false)
+const showAgendaItemDropdown = ref(false)
+const selectedStream         = ref(t('stream'))
+const selectedProgramme      = ref(t('programme'))
+const selectedAgendaItem     = ref(t('agendaItem'))
+const streams                = ref([])
+const agendaItems            = ref([])
+const programmes             = ref([])
 
-    getPrograms(locale).then((progs) => {
-      progs = mapPrograms(sanitizeResult(progs.data, locale))
-      this.$set(this, 'programmes', progs.filter(p => p))
-    })
-  },
-  props  : [ 'event' ],
-  methods: {
-    showFilter,
-    toggleStream,
-    done
-  }
-}
-
-function done (e){
+function done(e) {
   e.data = {
     show              : false,
-    keyWordFilter     : this.keyWordFilter,
-    selectedAgendaItem: (this.selectedAgendaItem!==this.$t('agendaItem'))? this.selectedAgendaItem:'',
-    selectedProgramme : (this.selectedProgramme!==this.$t('programme'))? this.selectedProgramme:'',
-    selectedStream    : (this.selectedStream!==this.$t('stream'))? this.selectedStream:''
+    keyWordFilter     : keyWordFilter.value,
+    selectedAgendaItem: (selectedAgendaItem.value !== t('agendaItem')) ? selectedAgendaItem.value : '',
+    selectedProgramme : (selectedProgramme.value !== t('programme')) ? selectedProgramme.value : '',
+    selectedStream    : (selectedStream.value !== t('stream')) ? selectedStream.value : ''
   }
-  events.$emit('showFilter', e)
+  bus.emit('showFilter', e)
 }
 
-function showFilter (e){
+function showFilter(e) {
   e.data = false
-  events.$emit('showFilter', e)
-}
-function toggleStream (){
-  this.showStreamDropdown=!this.showStreamDropdown
+  bus.emit('showFilter', e)
 }
 
-function getPrograms(){
-  const endPoint = `${process.env.NUXT_ENV_API}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
-
-  return axios.get(endPoint)
+function toggleStream() {
+  showStreamDropdown.value = !showStreamDropdown.value
 }
 
-function mapPrograms (programmes){
+async function getPrograms() {
+  const endPoint = `${config.public.api}/api/v2013/thesaurus/domains/CBD-SUBJECTS/terms`
+  return $fetch(endPoint)
+}
+
+function mapPrograms(progs) {
   const parents = []
   const map = {}
 
-  for (let i = 0; i < programmes.length; i++)
-    map[programmes[i].identifier]=programmes[i]
+  for (let i = 0; i < progs.length; i++)
+    map[progs[i].identifier] = progs[i]
 
-  for (let i = 0; i < programmes.length; i++)
-    if(!programmes[i].broaderTerms.length){
-      parents.push(programmes[i])
-      if(programmes[i].narrowerTerms.length)
-        if(!programmes[i].children)programmes[i].children=[]
-      for (let j = 0; j < programmes[i].narrowerTerms.length; j++)
-        programmes[i].children.push(map[programmes[i].narrowerTerms[j]])
+  for (let i = 0; i < progs.length; i++)
+    if (!progs[i].broaderTerms.length) {
+      parents.push(progs[i])
+      if (progs[i].narrowerTerms.length)
+        if (!progs[i].children) progs[i].children = []
+      for (let j = 0; j < progs[i].narrowerTerms.length; j++)
+        progs[i].children.push(map[progs[i].narrowerTerms[j]])
     }
   return parents
 }
 
-function sanitizeResult(docs, locale='en'){
+function sanitizeResult(docs, locale = 'en') {
   for (let i = 0; i < docs.length; i++)
-    //eslint-disable-next-line
     for (const variable in docs[i])
-      if([ 'title' ].includes(variable))
-        docs[i][variable]=docs[i][variable][locale]
+      if (['title'].includes(variable))
+        docs[i][variable] = docs[i][variable][locale]
   return docs
 }
+
+// created logic
+getPrograms().then((data) => {
+  const progs = mapPrograms(sanitizeResult(data, i18nLocale.value))
+  programmes.value = progs.filter(p => p)
+})
 </script>
 <style>
 

@@ -38,7 +38,7 @@ function truncateText(el, bindings, useFallbackFunc){
 }
 
 export default  {
-  bind (el){
+  beforeMount (el){
     if(typeof document === 'undefined') return
 
     useFallbackFunc =
@@ -47,7 +47,6 @@ export default  {
       : defaultFallbackFunc;
     el.style.cssText += css
   },
-  inserted        : (el, bindings) => truncateText(el, bindings, useFallbackFunc),
-  updated         : (el, bindings) => truncateText(el, bindings, useFallbackFunc),
-  componentUpdated: (el, bindings) => truncateText(el, bindings, useFallbackFunc)
+  mounted : (el, bindings) => truncateText(el, bindings, useFallbackFunc),
+  updated : (el, bindings) => truncateText(el, bindings, useFallbackFunc)
 }

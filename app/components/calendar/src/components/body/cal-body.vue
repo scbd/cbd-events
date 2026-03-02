@@ -6,6 +6,7 @@
     <transition name="slide-week" @leave="leave" >
       <CalWeekBody
         v-if="isWeek && !selectedIteration.loading"
+        ref="weekBody"
         :week="selectedIteration"
         :events-by-week="selectEvents"
         :conference="conference"
@@ -15,81 +16,65 @@
   </div>
 </template>
 
-<script>
-import CalWeekBody  from './cal-week-body'
-import Details      from '../event/cal-event-details'
-import EventsBus    from '../../modules/bus'
-import CalFilter    from './cal-filter'
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
+import { useBus }   from '~/composables/use-bus'
+import CalWeekBody   from './cal-week-body.vue'
+import Details       from '../event/cal-event-details.vue'
+import CalFilter     from './cal-filter.vue'
 
+const props = defineProps(['selectedIteration', 'events', 'conference'])
 
-export default {
-  name      : 'CalBody',
-  props     : [ 'selectedIteration', 'events', 'conference' ],
-  components: { CalWeekBody, Details, CalFilter },
-  methods   : { leave, showDetails, filter },
-  computed  : { isWeek, isMeeting, isDay, selectEvents },
-  data,
-  mounted
+const bus = useBus()
+
+const detailsData = ref(false)
+const showFilter  = ref(false)
+const weekBodyRef = useTemplateRef('weekBody')
+
+const isWeek    = computed(() => props.selectedIteration.type === 'week')
+const isDay     = computed(() => props.selectedIteration.type === 'day')
+const isMeeting = computed(() => props.selectedIteration.type === 'meeting')
+
+const selectEvents = computed(() => {
+  if (!props.selectedIteration) return {}
+  const weekText = props.selectedIteration.aDateTime?.toFormat('yyyy-W')
+  const dayText  = props.selectedIteration.aDateTime?.toFormat('yyyy-MM-dd')
+
+  if (isWeek.value && props.events.weeks) return props.events.weeks[weekText]
+  if (isDay.value && props.events.days)   return props.events.days[dayText]
+})
+
+function filter(e) {
+  if (Object.prototype.hasOwnProperty.call(e || {}, 'data'))
+    return (showFilter.value = e.data.show)
+  return (showFilter.value = !showFilter.value)
 }
 
-function  data(){
-  return{
-    detailsData: false,
-    showFilter : false
-  }
-}
-
-function mounted(){
-  EventsBus.$on('EventDetails', this.showDetails)
-  EventsBus.$on('showFilter', this.filter)
-}
-
-function filter (e){
-  if(hasOwnProperty.call(e||{}, 'data'))
-    return this.showFilter = e.data.show
-  
-  return this.showFilter=!this.showFilter
-}
-
-function showDetails (e){
+function showDetails(e) {
   const { data } = e
-
-  this.detailsData = this.detailsData? false : data
+  detailsData.value = detailsData.value ? false : data
 }
 
-function selectEvents(){
-  if(!this.selectedIteration) return {}
-
-  const { events } = this
-  const weekText = this.selectedIteration.aDateTime.toFormat('yyyy-W')
-  const dayText = this.selectedIteration.aDateTime.toFormat('yyyy-MM-dd')
-
-  if(this.isWeek && events.weeks)
-    return events.weeks[weekText]
-
-  if(this.isDay && events.days)
-    return events.days[dayText]
+function leave() {
+  // In Vue 2 this iterated this.$children[0].$refs — replaced with template ref
+  const el = weekBodyRef.value?.$el
+  if (el) {
+    const children = el.children
+    for (let i = 0; i < children.length; i++)
+      children[i].style.display = 'block'
+  }
+  setTimeout(() => { props.selectedIteration.loading = false }, 400)
 }
 
-function isWeek(){
-  return (this.selectedIteration.type==='week')
-}
+onMounted(() => {
+  bus.on('EventDetails', showDetails)
+  bus.on('showFilter', filter)
+})
 
-function isDay(){
-  return (this.selectedIteration.type==='day')
-}
-
-function isMeeting(){
-  return (this.selectedIteration.type==='meeting')
-}
-
-function leave(){
-  for (const ref in this.$children[0].$refs)
-    this.$children[0].$refs[ref].style.display='block'
-
-  setTimeout(() => { this.selectedIteration.loading = false }, 400)
-}
-
+onBeforeUnmount(() => {
+  bus.off('EventDetails', showDetails)
+  bus.off('showFilter', filter)
+})
 </script>
 
 <style>

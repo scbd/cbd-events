@@ -4,234 +4,193 @@
     <div :class="[$style.calComponent]">
       <CalHeader :selected-iteration="selectedIteration" />
       
-      <CalBody :selected-iteration="selectedIteration" :conference="conference" :events="events" />
+      <CalBody :selected-iteration="selectedIteration" :conference="conference" :events="calEvents" />
     </div>
   </section>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { DateTime, IANAZone } from 'luxon'
-import events             from '../modules/bus'
-import CalBody            from './body/cal-body'
-import CalHeader          from './header/cal-header'
-import CalWeeks           from '../modules/cal-weeks-service'
-import messages           from '../locales'
-import WeekSelect         from './body/week-select'
+import { useBus }     from '~/composables/use-bus'
+import CalBody         from './body/cal-body.vue'
+import CalHeader       from './header/cal-header.vue'
+import CalWeeks        from '../modules/cal-weeks-service'
+import messages        from '../locales'
+import WeekSelect      from './body/week-select.vue'
 
-export default {
-  name      : 'Calendar',
-  props     : [ 'options' ],
-  components: { CalBody, CalHeader, WeekSelect },
-  computed  : { iterations, selectedIteration, queryObject, conferenceTimeZone },
-  methods   : { mapByDay, mapByWeek, changeDateTime, setIterationsService, getEvents, setQueryString, applyFilter },
-  data,
-  mounted,
-  created,
-  beforeCreate
+const props = defineProps(['options'])
+
+const { locale: i18nLocale, t, getLocaleMessage, setLocaleMessage } = useI18n()
+const route  = useRoute()
+const router = useRouter()
+const bus    = useBus()
+
+// Merge calendar-specific i18n messages (was beforeCreate)
+for (const loc in messages) {
+  const msgs = getLocaleMessage(loc)
+  setLocaleMessage(loc, Object.assign(msgs, messages[loc]))
 }
 
-function data(){
-  return{
-    events           : {},
-    query            : {},
-    iterationsService: this.setIterationsService(this.$i18n, this.$route.query.selected),
-    conference       : this.options.conference
-  }
-}
+const calEvents          = ref({})
+const query              = ref({})
+const conference         = ref(props.options.conference)
 
-function mounted(){
-  events.$on('showFilter', this.applyFilter)
-  this.$root.$on('changeDate', this.changeDateTime)
-}
+const conferenceTimeZone = computed(() => {
+  const timeZone = conference.value?.timeZone
+  if (timeZone && IANAZone.isValidZone(timeZone)) return timeZone
+  return 'America/Montreal'
+})
 
-function beforeCreate(){
-  const { $i18n } = this;
-  
-  if(!$i18n) throw new Error('$i18n must be installed')
+function initIterationsService(i18n, date, type = 'week') {
+  if (!i18n) throw new Error('must have i18n installed')
+  const opts   = props.options || {}
+  const locale = opts.locale || 'en'
 
-  for (const locale in messages){
-    const msgs = $i18n.getLocaleMessage(locale);
-
-    $i18n.setLocaleMessage(locale, Object.assign(msgs, messages[locale]));
-  }
-}
-
-function created(){
-  const { $route, $router, $i18n } = this
-  const { query } = $route
-  const initStart = this.conference?.apps?.cbdEvents?.start || this.conference.startDate
-  const timeZone = this.conferenceTimeZone
-  const start = initStart? DateTime.fromISO(initStart, { zone: timeZone }) : DateTime.local()
-  const route = { query: { selected: start.toFormat('yyyy-MM-dd') } }
-
-  if(!query || !query.selected)
-    $router.replace(route)
-  else
-    this.iterationsService = this.setIterationsService($i18n, query.selected)
-
-  this.setQueryString(0)
-  this.getEvents()
-}
-
-function getEvents(){
-  const { queryFn } = this.options
-
-  return queryFn(this.queryObject)
-    .then(this.mapByDay)
-    .then(this.mapByWeek)
-    .then((e) => { this.events = e })
-}
-
-function selectedIteration(){
-  try { return this.iterationsService.selected }
-  catch(e){ return {} }
-}
-
-function iterations(){
-  if(!this.iterationsService) return []
-
-  const { iterations } = this.iterationsService
-
-  return iterations || []
-}
-
-function applyFilter (event){
-  try{
-    const { data } = event
-    const { options, $i18n } = this
-    const locale = options.locale || $i18n.locale
-    
-    if(!data.show) this.query = Object.assign(this.query, { locale })
-
-    this.query = Object.assign({ locale }, this.query, data)
-  }
-  catch(e){ this.query = {} }
-  finally{ this.getEvents(this.queryObject) }
-}
-
-
-function queryObject (){
-  //eslint-disable-next-line
-  let   { conference } = this.options
-  const { id         } = conference
-  const   locale       = this.options.locale || this.$i18n.locale || 'en'
-  const   query        = Object.assign(this.query, { locale, conference: id })
-
-  this.query = query
-  return query
-}
-
-function changeDateTime(numberOfIterations){
-  if(!this.iterationsService) this.setIterationsService()
-  const num = Number(numberOfIterations)
-
-  this.setQueryString(num)
-
-  this.getEvents(this.query).then(() => {
-    this.iterationsService.add(num)
-  })
-}
-
-function setQueryString(interations){
-
-  const { next, prev } = this.selectedIteration
-  
-  let nextIteration = this.selectedIteration
-
-  if(interations ==- 1) nextIteration = next
-  if(interations == -2) nextIteration = next.next
-  if(interations == 2)  nextIteration = prev.prev
-  if(interations == 1)  nextIteration = prev
-  
-  const { aDateTime, endDateTime } = nextIteration
-  const route = { query: { selected: aDateTime.toFormat('yyyy-MM-dd') } }
-
-
-  if(interations) this.$router.replace(route)
-
-  const start = aDateTime.toISO({includeOffset:false})
-  const end   = endDateTime.toISO({includeOffset:false})
-
-  this.query = { ...this.query, start, end }
-}
-
-function setIterationsService($i18n, date, type='week'){
-  if(!$i18n) throw new Error('must have i18n installed')
-  const opts   = this? this.options || {} : {}
-  const locale = opts.locale || 'en'//getUserAgentLocale()
-
-  if(date) date = DateTime.fromISO(date)
+  if (date) date = DateTime.fromISO(date)
   else date = DateTime.local()
-  if(type === 'week')
-    return new CalWeeks($i18n, date, locale)
+  if (type === 'week') return new CalWeeks(i18n, date, locale)
 }
 
-function mapByDay(events){
+const i18nObj = { locale: i18nLocale, t, getLocaleMessage, setLocaleMessage }
+const iterationsService = ref(initIterationsService(i18nObj, route.query.selected))
+
+const selectedIteration = computed(() => {
+  try { return iterationsService.value.selected }
+  catch (e) { return {} }
+})
+
+const iterations = computed(() => {
+  if (!iterationsService.value) return []
+  return iterationsService.value.iterations || []
+})
+
+const queryObject = computed(() => {
+  const { conference: conf } = props.options
+  const { id } = conf
+  const locale = props.options.locale || i18nLocale.value || 'en'
+  const q = Object.assign(query.value, { locale, conference: id })
+  query.value = q
+  return q
+})
+
+function mapByDay(events) {
   const { raw } = events
-  const conferenceTimeZone = this.conferenceTimeZone
+  const tz = conferenceTimeZone.value
   const days = {}
 
-  for (let i = raw.length-1; i >=0; i--){ //backrards so days are in order in object from push
+  for (let i = raw.length - 1; i >= 0; i--) {
     const { hasOwnProperty } = Object.prototype
-    const   dayStart         = DateTime.fromISO(raw[i].start, { zone: conferenceTimeZone }).startOf('day')
-    const   dayEnd           = DateTime.fromISO(raw[i].start, { zone: conferenceTimeZone }).endOf('day')
-    const   start            = DateTime.fromISO(raw[i].start, { zone: conferenceTimeZone })
-    const   dayStartText     = dayStart.toISODate({includeOffset:false})
+    const dayStart     = DateTime.fromISO(raw[i].start, { zone: tz }).startOf('day')
+    const dayEnd       = DateTime.fromISO(raw[i].start, { zone: tz }).endOf('day')
+    const start        = DateTime.fromISO(raw[i].start, { zone: tz })
+    const dayStartText = dayStart.toISODate({ includeOffset: false })
 
-
-    if(!hasOwnProperty.call(days, dayStartText))
-      days[dayStartText]=[]
-
-    if(start>=dayStart && start<=dayEnd)
-      days[dayStartText].push(raw[i])
+    if (!hasOwnProperty.call(days, dayStartText)) days[dayStartText] = []
+    if (start >= dayStart && start <= dayEnd) days[dayStartText].push(raw[i])
   }
 
   events.days = days
   return events
 }
 
-function mapByWeek(events){
+function mapByWeek(events) {
   const { days } = events
   const { hasOwnProperty } = Object.prototype
   const weeks = {}
-  const timeZone = this.conferenceTimeZone
-  
-  for (const day in days){
-    const year       = DateTime.fromISO(day, { zone: timeZone }).year
-    const weekNumber = DateTime.fromISO(day, { zone: timeZone }).weekNumber
+  const tz = conferenceTimeZone.value
+
+  for (const day in days) {
+    const year       = DateTime.fromISO(day, { zone: tz }).year
+    const weekNumber = DateTime.fromISO(day, { zone: tz }).weekNumber
     const weekText   = `${year}-${weekNumber}`
 
-    if(!hasOwnProperty.call(weeks, weekText)) weeks[weekText]={}
-
-    weeks[weekText][day]=days[day]
-
+    if (!hasOwnProperty.call(weeks, weekText)) weeks[weekText] = {}
+    weeks[weekText][day] = days[day]
   }
-  events.weeks=createLinkedList(weeks)
+  events.weeks = createLinkedList(weeks)
   return events
 }
 
-function createLinkedList(weeks){
+function createLinkedList(weeks) {
   const weekArr = Object.values(weeks)
-
-  //link listafy
-  for (let i = 0; i < weekArr.length; i++){
-    if(i>0)
-      weekArr[i].next = weekArr[i-1]
-    if(i<weekArr.length-1)
-      weekArr[i].prev = weekArr[i+1]
+  for (let i = 0; i < weekArr.length; i++) {
+    if (i > 0) weekArr[i].next = weekArr[i - 1]
+    if (i < weekArr.length - 1) weekArr[i].prev = weekArr[i + 1]
   }
   return weeks
 }
 
-function conferenceTimeZone(){
-  const timeZone = this.conference?.timeZone
-  
-  if (timeZone && IANAZone.isValidZone(timeZone)) {
-    return timeZone
-  }
-  
-  return 'America/Montreal'
+function getEvents() {
+  const { queryFn } = props.options
+  return queryFn(queryObject.value)
+    .then(mapByDay)
+    .then(mapByWeek)
+    .then((e) => { calEvents.value = e })
 }
+
+function setQueryString(interations) {
+  const { next, prev } = selectedIteration.value
+  let nextIteration = selectedIteration.value
+
+  if (interations === -1) nextIteration = next
+  if (interations === -2) nextIteration = next.next
+  if (interations === 2)  nextIteration = prev.prev
+  if (interations === 1)  nextIteration = prev
+
+  const { aDateTime, endDateTime } = nextIteration
+  const routeObj = { query: { selected: aDateTime.toFormat('yyyy-MM-dd') } }
+
+  if (interations) router.replace(routeObj)
+
+  const start = aDateTime.toISO({ includeOffset: false })
+  const end   = endDateTime.toISO({ includeOffset: false })
+
+  query.value = { ...query.value, start, end }
+}
+
+function applyFilter(event) {
+  try {
+    const { data } = event
+    const locale = props.options.locale || i18nLocale.value
+    if (!data.show) query.value = Object.assign(query.value, { locale })
+    query.value = Object.assign({ locale }, query.value, data)
+  }
+  catch (e) { query.value = {} }
+  finally { getEvents() }
+}
+
+function changeDateTime(numberOfIterations) {
+  if (!iterationsService.value) iterationsService.value = initIterationsService(i18nObj)
+  const num = Number(numberOfIterations)
+  setQueryString(num)
+  getEvents().then(() => { iterationsService.value.add(num) })
+}
+
+// created logic
+const initStart = conference.value?.apps?.cbdEvents?.start || conference.value.startDate
+const tz = conferenceTimeZone.value
+const startDt = initStart ? DateTime.fromISO(initStart, { zone: tz }) : DateTime.local()
+const initRoute = { query: { selected: startDt.toFormat('yyyy-MM-dd') } }
+
+if (!route.query || !route.query.selected)
+  router.replace(initRoute)
+else
+  iterationsService.value = initIterationsService(i18nObj, route.query.selected)
+
+setQueryString(0)
+getEvents()
+
+// mounted
+onMounted(() => {
+  bus.on('showFilter', applyFilter)
+  bus.on('changeDate', changeDateTime)
+})
+
+onBeforeUnmount(() => {
+  bus.off('showFilter', applyFilter)
+  bus.off('changeDate', changeDateTime)
+})
 </script>
 <style>
   a { color: #337ab7; text-decoration: none; }

@@ -17,114 +17,104 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, nextTick, onMounted, onUnmounted, useTemplateRef } from 'vue'
 import { DateTime }   from 'luxon'
-import lineClamp    from '../../directives/line-clamp'
-import events       from '../../modules/bus'
-import debounce     from 'lodash.debounce'
+import lineClamp      from '../../directives/line-clamp'
+import { useBus }     from '~/composables/use-bus'
+import debounce       from 'lodash.debounce'
 
-export default {
-  name : 'CalEvent',
-  props: [ 'event' ],
-  data(){
-    return {
-      numLines : 1,
-      widthFlag: false
-    }
-  },
-  directives: { clamp: lineClamp },
-  methods   : {
-    getDuration,
-    showDetails,
-    getStartTime,
-    resize,
-    oneLine,
-    isPast
-  },
-  mounted (){
-    this.isMounted = true;
-    this.resize()
-    window.addEventListener('resize', debounce(this.resize, 50))
-  },
-  destroyed (){
-    this.$nextTick(() => {
-      window.removeEventListener('resize', debounce(this.resize, 50))
-    })
+const vClamp = lineClamp
+
+const props = defineProps(['event'])
+const bus = useBus()
+
+const numLines  = ref(1)
+const widthFlag = ref(false)
+
+const eventCalRef      = useTemplateRef('eventCal')
+const eventCalTitleRef = useTemplateRef('eventCalTitle')
+
+function isPast() {
+  const start = DateTime.fromISO(props.event.start)
+  const today = DateTime.utc()
+  return start < today
+}
+
+function calcNumLines(height) {
+  if (height <= 52) return 1
+  if (height > 53 && height <= 79) return 2
+  if (height > 79 && height <= 105) return 3
+  if (height > 106) return 4
+}
+
+function oneLine() {
+  if (!eventCalTitleRef.value) return
+  eventCalTitleRef.value.style.margin = '0 0 0 0'
+  const titleWidth = eventCalTitleRef.value.clientWidth
+  const eventWidth = eventCalRef.value.clientWidth
+  const maxWidth = (eventWidth - 8)
+
+  if (eventCalRef.value.clientHeight < 35) {
+    if (titleWidth >= maxWidth)
+      eventCalTitleRef.value.style.width = eventCalTitleRef.value.clientWidth - 35 + 'px'
+  } else {
+    eventCalTitleRef.value.style.width = '100%'
   }
 }
-function isPast(){
-  const start = DateTime.fromISO(this.event.start)
-  const today = DateTime.utc()
 
-  if(start<today) return true
-  return false
-}
-
-function resize(){
-  this.$nextTick(() => {
-    this.numLines = numLines(this.$el.clientHeight)
-    if(this.numLines===1)
-      this.oneLine()
+function resize() {
+  nextTick(() => {
+    numLines.value = calcNumLines(eventCalRef.value.clientHeight)
+    if (numLines.value === 1)
+      oneLine()
     else
-      this.$refs.eventCalTitle.style.margin='1em 0 1em 0'
+      eventCalTitleRef.value.style.margin = '1em 0 1em 0'
   })
 }
 
-function oneLine(){
-  if(!this.$refs.eventCalTitle) return
-  this.$refs.eventCalTitle.style.margin='0 0 0 0'
-  const titleWidth = this.$refs.eventCalTitle.clientWidth
-  const eventWidth = this.$el.clientWidth
-  const maxWidth = (eventWidth - 8)
+const debouncedResize = debounce(resize, 50)
 
-  if(this.$el.clientHeight<35){
-    if((titleWidth >= maxWidth))
-      this.$refs.eventCalTitle.style.width = this.$refs.eventCalTitle.clientWidth - 35+'px'
-  }
-  else {
-    this.$refs.eventCalTitle.style.width = '100%'
-  }
+function showDetails(e) {
+  e.data = props.event
+  bus.emit('EventDetails', e)
 }
 
-function numLines(height){
-  if(height <= 52) return 1
-  if(height > 53 && height <= 79) return 2
-  if(height > 79 && height <= 105) return 3
-  if(height > 106) return 4
-}
-
-function showDetails (e){
-  e.data =this.event
-  events.$emit('EventDetails', e)
-}
-
-function getDuration (){
-  const start = DateTime.fromISO(this.event.start)
-  const end   = DateTime.fromISO(this.event.end)
+function getDuration() {
+  const start = DateTime.fromISO(props.event.start)
+  const end   = DateTime.fromISO(props.event.end)
   const diff = end.diff(start).shiftTo('hours', 'minutes').toObject()
 
-  if(diff.minutes < 60 && diff.minutes > 58){
-    diff.minutes=0
+  if (diff.minutes < 60 && diff.minutes > 58) {
+    diff.minutes = 0
     diff.hours++
   }
 
   let minutes = `${roundMinutes(diff.minutes)}m`
-
-  if(diff.minutes<59 && !diff.hours &&  diff.minutes) return minutes
-  if(!diff.minutes) minutes=''
-  return `${diff.hours}h `+minutes
+  if (diff.minutes < 59 && !diff.hours && diff.minutes) return minutes
+  if (!diff.minutes) minutes = ''
+  return `${diff.hours}h ` + minutes
 }
-function getStartTime (){
-  const start = DateTime.fromISO(this.event.start, { zone: this.event.timezone }).toFormat('T')
 
-  return start
+function getStartTime() {
+  return DateTime.fromISO(props.event.start, { zone: props.event.timezone }).toFormat('T')
 }
-function roundMinutes (m){
-  if(m>0 && m<= 15) return 15
-  if(m>15 && m<= 30) return 30
-  if(m>30 && m<= 59) return 45
+
+function roundMinutes(m) {
+  if (m > 0 && m <= 15) return 15
+  if (m > 15 && m <= 30) return 30
+  if (m > 30 && m <= 59) return 45
   return 0
 }
+
+onMounted(() => {
+  resize()
+  window.addEventListener('resize', debouncedResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', debouncedResize)
+})
 </script>
 
 <style module>

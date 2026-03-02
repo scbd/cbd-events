@@ -1,6 +1,6 @@
 
 export default  {
-  inserted
+  mounted: inserted
 }
 
 function inserted(el, binding){

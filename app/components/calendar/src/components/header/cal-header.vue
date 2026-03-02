@@ -15,25 +15,22 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
+import { useBus } from '~/composables/use-bus'
 
-import events from '../../modules/bus'
+const props = defineProps(['selectedIteration'])
+const bus = useBus()
 
-export default {
-  name   : 'CalHeader',
-  props  : [ 'selectedIteration' ],
-  methods: { toggleWeekSelect, toggleFilter },
-  data
+const showFilter = ref(false)
+
+function toggleWeekSelect() {
+  bus.emit('bottom-screen-done', { something: 'yes' })
 }
 
-function toggleWeekSelect(){
-  this.$root.$emit('bottom-screen-done', { something: 'yes' })
+function toggleFilter() {
+  bus.emit('showFilter')
 }
-
-function  data(){ return{ showFilter: false } }
-
-function toggleFilter(){ events.$emit('showFilter') }
-
 </script>
 
 <style module>

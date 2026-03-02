@@ -1,11 +1,11 @@
 import { DateTime } from 'luxon'
-import   Vue        from 'vue'
+import { nextTick } from 'vue'
 
 export default class {
   constructor($i18n, weekDateTime){
     this._initI18n($i18n)
 
-    Vue.set(this, 'iterations', [])
+    this.iterations = []
     this.weekIterations(weekDateTime)
     this.loading = false
   }
@@ -66,7 +66,7 @@ export default class {
 
       this.iterations[0].prev =  newWeek
       setTimeout(() => {
-        Vue.nextTick(() => this.iterations.pop())
+        nextTick(() => this.iterations.pop())
       }, 400);
       this.iterations.unshift(newWeek)
     }
@@ -87,7 +87,7 @@ export default class {
       this.iterations[14].next = newWeek
       this.iterations.push(newWeek)
       setTimeout(() => {
-        Vue.nextTick(() => this.iterations.shift())
+        nextTick(() => this.iterations.shift())
       }, 400)
     }
   }

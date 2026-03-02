@@ -4,12 +4,5 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CalMeetingRow'
-}
+<script setup>
 </script>
-
-<style>
-
-</style>

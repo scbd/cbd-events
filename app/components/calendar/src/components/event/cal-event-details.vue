@@ -89,107 +89,81 @@
   </transition>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useBus }              from '~/composables/use-bus'
+import AgendaItem              from './agenda-item.vue'
+import FileStatus              from './cal-event-details-file-status.vue'
+import { DateTime }            from 'luxon'
+import CalEventDetailsFile     from './cal-event-details-file.vue'
 
-import events               from '../../modules/bus'
-import AgendaItem           from './agenda-item'
-import FileStatus           from './cal-event-details-file-status'
-import { DateTime }           from 'luxon'
-import CalEventDetailsFile  from './cal-event-details-file'
-// import { Calendar } from '@awesome-cordova-plugins/calendar'
+const props = defineProps(['event', 'conference'])
+const bus = useBus()
 
-export default {
-  name      : 'Details',
-  props     : [ 'event', 'conference' ],
-  components: { AgendaItem, CalEventDetailsFile, FileStatus },
-  methods   : { addToCal, showDetails, files, itemTextArr, goTo, isInSession, addToCalReady },
-  computed  : { calEvent, dateTime, location, organizer, organizerEmail }
+const calEvent = computed(() => props.event || {})
+
+const dateTime = computed(() => {
+  const start = DateTime.fromISO(calEvent.value.start, { zone: calEvent.value.timezone }).toFormat('T')
+  const end   = DateTime.fromISO(calEvent.value.end, { zone: calEvent.value.timezone }).toFormat('T  cccc, LLLL L ')
+  return `${start} - ${end}`
+})
+
+const location = computed(() => {
+  const localName = calEvent.value.roomLocalName || ''
+  const loc       = calEvent.value.roomLocation
+  const title     = calEvent.value.roomTitle
+  return `${localName}${(loc && localName) ? ',' : ''} ${loc}${title ? ',' : ''} ${title}`
+})
+
+const organizer = computed(() => {
+  const name  = calEvent.value.organizerName || ''
+  let email   = calEvent.value.organizerEmail || ''
+  if (email) email = `${name ? '-' : ''} <${email}>`
+  if (!email && !name) return false
+  return `${name} ${email}`
+})
+
+const organizerEmail = computed(() => calEvent.value.organizerEmail || '')
+
+function addToCal() {
+  const start = DateTime.fromISO(calEvent.value.start, { zone: calEvent.value.timezone }).toJSDate()
+  const end   = DateTime.fromISO(calEvent.value.end, { zone: calEvent.value.timezone }).toJSDate()
 }
 
-function addToCal(){
-  const success = function(message) { console.log("Success: " + JSON.stringify(message)); };
-  const error   = function(message) { console.error("Error: " + message); };
-  const start   = DateTime.fromISO(this.calEvent.start, { zone: this.calEvent.timezone }).toJSDate()
-  const end     = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toJSDate()
+function addToCalReady() { return props.conference.schedule.addToCalReady }
 
-
-  // Calendar.createEventInteractively(this.calEvent.title,this.location,this.calEvent.description,start,end,success,error);
-}
-function addToCalReady(){ return this.conference.schedule.addToCalReady }
-  
-function goTo(url){
-  if(!process.server)
-    window.open(url, '_blank')
+function goTo(url) {
+  if (!import.meta.server) window.open(url, '_blank')
 }
 
-function itemTextArr (i){
-  if(this.calEvent.itemText)
-    return this.calEvent.itemText[i]
-  return''
+function itemTextArr(i) {
+  if (calEvent.value.itemText) return calEvent.value.itemText[i]
+  return ''
 }
 
-function showDetails (e){
+function showDetails(e) {
   e.stopPropagation()
-  e.data ={ data: true }
-  events.$emit('EventDetails', e)
+  e.data = { data: true }
+  bus.emit('EventDetails', e)
 }
 
-function calEvent (){
-  if(!this.event) return {}
-  return this.event
-}
-
-function dateTime (){
-  const start = DateTime.fromISO(this.calEvent.start, { zone: this.calEvent.timezone }).toFormat('T')
-  const end = DateTime.fromISO(this.calEvent.end, { zone: this.calEvent.timezone }).toFormat('T  cccc, LLLL L ')
-
-  return  `${start} - ${end}`
-}
-
-function location (){
-  const localName = this.calEvent.roomLocalName || ''
-  const location = this.calEvent.roomLocation
-  const title = this.calEvent.roomTitle
-
-  return  `${localName}${(location&&localName) ?',':''} ${location}${title ?',':''} ${title}`
-}
-  
-function organizer (){
-  const name = this.calEvent.organizerName || ''
-  let email = this.calEvent.organizerEmail || ''
-
-  if(email) email = `${name? '-':''} <${email}>`
-  if(!email && !name) return false
-  return  `${name} ${email}`
-}
-
-function organizerEmail (){
-  return  this.calEvent.organizerEmail || ''
-}
-  
-function files (index){
-  if(!this.calEvent.itemText)this.calEvent.itemText=[]
-  if(!this.calEvent.item)this.calEvent.item=[]
-  if(!this.calEvent.itemFiles)this.calEvent.itemFiles=[]
-  for (let i = 0; i < this.calEvent.itemFiles.length; i++){
-    if(typeof this.calEvent.itemFiles[i] === 'string')
-      this.calEvent.itemFiles[i] = JSON.parse(this.calEvent.itemFiles[i])
-
-    if(this.calEvent.itemFiles[i] && this.calEvent.itemFiles[i][0])
-      this.calEvent.itemFiles[i] = this.calEvent.itemFiles[i][0]
+function files(index) {
+  if (!calEvent.value.itemText) calEvent.value.itemText = []
+  if (!calEvent.value.item) calEvent.value.item = []
+  if (!calEvent.value.itemFiles) calEvent.value.itemFiles = []
+  for (let i = 0; i < calEvent.value.itemFiles.length; i++) {
+    if (typeof calEvent.value.itemFiles[i] === 'string')
+      calEvent.value.itemFiles[i] = JSON.parse(calEvent.value.itemFiles[i])
+    if (calEvent.value.itemFiles[i] && calEvent.value.itemFiles[i][0])
+      calEvent.value.itemFiles[i] = calEvent.value.itemFiles[i][0]
   }
-
-  return  this.calEvent.itemFiles[index]|| {}
+  return calEvent.value.itemFiles[index] || {}
 }
-  
-function isInSession(){
-  const start = DateTime.fromISO(this.conference.schedule.start)
-  const now = DateTime.local().setZone(this.conference.timezone)
 
-  if(start <= now)
-    return true
-
-  return false
+function isInSession() {
+  const start = DateTime.fromISO(props.conference.schedule.start)
+  const now   = DateTime.local().setZone(props.conference.timezone)
+  return start <= now
 }
 </script>
 <style>
