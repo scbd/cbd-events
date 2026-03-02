@@ -1,12 +1,12 @@
 <template>
-  <div :class="{'not-in-session':!isInSession}" class="main" >
-    <h4 v-if="!isInSession" class="text-center mt-3" >
+  <div :class="{'not-in-session': !sessionActive}" class="main">
+    <h4 v-if="!sessionActive" class="text-center mt-3">
       Provisional Agenda
     </h4>
-    <hr v-if="!isInSession(datetime)">
-    <section  v-if="!isInSession(datetime)">
-      <div class="agenda item " v-for=" (item, index) in agendaItems" :key="index">
-        <span class="label agenda" :class="{[agendaPrefix]:agendaPrefix}" >
+    <hr v-if="!sessionActive">
+    <section v-if="!sessionActive">
+      <div class="agenda item" v-for="(item, index) in agendaItems" :key="index">
+        <span class="label agenda" :class="{[agendaPrefix]: agendaPrefix}">
           {{ agendaPrefix }} {{ item.item }}
         </span>
         <h6 v-if="!agendaItems || !agendaItems.length"> Unavailable, will be posted shortly.</h6>
@@ -14,58 +14,51 @@
       </div>
       <hr>
     </section>
-    <Offline v-if="isInSession(datetime) && offLine" />
+    <Offline v-if="sessionActive && offLine" />
     <iframe
       ref="docsFrame"
-      v-if="isInSession(datetime) && !offLine"
+      v-if="sessionActive && !offLine"
       class="docs-frame"
-      :src="`${iFrameHost}/conferences/${conferenceCode}/schedules?viewOnly=true&${forceDate(datetime)}`"
+      :src="`${iFrameHost}/conferences/${conferenceCode}/schedules?viewOnly=true${forceDateParam}`"
     />
   </div>
 </template>
 
-<script>
-import   documentDownloadMixin   from '~/utils/document-download-mixin'
-import   Offline                 from '~/components/offline'
-import { mapGetters            } from 'vuex'
+<script setup>
+import { ref, computed       } from 'vue'
+import { storeToRefs         } from 'pinia'
+import { useConferencesStore } from '~/stores/conferences'
+import { useOffLineStore     } from '~/stores/off-line'
+import { useRoutesStore      } from '~/stores/routes'
+import { useDocumentDownload } from '~/composables/useDocumentDownload'
 
-export default {
-  mixins    : [ documentDownloadMixin ],
-  components: { Offline },
-  computed  : { ...gettersMap() },
-  created, asyncData
-}
+const route            = useRoute()
+const config           = useRuntimeConfig()
+const conferencesStore = useConferencesStore()
+const routesStore      = useRoutesStore()
+const offLineStore     = useOffLineStore()
 
-function asyncData ({  params, query }){
-  const { conferenceCode } = params
-  const { datetime }       = query
+const { conferenceCode } = route.params
+const { datetime       } = route.query
 
-  return {
-    conferenceCode,
-    datetime,
-    iFrameHost: process.env.NUXT_ENV_IFRAME_HOST
-  }
-}
+const iFrameHost = config.public.iframeHost
 
-function gettersMap(){
-  return mapGetters({
-    isInSession : 'conferences/isInSession',
-    offLine     : 'offLine/isOffLine',
-    forceDate   : 'conferences/forceDate',
-    agendaItems : 'conferences/agendaItems',
-    agendaPrefix: 'conferences/agendaPrefix'
-  })
-}
+const docsFrame = ref(null)
+useDocumentDownload(docsFrame)
 
-function created(){
-  if(!this.isInSession(this.datetime))
-    this.$store.commit('routes/SET_SHOW_MEETING_NAV', { agendasOnly: true })
-  else
-    this.$store.commit('routes/SET_SHOW_MEETING_NAV', false)
-}
+const { agendaItems, agendaPrefix } = storeToRefs(conferencesStore)
+const { isOffLine: offLine        } = storeToRefs(offLineStore)
+
+const sessionActive  = computed(() => conferencesStore.isInSession(datetime))
+const forceDateParam = computed(() => conferencesStore.forceDate(datetime))
+
+if (!sessionActive.value)
+  routesStore.setShowMeetingNav({ agendasOnly: true })
+else
+  routesStore.setShowMeetingNav(false)
 </script>
 
-<style >
+<style>
   .main {padding-top:.1em;}
   .main.not-in-session {padding-top:2em;}
   .agenda.item { padding: .5em 1em .5em 1em;}

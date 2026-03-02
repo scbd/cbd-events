@@ -11,29 +11,27 @@
   </div>
 </template>
 
-<script>
-import documentDownloadMixin    from '~/utils/document-download-mixin'
-import Offline                  from '~/components/offline'
-  
-export default {
-  name      : 'DocumentsPage',
-  mixins    : [ documentDownloadMixin ],
-  components: { Offline },
-  computed  : { offLine },
-  asyncData
-}
+<script setup>
+import { ref             } from 'vue'
+import { storeToRefs     } from 'pinia'
+import { useOffLineStore } from '~/stores/off-line'
+import { useRoutesStore  } from '~/stores/routes'
+import { useDocumentDownload } from '~/composables/useDocumentDownload'
 
-function asyncData ({ store, params }){
-  const { conferenceCode, meetingCode } = params
-  const   iFrameHost                    = process.env.NUXT_ENV_IFRAME_HOST
+const route        = useRoute()
+const config       = useRuntimeConfig()
+const routesStore  = useRoutesStore()
+const offLineStore = useOffLineStore()
 
-  store.commit('routes/SET_SHOW_MEETING_NAV', true)
+const { conferenceCode, meetingCode } = route.params
+const iFrameHost = config.public.iframeHost
 
-  return { conferenceCode, meetingCode, iFrameHost }
-}
+const docsFrame = ref(null)
+useDocumentDownload(docsFrame)
 
-function offLine(){ return this.$store.state.offLine.isOffLine }
+const { isOffLine: offLine } = storeToRefs(offLineStore)
 
+routesStore.setShowMeetingNav(true)
 </script>
 
 <style scoped>
