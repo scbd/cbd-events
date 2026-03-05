@@ -72,6 +72,7 @@ typings/
 .cache
 .next
 .nuxt
+.output
 .vuepress/dist
 .serverless/
 .fusebox/
