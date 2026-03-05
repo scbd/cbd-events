@@ -64,6 +64,12 @@ export default defineNuxtConfig({
         },
       },
     },
+    build: {
+      rollupOptions: {
+        // @awesome-cordova-plugins/* are native-only (iOS/Android) — not bundled for web
+        external: [/@awesome-cordova-plugins\/.*/],
+      },
+    },
   },
 
   nitro: {

@@ -1,6 +1,6 @@
 import { onMounted, onBeforeUnmount } from 'vue'
 import { useRoute               } from 'vue-router'
-import { useNuxtApp, useRuntimeConfig, useLoadingIndicator } from '#app'
+import { useNuxtApp, useRuntimeConfig } from '#app'
 import { $fetch                 } from 'ofetch'
 import   sizeOf                   from 'object-sizeof'
 import { useFilesStore          } from '~/stores/files'

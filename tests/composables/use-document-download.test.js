@@ -58,10 +58,12 @@ vi.mock('~/stores/routes', () => ({
 }))
 
 vi.mock('#app', () => ({
-  useNuxtApp         : () => ({ $swal: vi.fn() }),
-  useRuntimeConfig   : () => ({ public: { iframeHost: 'https://www.cbd.int' } }),
-  useLoadingIndicator: () => ({ start: mockLoadingStart, finish: mockLoadingFinish }),
+  useNuxtApp      : () => ({ $swal: vi.fn() }),
+  useRuntimeConfig: () => ({ public: { iframeHost: 'https://www.cbd.int' } }),
 }))
+
+// Override the global stub from setup.js with test-specific spies
+vi.stubGlobal('useLoadingIndicator', () => ({ start: mockLoadingStart, finish: mockLoadingFinish }))
 
 vi.mock('vue-router', () => ({
   useRoute: () => ({

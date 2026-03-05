@@ -60,3 +60,10 @@ vi.stubGlobal('useRuntimeConfig', () => ({
     appVersion : '1.0.0',
   },
 }))
+
+// ── Nuxt loading indicator ─────────────────────────────────────────────────
+vi.stubGlobal('useLoadingIndicator', vi.fn(() => ({
+  start : vi.fn(),
+  finish: vi.fn(),
+  clear : vi.fn(),
+})))
