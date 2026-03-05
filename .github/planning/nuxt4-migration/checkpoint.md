@@ -1,17 +1,29 @@
 # Checkpoint
 
-**Current phase:** Phase 08 — Bootstrap 5, i18n, Cleanup & Verification
-**Last completed:** `phase-08/p08-03-dependency-cleanup.md`
-**Next task:** `phase-08/p08-04-integration-testing.md`
-**Updated:** 2026-03-02T14:00:00Z
+**Current phase:** MIGRATION COMPLETE 🎉
+**Last completed:** `phase-08/p08-04-integration-testing` — ALL 8 PHASES DONE
+**Next task:** Merge p08-04-integration-testing → master; tag release
+**Updated:** 2026-03-05T15:00:00Z
 
 ## State
 
 - Full plan drafted, approved, and refined
-- 8 phases, 27 tasks
+- 8 phases, 27 tasks — ALL COMPLETE
 - Research complete (981-line codebase analysis)
 - Memory recall applied: lessons from circusliving_amp Nuxt 4 migration
-- **p01-01 COMPLETE**: nuxt.config.ts, package.json, app/app.vue, tsconfig.json
+- **ALL PHASES COMPLETE** (p01-01 through p08-04)
+- **213 tests passing**
+- **`yarn dev` smoke test: PASS** — Nuxt 4.3.1 dev server starts clean, Vite client/server build in <40ms
+- **`yarn build:i` smoke test: PASS** — `nuxt generate` succeeds (485 modules, 5 routes prerendered, output to `capacitor/www`); `cap sync` web asset copy succeeds (CocoaPods/Xcode native step is environment-only, not a code issue)
+
+## p08-04 Summary (COMPLETE)
+
+- **Deleted `app/plugins/axios.js`** — dead Nuxt 2 plugin; `$axios` / `@nuxtjs/axios` don't exist in Nuxt 4; all HTTP calls already use `$fetch`
+- **Externalized `@awesome-cordova-plugins/*`** in `nuxt.config.ts` `vite.build.rollupOptions.external` — `@awesome-cordova-plugins/file-opener` (used in `utils/cordova-files.js`) has a peer dep on `@awesome-cordova-plugins/core` which only resides in `capacitor/node_modules` (native-only). Rollup was failing to resolve it on the web build; externalizing tells Rollup these are native-runtime-only and not to bundle them.
+- **Fixed `useLoadingIndicator` import** in `app/composables/useDocumentDownload.js` — was imported from `#app` but not exported there; `useLoadingIndicator` is a Nuxt auto-import (not a `#app` export). Removed explicit import — Nuxt's auto-import Vite transform injects it correctly at build time. Added `vi.stubGlobal('useLoadingIndicator', ...)` to `tests/setup.js` and updated `use-document-download.test.js` to override the global with test-specific spies.
+- Added `.output` to `.gitignore`
+- `yarn nuxt build --dry-run` succeeds (485 modules, 0 errors)
+- 213 total tests passing
 - **p01-02 COMPLETE**: directory restructure, kebab-case file naming, dynamic route renames
 - **p01-03 COMPLETE**: build scripts, env vars, Capacitor unification
 - **Phase 01 COMPLETE**
