@@ -11,8 +11,12 @@ export default class {
   }
 
   _initI18n($i18n){
-    this.locale = $i18n.locale
-    this.$i18n  = $i18n
+    // In Vue 3, i18n.locale is a Ref<string>; Luxon expects a plain string.
+    const rawLocale = $i18n.locale
+    const localeStr = typeof rawLocale === 'string' ? rawLocale : (rawLocale?.value || 'en')
+
+    this.locale = localeStr
+    this.$i18n  = { ...$i18n, locale: localeStr }
   }
 
   get selected(){

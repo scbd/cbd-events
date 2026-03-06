@@ -27,9 +27,9 @@ function fetchBlob(coverImage) {
   return $fetch(url, { responseType: 'blob' })
 }
 
-async function fetchFromApi(code) {
+async function fetchFromApi(code, api) {
   try {
-    const url    = `${process.env.NUXT_ENV_API}/api/v2017/articles`
+    const url    = `${api}/api/v2017/articles`
     const params = buildQuery(code)
     const data   = await $fetch(url, { query: params })
 
@@ -73,7 +73,8 @@ export const useAboutStore = defineStore('about', () => {
   }
 
   async function _fetchAndSave(code) {
-    const article = await fetchFromApi(code)
+    const { public: { api } } = useRuntimeConfig()
+    const article = await fetchFromApi(code, api)
 
     if (!article) return undefined
 

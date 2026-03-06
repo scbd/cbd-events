@@ -56,6 +56,10 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    optimizeDeps: {
+      exclude: ['@awesome-cordova-plugins/file-opener'],
+      include: ['axios'],
+    },
     css: {
       preprocessorOptions: {
         scss: {

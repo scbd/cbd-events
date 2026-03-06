@@ -16,8 +16,8 @@
 export default {
   name: 'Icon',
   props: {
-    name:   { type: String,          required: true  },
-    inText: { type: Boolean,         default:  false },
+    name:   { type: String,                  required: true  },
+    inText: { type: [Boolean, String],        default:  false },
     x:      { type: [String, Number], default: null  }
   }
 }

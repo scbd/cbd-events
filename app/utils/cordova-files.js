@@ -104,10 +104,10 @@ export const openFile = (file, $cordova) => {
 //   return openFileDefault(file)
 }
 
+export const setOpenSafariFn  = (fn) => { CordovaFiles.OpenSafariFn = fn }
+
 export default class CordovaFiles{
   static openFile        = openFile
   static setOpenSafariFn = setOpenSafariFn
   static shareFile       = shareFile
 }
-
-export const setOpenSafariFn  = (fn) => { CordovaFiles.OpenSafariFn = fn }

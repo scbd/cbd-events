@@ -18,6 +18,7 @@ import { lstring        } from '~/utils/filters'
 
 const props = defineProps(['title', 'content', 'blob', 'tag'])
 
+const { public: { api } } = useRuntimeConfig()
 const articleRef = ref(null)
 
 onMounted(async () => {
@@ -28,12 +29,12 @@ onMounted(async () => {
   if (oembeds.length)
     for (const el of oembeds) {
       const rawUrl = el.getAttribute('url')
-      await getOembedHtml(el, { url: encodeURI(rawUrl) }, rawUrl)
+      await getOembedHtml(el, { url: encodeURI(rawUrl) }, rawUrl, api)
     }
 })
 
-async function getOembedHtml(el, params, rawUrl) {
-  const url = `${process.env.NUXT_ENV_API}/api/v2020/oembed`
+async function getOembedHtml(el, params, rawUrl, api) {
+  const url = `${api}/api/v2020/oembed`
 
   const r = await $fetch(url, { query: params }).catch(() => null)
 

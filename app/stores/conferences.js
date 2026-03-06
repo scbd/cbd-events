@@ -108,25 +108,25 @@ async function loadBlobs(conference){
   return conference
 }
 
-function queryConferences(locale = 'en'){
+function queryConferences(locale = 'en', api){
   const params = queryFilter({
     q: { 'apps.cbdEvents': { $exists: true } },
     s: { StartDate: -1 }
   })
-  const url = `${process.env.NUXT_ENV_API}/api/v2016/conferences`
+  const url = `${api}/api/v2016/conferences`
 
   return $fetch(url, { query: params })
     .then(data => normalizeApiResponse(data, locale))
     .then(data => hasMeetings(data))
 }
 
-function queryMeetings(selected, locale = 'en'){
+function queryMeetings(selected, locale = 'en', api){
   const { conference, majorEventIds, apps } = selected
   const { useMenus }                        = apps.cbdEvents
 
   if(!dataExists(selected, useMenus)) return []
 
-  const url    = `${process.env.NUXT_ENV_API}/api/v2016/meetings`
+  const url    = `${api}/api/v2016/meetings`
   const params = queryFilter(useMenus ? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIds))
 
   return $fetch(url, { query: params })
@@ -212,16 +212,9 @@ export const useConferencesStore = defineStore('conferences', () => {
   })
 
   const showCalendar = computed(() => {
-    try{
-      const { hideCalendar } = selected.value?.apps?.cbdEvents
+    const { hideCalendar } = selected.value?.apps?.cbdEvents ?? {}
 
-      return !hideCalendar
-    }
-    catch(e){
-      console.error(e)
-
-      return true // default show
-    }
+    return !hideCalendar
   })
 
   const conferenceCal = computed(() => {
@@ -287,8 +280,9 @@ export const useConferencesStore = defineStore('conferences', () => {
 
     const { $i18n } = useNuxtApp()
     const locale    = $i18n?.locale?.value ?? 'en'
+    const { public: { api } } = useRuntimeConfig()
 
-    const response = await queryConferences(locale)
+    const response = await queryConferences(locale, api)
 
     docs.value = response
 
@@ -308,10 +302,11 @@ export const useConferencesStore = defineStore('conferences', () => {
 
     const { $i18n } = useNuxtApp()
     const locale    = $i18n?.locale?.value ?? 'en'
+    const { public: { api } } = useRuntimeConfig()
     const routesStore = useRoutesStore()
     const mc          = routesStore.meetingCode
 
-    const result  = await queryMeetings(selected.value, locale)
+    const result  = await queryMeetings(selected.value, locale, api)
 
     meetings.value = result
 

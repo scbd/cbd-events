@@ -19,7 +19,7 @@ vi.mock('~/stores/conferences', () => ({
 // ---------------------------------------------------------------------------
 // Subject under test (imported AFTER mocks are in place)
 // ---------------------------------------------------------------------------
-import redirectsMiddleware from '~/middleware/redirects'
+import redirectsMiddleware from '~/middleware/redirects.global'
 
 // ---------------------------------------------------------------------------
 // Tests

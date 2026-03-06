@@ -2,7 +2,7 @@
 
 **Current phase:** MIGRATION COMPLETE 🎉
 **Last completed:** `phase-08/p08-04-integration-testing` — ALL 8 PHASES DONE
-**Next task:** Merge p08-04-integration-testing → master; tag release
+**Next task:** N/A — migration complete; user will merge to master manually when ready
 **Updated:** 2026-03-05T15:00:00Z
 
 ## State

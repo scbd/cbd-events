@@ -86,3 +86,5 @@ capacitor/www
 .github/instructions*
 
 .github/agents*
+copilot_exports
+.github*
