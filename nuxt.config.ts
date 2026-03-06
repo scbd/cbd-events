@@ -80,6 +80,21 @@ export default defineNuxtConfig({
     output: {
       publicDir: resolve(__dirname, 'capacitor/www'),
     },
+    devProxy: {
+      '/attachments-proxy': {
+        target: 'https://attachments.cbd.int',
+        changeOrigin: true,
+        prependPath: false,
+      },
+    },
+  },
+
+  $development: {
+    runtimeConfig: {
+      public: {
+        attachments: '/attachments-proxy',
+      },
+    },
   },
 
   devtools: { enabled: true },

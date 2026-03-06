@@ -43,12 +43,14 @@
         </div>
         <div v-if="calEvent.item_ss && calEvent.item_ss.length">
           <table>
+            <tbody>
             <tr>
               <td style="vertical-align:top;">
                 <span class="eco-docs" />
               </td>
               <td>
                 <table>
+                  <tbody>
                   <tr
                     :key="index"
                     v-for="(item, index) in calEvent.item_ss"
@@ -75,9 +77,11 @@
                       />
                     </td>
                   </tr>
+                  </tbody>
                 </table>
               </td>
             </tr>
+            </tbody>
           </table>
         </div>
         <div />

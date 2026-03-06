@@ -89,21 +89,28 @@ function dataExists({ conference, majorEventIds }, useMenus = false){
 // HTTP helpers — accept $axios explicitly so they are testable
 // ---------------------------------------------------------------------------
 
-function getBlob(url){
+async function getBlob(url, attachmentsBase = 'https://attachments.cbd.int'){
   if(!url) return undefined
 
-  return $fetch(url, { responseType: 'blob' })
+  const proxiedUrl = url.replace('https://attachments.cbd.int', attachmentsBase)
+
+  try {
+    return await $fetch(proxiedUrl, { responseType: 'blob' })
+  }
+  catch {
+    return undefined
+  }
 }
 
-async function loadBlobs(conference){
+async function loadBlobs(conference, attachments = 'https://attachments.cbd.int'){
   if(!conference?.apps)          conference.apps           = { cbdEvents: {} }
   if(!conference.apps.cbdEvents) conference.apps.cbdEvents = {}
 
   const { cbdEvents }        = conference.apps
   const { heroImage, image } = cbdEvents
 
-  cbdEvents.heroImageBlob = await getBlob(heroImage)
-  cbdEvents.imageBlob     = await getBlob(image)
+  cbdEvents.heroImageBlob = await getBlob(heroImage, attachments)
+  cbdEvents.imageBlob     = await getBlob(image, attachments)
 
   return conference
 }
@@ -280,7 +287,7 @@ export const useConferencesStore = defineStore('conferences', () => {
 
     const { $i18n } = useNuxtApp()
     const locale    = $i18n?.locale?.value ?? 'en'
-    const { public: { api } } = useRuntimeConfig()
+    const { public: { api, attachments } } = useRuntimeConfig()
 
     const response = await queryConferences(locale, api)
 
@@ -289,7 +296,7 @@ export const useConferencesStore = defineStore('conferences', () => {
     // Initialise selected conference
     let conf = conferenceCode ? byCode(conferenceCode) : getActive(response)
 
-    conf          = await loadBlobs(conf)
+    conf          = await loadBlobs(conf, attachments)
     selected.value = conf
 
     await getMeetings()

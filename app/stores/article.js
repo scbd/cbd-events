@@ -22,12 +22,19 @@ function buildQuery(code, tag) {
   return { ag: JSON.stringify(ag) }
 }
 
-function fetchBlob(coverImage) {
+async function fetchBlob(coverImage, attachmentsBase = 'https://attachments.cbd.int') {
   const url = coverImage?.url
 
   if (!url) return undefined
 
-  return $fetch(url, { responseType: 'blob' })
+  const proxiedUrl = url.replace('https://attachments.cbd.int', attachmentsBase)
+
+  try {
+    return await $fetch(proxiedUrl, { responseType: 'blob' })
+  }
+  catch {
+    return undefined
+  }
 }
 
 async function fetchFromApi(code, tag, api) {
@@ -81,12 +88,12 @@ export const useArticleStore = defineStore('article', () => {
   }
 
   async function _fetchAndSave(code, tag) {
-    const { public: { api } } = useRuntimeConfig()
+    const { public: { api, attachments } } = useRuntimeConfig()
     const article = await fetchFromApi(code, tag, api)
 
     if (!article) return undefined
 
-    article.blob = await fetchBlob(article.coverImage || {})
+    article.blob = await fetchBlob(article.coverImage || {}, attachments)
 
     await _save(code, tag, article)
 
