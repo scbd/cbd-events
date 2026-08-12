@@ -3,18 +3,21 @@
 | | |
 |---|---|
 | Ticket | DEV-1106 |
-| Status | Draft for review |
+| Status | Draft for review (rev 2 — post red-team) |
 | Date | 2026-08-12 |
 | Scope | `cbd-events` app (this repo) plus one cross-repo dependency (`@scbd/conference-cal`) |
-| Current stack | Nuxt 2.18.1, Vue 2.7.16, Vuex, webpack 4, `@nuxtjs/axios` (unused), nuxt-i18n 6, Bootstrap 4.6 (CSS only), Capacitor 6 (JS) / 7 (native shells), Capgo OTA |
-| Target stack | Nuxt 4.5.x, Vue 3.5.x, Vite, Pinia, `$fetch`/ofetch, `@nuxtjs/i18n` 10.x, Bootstrap 4.6 CSS (unchanged), Capacitor 8.5.x (single dependency tree), Capgo OTA (matching major) |
+| Current stack | Nuxt 2.18.1, Vue 2.7.16, Vuex, webpack 4, `@nuxtjs/axios` (unused), nuxt-i18n 6, Bootstrap 4.6 (CSS only), Capacitor 6 (JS) / 7.4.3 (native shells), Capgo OTA |
+| Target stack | Nuxt 4.5.x, Vue 3.5.x, Vite, Pinia, `$fetch`/ofetch behind a transport interface, `@nuxtjs/i18n` 10.x, Bootstrap 4.6 CSS (unchanged), Capacitor 7.4.x JS aligned to the existing shells (Capacitor 8 deferred to its own release), Capgo OTA (same contract) |
+| Review provenance | Devil's-advocate review 2026-08-12, critics codex + agy (2 delivered, 2 seats lost and accepted), 20 objections: 18 fixed into this revision, 1 rejected with evidence, 1 accepted. Complementary execution war-game same date (10 moves, 5 forks) converged on the D9 reversal |
 
 ## 1. Why now
 
 - Nuxt 2 has been end-of-life since June 2024. Nuxt 3 reached end-of-life on 2026-07-31, so Nuxt 4 (currently 4.5.1) is the only supported target. There is no value in a two-hop migration through an EOL framework.
 - Vue 2 has been EOL since December 2023. Every Vue 2 dependency in this app (vue-cordova, nuxt-i18n 6, the vendored calendar, `@scbd/conference-cal`) is frozen with it.
-- The native shells already run Capacitor 7 while the JS layer pins Capacitor 6. The two dependency trees for the same plugins are drift waiting to become a production bug.
+- The native shells already run Capacitor 7.4.3 while the JS layer pins Capacitor 6. The two dependency trees for the same plugins are drift waiting to become a production bug.
 - Sass, Node, and toolchain deprecations are already being suppressed in `nuxt.config.js` (`silenceDeprecations`); the workarounds accumulate faster than they can be removed on a dead framework.
+
+Version claims in this doc were verified 2026-08-12; re-resolve and pin exact versions at each phase's implementation time (repo convention: no `^`/`~`).
 
 ## 2. Current state (survey summary)
 
@@ -23,15 +26,15 @@ Full survey was done against `master` at `cba0cf8` (2026-08-12).
 | Dimension | Finding |
 |---|---|
 | Size | 42 SFCs + 34 JS modules, ~5,900 LOC app code. The vendored calendar widget (`components/Calendar/src/**`) is ~2,100 LOC, 36% of the app |
-| Rendering mode | `ssr: false` SPA, shipped via `nuxt generate` into `capacitor/www` for the native shells and for web hosting at cbd-events.cbd.int |
+| Rendering mode | `ssr: false` SPA, shipped via `nuxt generate` into `capacitor/www` for the native shells and for web hosting at cbd-events.cbd.int (deploy mechanism undocumented — see open question 5) |
 | Component style | 100% Options API. Zero `setup()`, zero composition imports. House ESLint style (hoisted function declarations, aligned colons) shapes every file |
-| State | Vuex, 6 modules. `conferences.js` (325 LOC) is the app's spine. Actions rely on injected `this.$axios`, `this.$localForage`, `this.$router` (31 sites) |
+| State | Vuex, 6 modules. `conferences.js` (325 LOC) is the app's spine. Actions rely on injected `this.$axios`, `this.$localForage`, `this.$router` (31 sites) — an implicit dependency-injection system, not just state |
 | Persistence | localforage wrapped by a custom Nuxt 2 module + lodash-templated plugin that builds 5 `new Vue()` instances as service objects (`$localForage.files/blobs/about/article`). This is the offline-first layer |
 | Eventing | Two event buses: `this.$root.$on/$emit` (21 sites, 12 files, drives all bottom-sheet flows) and a `new Vue()` bus inside the calendar (8 sites) |
-| HTTP | `composables/http.js` switches between raw axios (web) and `@ionic-native/http` (native). `@nuxtjs/axios` is declared but never registered: dead |
-| i18n | nuxt-i18n 6, lazy, `en` only registered (a `fr.json` ships in the calendar), Vuex-module coupling (`store.state.i18n.locale`, `I18N_SET_LOCALE`) |
-| Mobile | Capacitor 6 (JS) / 7.4.3 (`capacitor/` shells). Plugins actually used in code: core, status-bar, share, filesystem. Declared but unused: app, device, splash-screen, local-notifications, awesome-cordova/ionic-native cores. Legacy Cordova: vue-cordova, `@ionic-native/http`, cordova-plugin-advanced-http, cordova-plugin-file, cordova-plugin-file-opener2 (git-pinned) |
-| OTA | `@capgo/capacitor-updater` (autoUpdate off) pulling a hand-maintained S3 `index.json` and `dist.zip` per version from attachments.cbd.int; same-major semver gate; zip layout = `capacitor/www` root |
+| HTTP | `composables/http.js` switches between raw axios (web) and `@ionic-native/http` (native), normalizing both to `res.data`. `@nuxtjs/axios` is declared but never registered: dead |
+| i18n | nuxt-i18n 6, lazy, `en` only registered (a `fr.json` ships in the calendar), Vuex-module coupling (`store.state.i18n.locale`, `I18N_SET_LOCALE`), `___en` route-name suffixes built by hand in 3 files |
+| Mobile | Capacitor 6 (JS) / 7.4.3 (`capacitor/` shells). Capacitor plugins imported in code: core, status-bar, share, filesystem. Platform detection also flows through `$cordova.device` (vue-cordova) on the downloads page. Legacy Cordova: vue-cordova, `@ionic-native/http`, cordova-plugin-advanced-http, cordova-plugin-file, cordova-plugin-file-opener2 (git-pinned for a documented Play-policy reason) |
+| OTA | `@capgo/capacitor-updater` (autoUpdate off) pulling a hand-maintained S3 `index.json` and `dist.zip` per version; same-major semver gate on the baked `NUXT_ENV_VERSION`; zip layout = `capacitor/www` root. `notifyAppReady()` is called only inside the update path, never on plain launches — the current lifecycle works in production on updater v6 but is uncharacterized (rollback, interrupted download, corrupt zip, checksum unused) |
 | Auth | None. All API calls are anonymous GETs against api.cbd.int (v2013 Solr, v2016 conferences/meetings, v2017 articles, v2020 oembed) plus a cross-origin iframe + postMessage bridge into www.cbd.int for document download |
 | Config | Build-time `env:` block only, webpack-inlined. No runtime config, no `.env` |
 | Safety net | No tests, no CI, no lint script, no pinned Node version. Release is a manual zip-and-upload runbook in README.md |
@@ -52,129 +55,140 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  A[nuxt generate<br/>Nuxt 4 + Vite] --> B[.output/public<br/>-> capacitor/www]
-  B --> C[cap sync android/ios<br/>Capacitor 8.5 shells<br/>single dep tree]
-  B --> D[zip dist.zip -> S3<br/>Capgo OTA - same contract]
+  A[nuxt generate<br/>Nuxt 4 + Vite] --> B[.output/public<br/>copy -> capacitor/www]
+  B --> C[cap sync android/ios<br/>Capacitor 7.4.x shells<br/>zero native changes]
+  B --> D[zip dist.zip -> S3<br/>Capgo OTA - 6.x cohort]
   B --> E[static web hosting]
-  C --> F[Play Store / App Store]
-  D --> G[installed apps]
+  C --> F[Play Store / App Store<br/>6.0.0 store-first]
+  D --> G[installed 6.x apps]
 ```
 
-- **Nuxt 4.5.x, `ssr: false`, `nuxt generate`.** The rendering model does not change. Nitro's `output.publicDir` (or a copy step) keeps `capacitor/www` as the shell's `webDir` so the OTA zip layout and the native shell config are untouched.
-- **`app/` directory structure** per Nuxt 4 conventions: `app/pages`, `app/layouts`, `app/components`, `app/composables`, `app/plugins`, `app/middleware`, `app/assets`; `public/` for the favicon (fixes the currently dangling link); `i18n/locales/` for locale files.
-- **Pinia replaces Vuex.** One store per current module. Actions take their dependencies explicitly (composables), ending the `this.$axios` / `this.$localForage` / `this.$router.currentRoute` pattern.
-- **`$fetch`/ofetch replaces axios everywhere.** On native platforms, Capacitor's built-in `CapacitorHttp` (`plugins.CapacitorHttp.enabled`) patches `fetch`, which retires `@ionic-native/http`, `cordova-plugin-advanced-http`, and the platform switch in `composables/http.js` in one move.
-- **`runtimeConfig.public` replaces the `env:` block.** Note the OTA model means values still bake into each shipped zip; this is about API hygiene, not dynamic reconfiguration.
-- **`@nuxtjs/i18n` 10.x** with the same `prefix_except_default` strategy, lazy `en`, cookie detection. The Vuex coupling (`state.i18n.*`, `I18N_SET_LOCALE`) is replaced by the module's composables (`useI18n`, `useSwitchLocalePath`).
-- **Composition API with `<script setup>`** for all ported components (house convention for Nuxt 4 work). TypeScript is adopted for new composables/stores; wholesale TS conversion of ported templates is not required in this migration (section 9).
-- **Capacitor 8.5.x, one dependency tree.** Root `package.json` owns all `@capacitor/*` versions; the `capacitor/package.json` split is dissolved or reduced to CLI-only. Unused plugin dependencies (app, device, splash-screen, local-notifications, ionic-native/awesome-cordova cores) are dropped.
-- **Bootstrap 4.6 CSS stays.** It is CSS-only today (no bootstrap-vue, no JS). Moving to Bootstrap 5 is real work (form-group and friends are used across 19 SFCs) with zero migration payoff; it is explicitly out of scope.
-- **Event buses are removed.** Bottom-sheet done/cancel flows become explicit emits + a small shared composable (`useBottomScreen`); the calendar bus becomes provide/inject or component-local state. `mitt` is the fallback if a true broadcast case remains.
-- **The localForage layer becomes a plain composable** (`useOfflineStore` or similar) preserving the current metadata/blob split and the documented `iterate` behavior. The lodash-template plugin and its 5 `new Vue()` service bags are deleted.
+- **Nuxt 4.5.x, `ssr: false`, `nuxt generate`.** The rendering model does not change. Generate to the stock `.output/public` and copy into `capacitor/www` in the build scripts, so the OTA zip layout and the native shell config are untouched.
+- **`app/` directory structure** per Nuxt 4 conventions; `public/` for the favicon (fixes the currently dangling link); `i18n/locales/` for locale files.
+- **Pinia replaces Vuex, behind explicit service interfaces.** The Vuex modules double as a hidden DI container (`this.$axios`, `this.$localForage`, `this.$router` inside actions). Before porting, define the service interfaces (transport, offline store); actions take dependencies and route params as explicit arguments — never `useRoute()` inside an action body (it throws outside setup context).
+- **A framework-neutral transport interface replaces the axios/ionic-native switch.** Characterize the current `useHttp` contract (both paths normalize to `res.data`), port state and pages against the unchanged interface, then swap implementations: ofetch on web, **explicit `CapacitorHttp.request()`** on native. No global fetch patching — the CapacitorHttp native implementation ships inside `@capacitor/core` and is callable on the fielded 7.4.3 shells without any native or config change, which is what keeps OTA compatibility on the table.
+- **Capacitor stays on 7.4.x for the entire migration.** The JS tree aligns to the shells that are already in the field; the shells themselves do not change. Retiring the Vue-2-locked JS wrappers (vue-cordova, `@ionic-native/*`, `@awesome-cordova-plugins/*`) needs no native delta. Capacitor 8 (SystemBars edge-to-edge, UIScene, file-opener replacement, cordova plugin removal) is its own post-migration release — phase 10.
+- **`runtimeConfig.public` replaces the `env:` block.** The OTA model means values still bake into each shipped zip; this is API hygiene, not dynamic reconfiguration.
+- **`@nuxtjs/i18n` 10.x** with the same `prefix_except_default` strategy, lazy `en`, and the same `localePref` cookie. This is a real workstream, not a config swap: `iso` becomes `language`, locale files move to the `i18n/` dir convention, the Vuex coupling is replaced by `useI18n`/`useSwitchLocalePath`, and the hand-built `___en` route names get snapshot tests (3 files construct them manually).
+- **Ported components keep the Options API where they compile cleanly under Vue 3.** Rewriting 42 known-working SFCs into `<script setup>` during the port would turn a migration into a greenfield rewrite. `<script setup>` + TypeScript are reserved for new code (stores, composables) and components already under structural surgery (bus/filter/mixin removals). Post-cutover conversion is logged as debt. This is a deliberate migration-scoped exception to the house Nuxt-4 convention.
+- **Bootstrap 4.6 CSS stays** (CSS-only usage today; no bootstrap JS, no bootstrap-vue). Porting notes BS5-breaking classes to the debt ledger as templates are touched, but no BS5 work in this migration.
+- **Event buses are removed** (done pre-port, on Vue 2.7 — phase 2). Bottom-sheet done/cancel flows become explicit emits + a small `useBottomScreen` composable; the calendar bus becomes provide/inject.
+- **The localForage layer becomes a plain composable** preserving the exact store names, keys, and the documented `iterate` behavior. The lodash-template plugin and its 5 `new Vue()` service bags are deleted.
 
 ## 4. Migration strategy
 
-**Decision: single-repo, in-place port to a fresh Nuxt 4 scaffold, phased into reviewable PRs on a long-lived integration branch. No Nuxt Bridge.**
+**Decision: single-repo, in-place port to a fresh Nuxt 4 scaffold, phased into reviewable PRs on an integration branch that is never left unbootable. No Nuxt Bridge. Native walking skeleton before any UI port. Capacitor major upgrade decoupled.**
 
 Options considered:
 
 | Option | Assessment |
 |---|---|
-| A. Nuxt Bridge, then 3, then 4 | Rejected. Bridge targets Nuxt 3, which is EOL; two framework hops for a 5,900 LOC app is more total work and more intermediate broken states |
-| B. In-place port to Nuxt 4 scaffold, phased PRs, integration branch (chosen) | The app is small enough to port module-by-module in weeks, keeps one repo/history, and each phase is independently reviewable. The integration branch (`feat/DEV-XXXX-nuxt4`) holds phases until cutover so `master` stays releasable on Nuxt 2 |
-| C. Greenfield rewrite in a new repo | Rejected. Loses history, invites scope creep, and the survey shows the app's logic (conference/meeting state machine, offline layer, OTA) is worth porting, not re-inventing |
+| A. Nuxt Bridge, then 3, then 4 | Rejected. Bridge targets Nuxt 3 (EOL) and is unmaintained; two framework hops for a 5,900 LOC app is more total work and more intermediate broken states. A bounded Bridge comparison spike was raised in review and rejected: the phase 3 walking skeleton provides the same early-failure discovery without building on a dead branch (accepted risk) |
+| B. In-place port to Nuxt 4 scaffold, phased PRs, integration branch (chosen) | Small enough to port module-by-module; one repo/history; each phase independently reviewable. Review hardening: the branch must boot end-to-end from phase 3 onward (walking skeleton), rebase onto master weekly, and phases 4-5 land as vertical slices so state is verified through real UI, not in a vacuum |
+| C. Greenfield rewrite in a new repo | Rejected. Loses history, invites scope creep; the app's logic (conference/meeting state machine, offline layer, OTA) is worth porting, not re-inventing |
+| D. Two-framework coexistence behind a build flag | Rejected. Two Nuxt majors cannot share one `package.json`; a workspace split is more churn than value at this size |
 
 Two Vue-2-compatible refactors are deliberately pulled **before** the framework switch (phase 2), because Vue 2.7 supports the Composition API and both changes shrink the hard part of the port:
 
 1. Event-bus elimination (buses are removed APIs in Vue 3, and the flows have no test coverage).
-2. Filters to plain functions (filters are removed in Vue 3, and two templates use `this.` inside expressions, which does not even compile under Vue 3).
+2. Filters to plain functions (filters are removed in Vue 3, and two templates use `this.` inside expressions, which does not compile under Vue 3).
 
 ## 5. Key decisions (ADR-lite)
 
 | # | Decision | Rationale | Alternative rejected |
 |---|---|---|---|
-| D1 | Target Nuxt 4.5.x directly | Only supported major; Nuxt 3 EOL 2026-07-31 | Bridge/Nuxt 3 hop |
-| D2 | Keep `ssr: false` + `nuxt generate` | App is an offline-first mobile shell; SSR adds nothing and risks the OTA contract | SSR/hybrid rendering |
-| D3 | Vuex to Pinia, 1:1 module mapping first | Mechanical, reviewable; restructuring state shape is deferred | Redesigning state during the port |
-| D4 | axios (and `@ionic-native/http`) to `$fetch` + CapacitorHttp | One HTTP path for web and native; deletes 3 legacy deps and the platform switch | Keeping axios (Vue 3 compatible but redundant with ofetch) |
-| D5 | Fork the vendored calendar in place, port it, keep it vendored | It is already vendored source (36% of app LOC); porting in place avoids a package release cycle mid-migration | Extracting it to a package first |
-| D6 | `@scbd/conference-cal`: port and republish as 2.x (Vue 3), or vendor its single SFC into this repo | Package is Vue 2 locked (deps on vue 2.6.10, imports raw SFC from node_modules). Decision between republish vs vendor belongs to the team (cross-repo ownership) | Leaving it: blocks `overview.vue` |
-| D7 | Keep Bootstrap 4.6 CSS unchanged | CSS-only usage; BS5 migration is orthogonal work | Bundling a BS5 upgrade into this migration |
-| D8 | Keep the Capgo OTA contract byte-compatible (zip of the generated www root, S3 index.json, same-major gate) | Every installed client depends on it; breaking it silently bricks updates | Redesigning OTA delivery in the same effort |
-| D9 | App version stays same-major (5.x) through the migration release | The Capgo same-major gate means a major bump cuts every installed client off OTA; a 5.x Nuxt 4 release keeps the OTA path alive. Bump majors only deliberately, store-release-first, after the Nuxt 4 build has proven stable | Bumping to 6.0.0 with the framework |
-| D10 | Establish minimal CI + smoke tests before the port begins | Zero safety net today; hand-testing two simulators per phase does not scale across 8 phases | Porting first, testing later |
-| D11 | Capacitor 8.5.x during the port, not 9 | 8.5 is current stable; 9 is alpha. The Cordova-optional direction of 9 is exactly where this plan lands (all Cordova plugins retired), making a later 9 bump trivial | Waiting on / alpha-adopting 9 |
+| D1 | Target Nuxt 4.5.x directly | Only supported major; Nuxt 3 EOL 2026-07-31 | Bridge/Nuxt 3 hop; also a bounded Bridge comparison spike (see §4) |
+| D2 | Keep `ssr: false` + `nuxt generate` | App is an offline-first mobile shell; SSR adds nothing and risks the OTA contract. Web hosting keeps the same artifact, with deep-link/refresh/404 tests added because the web deploy contract is currently undocumented | SSR/hybrid rendering; separate web artifact (revisit only if the host requires it) |
+| D3 | Vuex to Pinia: state shape 1:1, dependencies explicit | Preserves externally observed state while dismantling the hidden DI (`this.$axios`/`$localForage`/`$router` in actions). One vertical slice (conference load → select → persist → route) migrates end-to-end first to prove the pattern | Blind module-by-module conversion ("mechanical" was an underestimate); redesigning state shape during the port |
+| D4 | Transport interface first; ofetch (web) + explicit `CapacitorHttp.request()` (native) behind it | One characterized contract; implementations swap without touching consumers. No global fetch patch — explicit calls work on fielded shells with zero native change | Big-bang axios removal coupled to a native HTTP change (review: changes request/error contracts app-wide in one step) |
+| D5 | Fork the vendored calendar in place, port it, keep it vendored | Already vendored source (36% of app LOC); porting in place avoids a package release cycle mid-migration. Its Vue 3/Vite compile risk is pulled early via a phase 3 spike; the full port stays late where regression exposure is lowest | Extracting it to a package first |
+| D6 | `@scbd/conference-cal`: resolve BEFORE phase 3 — port and republish as 2.x (Vue 3), or vendor its full dependency closure (SFC + a Vue 3 dragscroll replacement + luxon alignment) into this repo | Package is Vue 2 locked (deps on vue 2.6.10, `vue-dragscroll` 1.x, imports raw SFC from node_modules). "Vendor one SFC" was an unverified simplification — the closure is what gets vendored. Ownership decision belongs to the team but now gates the port start | Deferring the decision into phase 6 (left phase scope undefined) |
+| D7 | Keep Bootstrap 4.6 CSS unchanged | CSS-only usage; BS5 migration is orthogonal. Phase 5 logs BS5-breaking classes to the debt ledger as templates are opened, so the later upgrade is costed with data | Bundling a BS5 upgrade into this migration |
+| D8 | Keep the Capgo OTA contract (zip of the generated www root, S3 index.json, same-major gate) — after characterizing it | The delivery mechanism stays; but its lifecycle (notifyAppReady handshake, rollback, interrupted download, corrupt zip, unused checksum) is currently unverified and gets characterized in phase 1 and re-verified against the target updater major in phase 8 | Treating the current OTA code as known-good ("immutable contract" without evidence); redesigning OTA delivery |
+| D9 | **(Reversed in review)** Nuxt 4 ships as **6.0.0, store-first**. A final 5.x OTA bundle adds an "update from the store" nudge; the 5.x index entries freeze (never deleted); OTA resumes within 6.x | OTA replaces only the web bundle, never the native shell. A 5.x Nuxt 4 zip would be pulled by every fielded shell — including pre-7.4.3 ones — where the JS↔native bridge contract is not guaranteed: the white-screen scenario D8 exists to prevent. The same-major gate (verified in `composables/over-the-air.js`) makes 6.0.0 a clean, code-free cutoff. Conditional exception: a 5.x OTA of the Nuxt 4 bundle may be considered ONLY if store-console evidence shows the active installed base is on the 7.4.3-era shell AND the walking skeleton proves bundle/shell parity — default remains store-first | The original D9 ("stay 5.x so OTA stays alive") — reversed because it created the exact bricking risk it tried to avoid |
+| D10 | Layered safety net before the port; web smoke is NOT the oracle for native risk | Playwright exercises only web code paths (`Capacitor.getPlatform() === 'web'` branches). The net is layered: web smoke + generated-bundle structure checks + localForage migration fixtures + transport contract tests in CI, plus a mandatory device checklist on every native-touching phase | Porting first, testing later; treating a green web suite as migration safety |
+| D11 | **(Rewritten in review)** Capacitor stays 7.4.x through the migration; Capacitor 8 is its own post-migration release (phase 10) | Coupling a Capacitor major to the framework migration multiplied risk and broke OTA compatibility for zero Nuxt-4 benefit (Nuxt 4 does not require Capacitor 8). Aligning the JS tree to the fielded 7.4.3 shells removes the 6-vs-7 drift NOW with no native delta | The original D11 (upgrade to 8.5 during the port); waiting on / alpha-adopting Capacitor 9 |
+| D12 | Ported components keep Options API; `<script setup>`/TS only for new or already-rewritten code | Vue 3 fully supports Options API; forcing conversion of 42 known-working SFCs inflates the diff and the regression surface. Migration-scoped exception to house convention, logged as post-cutover debt | Wholesale `<script setup>` conversion during the port |
 
 ## 6. Phased roadmap
 
-Each phase is one PR (or a small chain) against the integration branch, sized to the repo's ~200 to 400 LOC review budget where the work is code (docs and lockfile churn excluded). Phases 0 to 2 land on `master` directly since they are Nuxt-2-safe and independently valuable.
+Each phase is one PR (or a small chain) against the integration branch, sized to the repo's ~200 to 400 LOC review budget where the work is code. Phases 0 to 2 land on `master` directly since they are Nuxt-2-safe and independently valuable. **Gate rule: phase 3's walking skeleton must pass before any of phases 4-6 start; D6 must be resolved before phase 3 starts.**
 
 | Phase | Deliverable | Contents | Risk |
 |---|---|---|---|
-| 0 | Dead-code and dependency cleanup (on master) | Remove `@nuxtjs/axios` + orphaned `plugins/axios.js`, `vue-notifications`, `modules/CoverImageMixin.js`, `modules/appEnvironmentsManager.js`, `Calendar/src/directives/Scroll.js`, duplicate page `_meetingCode/WeekSelect.vue`, dead `asyncData` in `components/article.vue`, `CalFooter.vue` + `velocity-animate` (after confirming unreferenced). Fix `NODE_ENV=android|ios` builds running `dev: true`. Fix sweetalert `type:` to `icon:` | Low |
-| 1 | Safety net (on master) | `.nvmrc` + `engines`; `lint` script; GitHub Actions workflow (lint + web build); Playwright smoke suite against the generated site: home redirect, conference list, meeting agenda, calendar render, documents iframe boot, downloads page, language page. These are the regression oracle for every later phase | Low |
-| 2 | Vue-3-ready refactors on Vue 2.7 (on master) | Replace both event buses (explicit emits + `useBottomScreen` composable; calendar via provide/inject); filters to imported functions (fixes the two `this.`-in-template expressions); remove the `$children[0].$refs` reach-in in `CalBody.vue`; replace `Vue.set`/`$set`, `$forceUpdate` in languages.vue; convert `<template functional>` (Icon, Spinner) to normal SFCs | Medium: touches untested UI flows, protected by phase 1 smoke tests |
-| 3 | Nuxt 4 scaffold (integration branch starts) | Fresh `nuxt.config.ts` (`ssr:false`, runtimeConfig, i18n 10, Pinia module, css list), `app/` skeleton, `public/favicon.ico`, ESLint flat config with `eslint-plugin-vue` Vue 3 ruleset, generate output wired to `capacitor/www`. App boots to an empty shell; CI builds it | Low |
-| 4 | State + persistence port | Pinia stores 1:1 from Vuex modules; localForage rewrite as composable behind the same call surface; route/params dependencies injected explicitly (`useRoute`); i18n state reads moved to `useI18n`. The reactivity hacks (`slice(0)` clones, keyed-object assignment) are removed with behavior verified by smoke tests | High: this is the spine. Review `store/conferences.js` port line-by-line |
-| 5 | Pages, layouts, app components port | 15 pages + 2 layouts + 8 app components to `<script setup>`; `asyncData` to `useAsyncData` (or plain `await` in setup under SPA); `redirects` middleware to `defineNuxtRouteMiddleware`; `nuxt-link tag="li"` to `custom` + slot; transition class renames (`-enter` to `-enter-from`) across app.css and SFC styles; `documentDownloadMixin` to a composable (`useDocumentDownload`) preserving the postMessage protocol; `$nuxt.$loading` to `useLoadingIndicator`; `process.client` to `import.meta.client`; Node builtin imports (`path`, `querystring`) replaced with URL/String helpers | High volume, mostly mechanical. Split into 2 to 3 PRs (pages, layouts+nav, download flow) |
-| 6 | Calendar subtree port | The vendored `components/Calendar/src/**` (15 SFCs): directive hook renames (LineClamp), `<transition>` fixes, `$style` modules under Vite, bus removal fallout, raw axios calls to `$fetch`, locale merge via i18n 10 API. Plus D6: `@scbd/conference-cal` port (republish or vendor) for `overview.vue` | High: most fragile UI (week-slide animation), do last among UI work |
-| 7 | Capacitor unification + native modernization | Single Capacitor 8.5 dependency tree at root; remove vue-cordova, `@ionic-native/*`, `@awesome-cordova-plugins/*`, cordova-plugin-advanced-http; enable CapacitorHttp; port `CordovaFiles.js`/`localFileSystem.js` to `@capacitor/filesystem`; re-evaluate git-pinned file-opener2 against a Capacitor 8 file-opener plugin; verify status-bar behavior under Capacitor 8's edge-to-edge SystemBars (the DEV-1028 work is in this area; coordinate) | Medium-high: native QA on both platforms |
-| 8 | OTA + release pipeline re-validation | Confirm generated output zips to the same layout; verify Capgo updater (major matching Capacitor) applies a Nuxt 4 `dist.zip` over a Nuxt 2 install on 5.x (the critical upgrade path); document the new build in README; update `build:a`/`build:i` scripts; confirm no dotfiles enter the zip (existing hard-brick hazard) | High consequence, low volume. Test on real devices with a staged S3 index |
-| 9 | Cutover | Integration branch to master; store builds submitted; OTA published after store versions are live; post-cutover watch | Gate: full device QA matrix + all smoke tests green |
-
-Known upstream integration issues to design around in phases 3 and 7: Capacitor config at repo root as JSON can trip Nuxt 4's module resolution (use `capacitor.config.ts` or keep the config inside `capacitor/`), and app-boot issues reported with Nuxt 4 + Capacitor ([nuxt#32873](https://github.com/nuxt/nuxt/issues/32873), [nuxt#33381](https://github.com/nuxt/nuxt/issues/33381)); validate asset URL resolution under the `capacitor://` scheme in the phase 3 spike before any UI porting begins.
+| 0 | Dead-code and dependency cleanup (on master) | Remove `@nuxtjs/axios` + orphaned `plugins/axios.js`, `vue-notifications`, `modules/CoverImageMixin.js`, `modules/appEnvironmentsManager.js`, `Calendar/src/directives/Scroll.js`, duplicate page `_meetingCode/WeekSelect.vue`, dead `asyncData` in `components/article.vue`, `CalFooter.vue` + `velocity-animate` (grep + runtime click-through before each delete; restore in-PR if live). Fix `NODE_ENV=android\|ios` builds running `dev: true`. Fix sweetalert `type:` → `icon:`. Fix the undefined `return test` in `composables/over-the-air.js` | Low |
+| 1 | Layered safety net (on master) | `.nvmrc` + `engines` (Nuxt 4 needs Node ^20.19 or >=22.12); `lint` script; GitHub Actions (lint + generate + smoke). Playwright smoke of the 7 core routes with recorded fixtures in CI (live-API runs nightly, non-blocking) — **explicitly caveated as web-only coverage**. Generated-bundle structure check (asset layout, no dotfiles). localForage fixture captured from a real production device (the phase 4 oracle). Transport contract tests around the current `useHttp` behavior. **OTA baseline characterization** on the production build: document observed notifyAppReady/rollback/interrupted-download/corrupt-zip behavior on updater v6 before anything changes | Low volume, high leverage |
+| 2 | Vue-3-ready refactors on Vue 2.7 (on master) | One flow per PR: bottom-screen bus → `useBottomScreen` composable; calendar `Bus.js` → provide/inject; filters → imported functions (fixes the two `this.`-in-template expressions); `CalBody.vue` `$children[0].$refs` reach-in → reactive `v-show` state; `<template functional>` (Icon, Spinner) → normal SFCs; `Vue.set`/`$forceUpdate` removals. Manual side-by-side check against a master build per flow | Medium: untested UI flows, protected by phase 1 + per-flow isolation |
+| 3 | Nuxt 4 scaffold + **native walking skeleton gate** (integration branch starts) | Fresh `nuxt.config.ts` (`ssr:false`, runtimeConfig, i18n 10 with `language` keys + `i18n/` dir, Pinia module, css list), `app/` skeleton, `public/favicon.ico`, ESLint 9 flat config (Vue 3 ruleset, recreate house style), generate → copy step into `capacitor/www`. **Gate (both platforms, PRODUCTION shells, before any UI port):** skeleton boots under the capacitor scheme with zero webview 404s (known breakage: [nuxt#32873](https://github.com/nuxt/nuxt/issues/32873), [nuxt#33381](https://github.com/nuxt/nuxt/issues/33381) — countermoves: `app.baseURL './'`, else post-generate path rewrite); reads the phase 1 localForage fixture; completes one `CapacitorHttp.request()`; performs one Filesystem op; applies as a staged OTA bundle over the current production install; the vendored calendar subtree compiles under Vite/Vue 3 (compile spike only). Also: i18n route-name (`___en`) snapshot baseline | The gate is the point: fail here, not in phase 6 |
+| 4 | State + persistence port (vertical slice first) | Define service interfaces (transport, offline store). Migrate ONE vertical slice end-to-end — conference load → selection → persistence → routed page — proving Pinia + composable + UI wiring together. Then remaining stores 1:1 by state shape. localForage rewrite keeps identical store names/keys + the `iterate` quirk; boot-time data-compat check + the phase 1 real-device fixture as oracle. Route params arrive as action arguments from page setup (never `useRoute()` in actions). i18n state reads → `useI18n`. Reactivity hacks (`slice(0)` clones, keyed-object assignment) removed with behavior verified | High: this is the spine. Getter-parity table for `conferences.js` (14 getters, same fixture in, same output) |
+| 5 | Pages, layouts, app components port | 15 pages + 2 layouts + 8 app components, Options API preserved (D12); `asyncData` → setup await/`useAsyncData`; `redirects` middleware → `defineNuxtRouteMiddleware`; `nuxt-link tag="li"` → `custom` + v-slot rendering the SAME `<li>` DOM (nav CSS depends on it); transition class renames (`-enter` → `-enter-from`) across app.css and SFC styles; `documentDownloadMixin` → `useDocumentDownload` with registration guard (duplicate postMessage listeners = double downloads) preserving the www.cbd.int iframe protocol; `$nuxt.$loading` → `useLoadingIndicator`; `process.client` → `import.meta.client`; Node builtin imports (`path`, `querystring`) → URL/String helpers; `$cordova.device` iOS check → `Capacitor.getPlatform() === 'ios'`; `localePath`/`switchLocalePath` parity + route-name snapshots green; log BS5-breaking classes to debt. Split into 2-3 PRs (pages; layouts+nav; download flow) | High volume. i18n/router workstream is real work, not renames |
+| 6 | Calendar subtree + conference-cal port | The vendored `components/Calendar/src/**` (15 SFCs): directive hook renames (LineClamp), `<transition>` fixes (incl. the `v-for` transition → `transition-group`), `$style` modules under Vite, raw axios → transport interface, locale merge via i18n 10 API, week-slide animation rebuilt as reactive state (fallback: reduced fade-only animation rather than holding the migration). Plus D6 execution (already decided pre-phase-3): vendored closure or republished 2.x for `overview.vue` | High: most fragile UI. Compile risk already burned down by the phase 3 spike |
+| 7 | Capacitor JS-tree alignment (zero native changes) | Single Capacitor **7.4.x** dependency tree at root matching the shells; remove vue-cordova, `@ionic-native/*`, `@awesome-cordova-plugins/*` JS wrappers; native HTTP via the D4 transport (explicit `CapacitorHttp.request()`); `CordovaFiles.js`/`localFileSystem.js` → `@capacitor/filesystem`; the git-pinned cordova-plugin-file-opener2 and cordova-plugin-file **stay in the shells untouched** (their JS call sites keep working; replacement is phase 10). Device verification checklist on both platforms | Medium: JS-only by design; native QA still mandatory |
+| 8 | OTA re-validation + release pipeline | Verify the generated output zips to the same layout (no dotfiles — existing hard-brick hazard); verify the updater handshake against the shipped updater version (notifyAppReady timing, rollback, interrupted download, corrupt zip) vs the phase 1 baseline; adopt the checksum param; staged S3 index test on real devices: production 5.x Nuxt 2 install → staged Nuxt 4 zip → boots with offline data intact. Execute D9: final 5.x nudge bundle prepared; 6.0.0 versioning wired; production index.json untouched until phase 9 | High consequence, low volume |
+| 9 | Cutover (store-first) | Submit 6.0.0 to Play internal track + TestFlight; full device QA matrix; publish store releases; **only after both store versions are live**: publish the final 5.x nudge bundle and the 6.x OTA entries; deploy web (mechanism per open question 5); post-cutover watch. Never during a major CBD meeting (freeze windows — open question 6) | Gate: staged OTA test green on both platforms + smoke green + QA sign-off |
+| 10 | Capacitor 8 upgrade (own release, post-migration) | Capacitor 8.5.x (verified current 2026-08-12) single tree + shells: SystemBars edge-to-edge (coordinate with the DEV-1028 safe-area work), iOS UIScene (8.5), updater major aligned to Capacitor 8, file-opener2 replacement **with a manifest-permission audit** (the git pin exists because broad file permissions trigger Play rejection — keep the pin if no compliant equivalent), cordova plugin removal, then a 6.x store release + OTA within the 6.x cohort | Medium-high, but isolated from the framework migration by design |
 
 ## 7. Risk register
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| OTA contract breaks: installed apps stop updating or brick | Critical | D8/D9; phase 8 staged-index device test of Nuxt2-to-Nuxt4 OTA before publishing; keep 5.x major |
-| localForage rewrite loses offline data or changes iterate semantics | High | Same storage keys and store names; write a data-compat check on first boot; the quirk is documented in `.github/copilot-instructions.md` |
-| Event-bus removal breaks bottom-sheet/settings flows | High | Done in phase 2 on Vue 2.7 where behavior can be A/B checked against master; smoke tests cover the flows |
-| `store/conferences.js` port introduces subtle selection-state bugs | High | 1:1 Pinia mapping (D3), line-by-line review, smoke tests exercise conference/meeting selection |
-| Calendar animation/`$style`/directive fixes regress the calendar | Medium | Phase 6 isolated; visual check on simulators; consider snapshotting key calendar states in Playwright |
-| `@scbd/conference-cal` port stalls on cross-repo ownership | Medium | D6 decision requested at plan review; vendor fallback keeps this repo unblocked |
-| Vite vs webpack assumptions (Node builtins, `require()`, lodash template) | Medium | Inventoried in survey; addressed per-file in phases 4 to 6 |
-| Capacitor 8 native changes (edge-to-edge, UIScene on iOS) conflict with DEV-1028 styling work | Medium | Coordinate phase 7 with the DEV-1028 branch owner; re-test safe-area handling |
-| No tests today; regressions ship unnoticed | High | Phase 1 is mandatory and blocks later phases |
-| Store review delays (Play/App Store) at cutover | Low | Submit store builds ahead of OTA publish (phase 9 ordering) |
+| OTA delivers a bundle the fielded native shell cannot run (white screen; no rollback for affected users) | Critical | D9 reversed: 6.0.0 store-first; same-major gate blocks old shells mechanically; staged-index device test from a real production install (phase 8); production index frozen until store releases are live (phase 9) |
+| Current OTA lifecycle misunderstood (notifyAppReady only called in the update path; rollback semantics unverified; checksum unused) | High | Phase 1 characterization baseline on updater v6; phase 8 re-verification against the shipped updater; adopt checksum |
+| localForage rewrite loses offline data or changes iterate semantics | High | Identical store names/keys; real-device fixture captured in phase 1 as the only valid oracle (fresh installs false-pass); boot-time compat check; migration shim if needed |
+| `store/conferences.js` port introduces selection-state bugs | High | Vertical-slice-first (D3); getter-parity table; smoke tests exercise conference/meeting selection |
+| Walking-skeleton class failures: capacitor-scheme assets, Vite/Vue 3 calendar compile, CapacitorHttp on device | High | All pulled into the phase 3 gate — fail before the port, not after it |
+| Integration branch drifts from an active master / stays unbootable | High | Bootable-branch invariant from phase 3; weekly rebase; master feature-freeze sought (open question 4) |
+| i18n 6→10 route-name/URL drift breaks deep links and the language switcher | Medium | Route-name snapshot tests from phase 3; `localePref` cookie parity; localePath/switchLocalePath parity checks |
+| Duplicate postMessage listeners double-fire document downloads | Medium | Registration guard in `useDocumentDownload`; smoke assertion on single-fire |
+| Calendar animation regresses | Medium | Reactive rebuild verified in browser; explicit fallback to reduced animation rather than schedule slip |
+| `@scbd/conference-cal` stalls on cross-repo ownership | Medium | D6 now gates phase 3 start; vendor-the-closure fallback keeps this repo unblocked |
+| file-opener replacement triggers Play-policy rejection | Medium | Deferred to phase 10 with a mandatory manifest-permission audit; git pin retained through the migration |
+| Web deploy contract unknown (nothing in repo) | Medium | Open question 5 blocks phase 9; deep-link/refresh/404/cache tests added in phases 1/5 |
+| Store review delays at cutover | Low | Store-first ordering already required by D9; no hard external deadline for cutover |
 
 ## 8. Verification strategy
 
-- **Per phase:** lint + web build + Playwright smoke suite in CI (from phase 1 onward). Phases touching native code add manual simulator checks (iOS + Android) for: boot, status bar, offline mode, document download/open, share, OTA apply.
-- **Phase 8 gate:** on-device OTA test from a production 5.x Nuxt 2 install to the Nuxt 4 bundle via a staged S3 index, both platforms.
-- **Cutover gate:** all smoke tests green, device QA matrix signed off, README release runbook updated and walked through once end-to-end.
+- **Per phase:** lint + generate + web smoke (fixtures) + bundle-structure check in CI. Web smoke is web-only coverage by definition — every phase that touches runtime behavior on device (3, 4, 6, 7, 8, 9, 10) additionally requires the device checklist on both platforms: boot, status bar, offline mode, document download/open, share, OTA apply. Evaluate Maestro (or scripted `cap run` flows) for automating the native checklist; until then it is a manual, recorded checklist per PR.
+- **Phase 3 gate:** all walking-skeleton items observed on both platforms before phases 4-6 begin.
+- **Phase 8 gate:** on-device staged-index OTA from a production 5.x Nuxt 2 install to the Nuxt 4 bundle, offline data intact, both platforms.
+- **Cutover gate:** store builds live, staged OTA green, device QA matrix signed off, README release runbook updated and walked through once end-to-end.
 
 ## 9. Out of scope
 
-- Bootstrap 5 upgrade (D7).
-- Adding authentication, push notifications, or deep links (none exist today; the unused plugin deps are removed, not implemented).
-- Redesigning the OTA delivery mechanism (D8) or the manual release runbook beyond updating it for the new build output.
-- Full TypeScript conversion of ported view components (new composables/stores are TS; templates port as-is).
-- Capacitor 9 (D11).
+- Bootstrap 5 upgrade (D7 — audit notes only).
+- Adding authentication, push notifications, or deep links (none exist today).
+- Redesigning the OTA delivery mechanism (D8) beyond characterizing and re-verifying it.
+- Wholesale `<script setup>`/TypeScript conversion of ported components (D12 — post-cutover debt).
+- Capacitor 8 and 9 during the migration (D11 — Capacitor 8 is phase 10, its own release; 9 is alpha).
 - French localization completion (the half-built i18n surface ports as-is; enabling `fr` is product work).
 
 ## 10. Open questions for plan review
 
-1. **D6:** port and republish `@scbd/conference-cal` for Vue 3, or vendor its SFC into this repo? Recommendation: vendor (fastest, one consumer known); republish only if other apps consume it.
-2. Does the team want the phase 0 to 2 PRs released to production (web + OTA) before the port begins, or held? Recommendation: release them; they are independently valuable and de-risk the diff.
-3. Who owns the device QA matrix for phases 7 to 9 (which physical devices / OS versions)?
-4. Integration branch naming and the Jira epic to parent phases 0 to 9 (each phase should be its own DEV ticket).
+1. **D6 (gates phase 3):** port and republish `@scbd/conference-cal` for Vue 3, or vendor its full dependency closure into this repo? Recommendation: vendor (fastest, one known consumer); republish only if other apps consume it — needs an org-wide code search to answer.
+2. Release the phase 0-2 PRs to production (web + OTA) before the port begins, or hold them? Recommendation: release; they are independently valuable and de-risk the diff.
+3. Who owns the device QA matrix (devices / OS versions) and sign-off for phases 3 and 7-10?
+4. Will the team agree to a master feature-freeze (or strict rebase discipline) while phases 3-9 are on the integration branch?
+5. How is cbd-events.cbd.int (web) deployed today? Nothing in the repo describes it; phase 9 cannot complete without the answer.
+6. Cutover freeze windows: which upcoming CBD meetings (COP/SBSTTA/SBI) must the phase 9 cutover avoid?
+7. Integration branch naming and the Jira epic to parent phases 0-10 (each phase should be its own DEV ticket).
+8. Store-console adoption stats (V6): what share of active installs run the current 7.4.3-era shells? (Quantifies the D9 conditional path; the default store-first plan does not depend on it.)
 
 ## Appendix A: dependency disposition
 
 | Dependency (root package.json) | Disposition |
 |---|---|
-| nuxt 2.18.1, vue 2.7.16, vue-template-compiler, vue-server-renderer | Replaced by nuxt 4.5.x (vue 3.5 bundled) |
+| nuxt 2.18.1, vue 2.7.16, vue-template-compiler, vue-server-renderer | Replaced by nuxt 4.5.x (vue 3.5 bundled) — phase 3+ |
 | @nuxtjs/axios | Delete (phase 0; already unregistered/dead) |
-| nuxt-i18n 6.28.1 | Replace with @nuxtjs/i18n 10.x (phase 3) |
-| vue-cordova, @ionic-native/core, @ionic-native/http, @awesome-cordova-plugins/* | Delete (phase 7; CapacitorHttp + @capacitor/filesystem replace them) |
+| nuxt-i18n 6.28.1 | Replace with @nuxtjs/i18n 10.x (phase 3; full workstream — `iso`→`language`, dir restructure, route-name snapshots) |
+| vue-cordova, @ionic-native/core, @ionic-native/http, @awesome-cordova-plugins/* | Delete JS wrappers (phase 7; transport interface + `Capacitor.getPlatform()` replace them; **no native changes**) |
+| cordova-plugin-advanced-http, cordova-plugin-file, cordova-plugin-file-opener2 (git-pinned) — native shells | **Keep through the migration** (phase 7 is JS-only). Removal/replacement in phase 10 with a Play-policy manifest audit |
 | vue-notifications | Delete (phase 0; never imported) |
-| velocity-animate | Delete (phase 0, pending dead-code confirmation of CalFooter.vue) |
-| @capacitor/* 6.x (root) + 7.x (capacitor/) | Unify at 8.5.x in root (phase 7) |
-| @capgo/capacitor-updater | Upgrade to the major matching Capacitor 8 (phase 7/8) |
+| velocity-animate | Delete (phase 0, after grep + runtime confirmation of CalFooter.vue) |
+| @capacitor/* 6.x (root) vs 7.4.3 (capacitor/) | Unify at **7.4.x** in root (phase 7), matching the fielded shells. Capacitor 8.5.x in phase 10 (own release) |
+| @capgo/capacitor-updater | Keep the Capacitor-7-compatible major through the migration; verify handshake + adopt checksum (phase 8). Align major to Capacitor 8 in phase 10 |
+| @capacitor/device (JS dep) | Delete the unused JS import; the downloads-page iOS check (`$cordova.device`, downloads.vue:68) is replaced by `Capacitor.getPlatform() === 'ios'` in phase 5 |
 | bootstrap 4.6.2, sweetalert2, localforage, luxon, lodash.debounce, semver, camelcase-keys, object-sizeof | Keep (camelcase-keys no longer needs transpile under Vite) |
 | @scbd/ckeditor5-build-inline-full | Keep (CSS-only usage) |
-| @scbd/conference-cal 1.0.3 | D6: Vue 3 republish or vendor (phase 6) |
-| eslint 7 + babel-eslint + eslint-plugin-vue 7 | Replace with flat-config ESLint 9 + eslint-plugin-vue Vue 3 ruleset (phase 3); recreate the house style rules |
+| @scbd/conference-cal 1.0.3 | D6: Vue 3 republish or vendored dependency closure — decided before phase 3, executed in phase 6 |
+| eslint 7 + babel-eslint + eslint-plugin-vue 7 | Replace with flat-config ESLint 9 + Vue 3 ruleset (phase 3); recreate the house style rules |
 | replace (devDep) | Delete (phase 0; unused) |
