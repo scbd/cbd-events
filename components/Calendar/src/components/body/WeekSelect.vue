@@ -71,7 +71,7 @@ function beforeDestroy (){ this.$root.$off('bottom-screen-done') }
   .slide-details-leave-active, .slide-details-enter-active  { transition: all .4s ease; }
   .slide-details-enter { transform: translateY(100%); opacity: 0; }
   .slide-details-leave-to { transform: translateY(200%); opacity: 0; }
-  .page{ position:absolute; top:0;z-index:100000;  height:100vh; background-color: #eee;}
+  .page{ position:absolute; top:0; z-index:100000; height:100vh; background-color: #eee; padding-top: calc(32px + env(safe-area-inset-top, 0px)); }
   .block > img { align-self: center; width: 100%; }
   .block > div { vertical-align: top; }
   .block h5 { font-weight: 500; }

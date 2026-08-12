@@ -15,6 +15,9 @@
     "contentInset": "always"
 },
   "plugins": {
+    "SplashScreen": {
+      "backgroundColor": "#000000"
+    },
 		"CapacitorUpdater": {
 			"autoUpdate": false,
       "statsUrl": ""

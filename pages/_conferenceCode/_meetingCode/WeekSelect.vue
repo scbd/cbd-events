@@ -71,7 +71,7 @@ function changeMeeting(meeting){
 </script>
 
 <style scoped>
-  .page{ margin-top:50px; height:100vh; }
+  .page{ margin-top: calc(100px + env(safe-area-inset-top, 0px)); height:100vh; }
   .block > img { align-self: center; width: 100%; }
   .block > div { vertical-align: top; }
   .block h5 { font-weight: 500; }

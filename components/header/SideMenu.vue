@@ -96,7 +96,7 @@ section{display:inline-block;}
 .logo{ max-height: 1.3em; }
  h1{ margin: 1em 1em 1em 1em; }
 .list-group-item{ font-size: 1em; width:100%; text-align:left; }
-.side-menu{ position:absolute; top:30px; left:1px; height:100vh; width:99vw; background-color: #eee; }
+.side-menu{ position:fixed; top:calc(30px + env(safe-area-inset-top, 0px)); left:0; height:100vh; width:100vw; background-color: #eee; z-index: 1000000; }
 .test-enter-active { transition: all .2s ease; }
 .test-leave-active { transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0); }
 .test-enter { transform: translatex(100vw); opacity: 0; }

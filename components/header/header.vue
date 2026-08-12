@@ -164,12 +164,7 @@ function     hasScrolled (){
   .sub-con { background-color:rgba(0,0,0,0.40); width:100vw; height: 45px; padding: .6em 0 0 0; }
   .sub {
     color:white;
-    background-color: rgba(0,0,0,0);
-    background: #bdc3c7; /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(left top, #bdc3c7, #2c3e50); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to bottom right, #bdc3c7, #2c3e50); /* Standard syntax (must be last) */
+    background-color: rgb(1, 70, 58);
     border: none;
   }
   .mainn {
@@ -190,6 +185,16 @@ function     hasScrolled (){
     padding-top: env(safe-area-inset-top, 0px);
     z-index:99999;
     width:100%;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .mainn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: env(safe-area-inset-top, 0px);
+    background-color: rgb(1, 70, 58); /* Matches the buttons on home page */
   }
   @media (max-width: 320px) {
     .title{ font-size: .9em; }
