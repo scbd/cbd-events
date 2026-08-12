@@ -187,6 +187,7 @@ function     hasScrolled (){
     transition: top 0.2s ease-in-out;
     position:fixed;
     top:0px;
+    padding-top: env(safe-area-inset-top, 0px);
     z-index:99999;
     width:100%;
   }

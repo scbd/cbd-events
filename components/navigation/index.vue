@@ -126,7 +126,11 @@ function hasScrolled (){
 .nav-fill > li > a:hover, a:active, a:focus{ height: 100%; background-color: #009b48; }
 .nav{ width:100%; height:100%; background-color:rgba(0,0,0,0.40); color:#FFFFFF; }
 
-.navbar{height:40px; padding:0 0 0 0; border-radius: 0px; position: fixed; bottom:0px; width:100%; z-index:100000; }
+.navbar{
+  height: calc(40px + env(safe-area-inset-bottom, 0px));
+  padding: 0 0 env(safe-area-inset-bottom, 0px) 0;
+  border-radius: 0px; position: fixed; bottom:0px; width:100%; z-index:100000;
+}
 .font-m{ font-size: .7em; }
 .menu-gradient {
   background-color: rgba(0,0,0,0);
