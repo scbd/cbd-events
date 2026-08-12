@@ -1,6 +1,6 @@
 <template>
   <transition name="bottom" v-if="isMounted" >
-    <section>
+    <section class="bottom-screen-layout">
       <Icons />
       <main>
         <nuxt />
@@ -23,3 +23,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.bottom-screen-layout {
+  background-color: white;
+  min-height: 100vh;
+}
+</style>

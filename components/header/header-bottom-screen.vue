@@ -47,6 +47,16 @@ function done(){
     padding-top: env(safe-area-inset-top, 0px);
     z-index:99999;
     width:100%;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .mainn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: env(safe-area-inset-top, 0px);
+    background-color: rgb(1, 70, 58);
   }
   @media (min-width: 0px) {
     .nav-justified > li { display: table-cell; width: 1%; font-size: 1.5em; }

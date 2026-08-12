@@ -124,21 +124,12 @@ function hasScrolled (){
 
 .nav>li>a:hover, .nav>li> a:focus { background-color: #009b48; }
 .nav-fill > li > a:hover, a:active, a:focus{ height: 100%; background-color: #009b48; }
-.nav{ width:100%; height:100%; background-color:rgba(0,0,0,0.40); color:#FFFFFF; }
+.nav{ width:100%; height:100%; background-color:rgba(0,0,0,0); color:#FFFFFF; }
 
-.navbar{
-  height: calc(40px + env(safe-area-inset-bottom, 0px));
-  padding: 0 0 env(safe-area-inset-bottom, 0px) 0;
-  border-radius: 0px; position: fixed; bottom:0px; width:100%; z-index:100000;
-}
+.navbar{height: calc(40px + env(safe-area-inset-bottom, 0px)); padding:0 0 env(safe-area-inset-bottom, 0px) 0; border-radius: 0px; position: fixed; bottom:0px; width:100%; z-index:100000; }
 .font-m{ font-size: .7em; }
 .menu-gradient {
-  background-color: rgba(0,0,0,0);
-  background: #bdc3c7; /* For browsers that do not support gradients */
-  background: -webkit-linear-gradient(left top, #bdc3c7, #2c3e50); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(bottom right, #bdc3c7, #2c3e50); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(to bottom right, #bdc3c7, #2c3e50); /* Standard syntax (must be last) */
+  background-color: rgb(1, 70, 58);
   border: none;
 }
 .conf{ line-height: .7em; vertical-align: middle; }

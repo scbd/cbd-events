@@ -71,7 +71,6 @@
 
 .main-view{
   margin-top: calc(35px + env(safe-area-inset-top, 0px));
-  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
 }
 .debugB {
   border: 1px solid blue;

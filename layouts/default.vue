@@ -14,7 +14,7 @@
 import   Header      from '~/components/header/header'
 import   Nav         from '~/components/navigation/index'
 import { updateOTA } from '~/composables/over-the-air'
-import { StatusBar } from '@capacitor/status-bar'
+import { StatusBar, Style } from '@capacitor/status-bar'
 import { Capacitor } from '@capacitor/core';
 
 export default {
@@ -29,7 +29,8 @@ function data(){ return{ percent: null, state: null } }
 async function mounted(){
   if(Capacitor.getPlatform() === 'web') return
 
-  StatusBar.setBackgroundColor({ color: '#000000'});
+  // StatusBar.setBackgroundColor({ color: '#000000'});
+  StatusBar.setStyle({ style: Style.Dark });
 
   await updateOTA(this.onProgress, syncError)
 
