@@ -36,8 +36,6 @@ export const updateOTA = async (progressFnc, errorFnc) => {
 
   CapacitorUpdater.notifyAppReady()
   CapacitorUpdater.reload()
-
-  return test
 }
 
 async function getDistUrl(version){
