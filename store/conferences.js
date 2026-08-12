@@ -171,7 +171,8 @@ function queryConferences($axios, { locale='en' }){
 }
 
 async function loadBlobs(conference, $axios){
-  if(!conference?.apps) conference.apps = { cbdEvents: {} }
+  if(!conference) return conference
+  if(!conference.apps) conference.apps = { cbdEvents: {} }
   if(!conference.apps.cbdEvents) conference.apps.cbdEvents = {}
 
   const { cbdEvents }             = conference?.apps || {}
@@ -207,23 +208,27 @@ function getBlob(url, $axios){
   return useHttp(restParams, $axios)
 }
 
+const appConfig = (doc) => doc?.apps?.cbdEvents || {}
+
 function hasNoMenus({ apps, conference, majorEventIds }){
-  const { useMenus } = apps?.cbdEvents || {}
+  const { useMenus } = appConfig({ apps })
   const menus        = extractMenus(conference)
 
   if(useMenus && !menus.length) return true
 
-  if(!useMenus && !majorEventIds) return true
+  if(!useMenus && !majorEventIds?.length) return true
 
   return false
 }
 
 function extractMenus(conference){
-  return conference?.menus || (conference?.events || []).filter((e) => e.menus) || []
+  if(conference?.menus?.length) return conference.menus
+
+  return (conference?.events || []).flatMap((e) => e.menus || [])
 }
 
 function extractMeetingsFromMenus({ apps, conference, majorEventIds }){
-  const { useMenus } = apps?.cbdEvents || {}
+  const { useMenus } = appConfig({ apps })
   const menus        = extractMenus(conference)
   const meetings     = useMenus? menus : majorEventIds
 
@@ -232,9 +237,13 @@ function extractMeetingsFromMenus({ apps, conference, majorEventIds }){
 
 //checks is conference has major meetings defined by  majorEventIds by default or conference.menus
 function hasMeetings (docs){
+  if(!Array.isArray(docs)) return docs
 
   for (let i = 0; i < docs.length; i++){
-    if(hasNoMenus(docs[i])) continue
+    if(hasNoMenus(docs[i])){
+      docs[i].hasMeetings = false
+      continue
+    }
 
     const meetings = extractMeetingsFromMenus(docs[i]) || []
 
@@ -282,8 +291,8 @@ function generateParamsByMenu(menus){
 }
 
 function dataExists({ conference, majorEventIds }, useMenus=false){
-  if(useMenus && !conference?.menus) return false
-  if(!useMenus && !majorEventIds)   return false
+  if(useMenus && !extractMenus(conference).length) return false
+  if(!useMenus && !majorEventIds?.length)          return false
 
   return true
 }
@@ -291,14 +300,14 @@ function dataExists({ conference, majorEventIds }, useMenus=false){
 
 //MEETINGS
 function queryMeetings ($axios, selected, locale='en'){
-  const { conference, majorEventIds, apps } = selected
-  const { useMenus }                        = apps.cbdEvents
-
+  const { conference, majorEventIds } = selected
+  const { useMenus }                  = appConfig(selected)
 
   if(!dataExists(selected, useMenus)) return []
 
+  const menus  = extractMenus(conference)
   const url    = `${ process.env.NUXT_ENV_API }/api/v2016/meetings`
-  const params = queryFilter(useMenus? generateParamsByMenu(conference.menus) : generateParamsById(majorEventIds))
+  const params = queryFilter(useMenus? generateParamsByMenu(menus) : generateParamsById(majorEventIds))
 
   return useHttp({ url, method: 'get', responseType: 'json', params }, $axios)
     .then((data) => {
@@ -307,10 +316,12 @@ function queryMeetings ($axios, selected, locale='en'){
     })
     .then(response => {
       if(!useMenus) return response
-            
+
+      const flatMenus = flattenMenus(menus)
+
       for (let i = 0; i < response.length; i++){
         const { code }  = response[i]
-        const menuMatch = conference.menus.find(menu => menu.code === code)
+        const menuMatch = flatMenus.find(menu => menu.code === code)
 
         if(menuMatch)
           response[i] = Object.assign({}, response[i], menuMatch)
