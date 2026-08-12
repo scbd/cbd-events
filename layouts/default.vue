@@ -31,7 +31,7 @@ async function mounted(){
 
   StatusBar.setBackgroundColor({ color: '#000000'});
 
-  const t = await updateOTA(this.onProgress, syncError)
+  await updateOTA(this.onProgress, syncError)
 
   document.addEventListener('resume', this.onResume, false)
 }
