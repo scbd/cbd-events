@@ -208,20 +208,22 @@ function getBlob(url, $axios){
 }
 
 function hasNoMenus({ apps, conference, majorEventIds }){
-  const { useMenus } = apps.cbdEvents
+  const { useMenus } = apps?.cbdEvents || {}
   const menus        = extractMenus(conference)
 
-  if(useMenus && !menus) return true
+  if(useMenus && !menus.length) return true
 
-  if(!useMenus && !majorEventIds) true
+  if(!useMenus && !majorEventIds) return true
+
+  return false
 }
 
 function extractMenus(conference){
-  return conference.menus || conference?.events.filter((e) => e.menus) || []//(conference?.events || []).filter((e) => e.menus) || []
+  return conference?.menus || (conference?.events || []).filter((e) => e.menus) || []
 }
 
 function extractMeetingsFromMenus({ apps, conference, majorEventIds }){
-  const { useMenus } = apps.cbdEvents
+  const { useMenus } = apps?.cbdEvents || {}
   const menus        = extractMenus(conference)
   const meetings     = useMenus? menus : majorEventIds
 
@@ -280,7 +282,7 @@ function generateParamsByMenu(menus){
 }
 
 function dataExists({ conference, majorEventIds }, useMenus=false){
-  if(useMenus && !conference.menus) return false
+  if(useMenus && !conference?.menus) return false
   if(!useMenus && !majorEventIds)   return false
 
   return true
