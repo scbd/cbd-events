@@ -18,7 +18,7 @@ async function asyncData ({ store, params }){
   
   store.commit('routes/SET_SHOW_MEETING_NAV', false)
 
-  let { content, blob, title } = await store.dispatch('about/get', { code: conferenceCode})
+  let { content, blob, title } = (await store.dispatch('about/get', { code: conferenceCode})) || {}
 
   if(blob)
     blob = URL.createObjectURL(blob)

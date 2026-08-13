@@ -36,12 +36,10 @@ async function saveFiles({ data }){
   this.$nuxt.$loading.start()
   this.$store.commit('files/DOWNLOADING')
 
-  const blobs    = await getBlobs(msg)
-
-  const fileObjs = this.getFileObjs(msg, blobs)
-
-
   try{
+    const blobs    = await getBlobs(msg)
+    const fileObjs = this.getFileObjs(msg, blobs)
+
     await this.$store.dispatch('files/SAVE', { files: fileObjs, blobs })
     await this.$store.dispatch('files/LOAD')
   }

@@ -57,7 +57,7 @@ function getBlob({ url }, $axios){
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return useHttp(restParams, $axios)
+  return useHttp(restParams, $axios).catch(() => undefined)
 }
 
 
@@ -68,6 +68,10 @@ function loadArticle(conferenceCode, $axios){
 
     return useHttp(restParams, $axios)
       .then((data) => data[0])
+      .catch((e) => {
+        console.error('about/get: failed to load article', e)
+        return undefined
+      })
   }
   catch(e){
     console.error(e)
