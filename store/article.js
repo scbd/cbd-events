@@ -69,7 +69,7 @@ function getBlob({ url }, $axios){
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return useHttp(restParams, $axios)
+  return useHttp(restParams, $axios).catch(() => undefined)
 }
 
 
@@ -78,7 +78,12 @@ function loadArticle(conferenceCode, tag, $axios){
     const url        = `${process.env.NUXT_ENV_API}/api/v2017/articles`;
     const restParams = { url,  method: 'get',  responseType: 'json', params: getQuery(conferenceCode, tag) };
 
-    return useHttp(restParams, $axios).then((data) => data[0])
+    return useHttp(restParams, $axios)
+      .then((data) => data[0])
+      .catch((e) => {
+        console.error('article/get: failed to load article', e)
+        return undefined
+      })
   }
   catch(e){
     console.error(e)

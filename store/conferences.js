@@ -8,21 +8,32 @@ async function getConferences({ state, dispatch, commit, rootState }){
   if(state.selected) return state.docs
 
   const { conferenceCode } = this.$router.currentRoute.params
-  const   response         = await queryConferences(this.$axios, rootState.i18n)
+
+  let response
+
+  try{ response = await queryConferences(this.$axios, rootState.i18n) }
+  catch(e){
+    console.error('conferences/get: failed to load conferences', e)
+    commit('setConferences', [])
+    return []
+  }
 
   commit('setConferences', response)
-  
+
   await initSelectedConference({ state, commit }, { conferenceCode, response })
   await dispatch('getMeetings')
   return response
 }
 
 async function getMeetings({ state, commit, rootState }){
-  const meetings = await queryMeetings(this.$axios, state.selected, rootState.i18n)
+  let meetings = []
+
+  try{ meetings = await queryMeetings(this.$axios, state.selected, rootState.i18n) }
+  catch(e){ console.error('conferences/getMeetings: failed to load meetings', e) }
 
   commit('setMeetings', meetings)
 
-  const { meetingCode } = rootState.routes.route.params
+  const { meetingCode } = rootState.routes.route?.params || {}
 
   initSelectedMeeting({ state, commit }, meetingCode)
 
@@ -65,16 +76,9 @@ function conference (state){
 }
 
 function showCalendar (state){
-  try{ 
-      const { hideCalendar } = state.selected?.apps?.cbdEvents
+  const { hideCalendar } = state.selected?.apps?.cbdEvents || {}
 
-    return !hideCalendar
-  }
-  catch(e){ 
-    console.error(e); 
-    
-    return true; // defautl show
-  }
+  return !hideCalendar
 }
 
 
@@ -156,7 +160,11 @@ export const mutations = { setDeleteAll, setSelected, setSelectedMeeting, setCon
 
 
 function isValidDate(date){ return !isNaN(new Date(date).getTime()) }
-function getActive (conferences){ return conferences.find((c) => c.active) || conferences[0] }
+function getActive (conferences){
+  if(!Array.isArray(conferences)) return undefined
+
+  return conferences.find((c) => c.active) || conferences[0]
+}
 
 function queryConferences($axios, { locale='en' }){
   const params = queryFilter({
@@ -195,6 +203,8 @@ async function initSelectedConference({ $axios, state, commit }, { conferenceCod
   else
     conference = getActive(response)
 
+  if(!conference) return // nothing loaded (e.g. API unavailable) - keep selected false so a later call can retry
+
   conference = await loadBlobs(conference, $axios)
 
   commit('setSelected', conference)
@@ -205,7 +215,7 @@ function getBlob(url, $axios){
 
   const restParams = { method: 'get', url, responseType: 'blob' }
 
-  return useHttp(restParams, $axios)
+  return useHttp(restParams, $axios).catch(() => undefined)
 }
 
 const appConfig = (doc) => doc?.apps?.cbdEvents || {}
