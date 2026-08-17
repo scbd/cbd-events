@@ -247,7 +247,7 @@ function extractMeetingsFromMenus({ apps, conference, majorEventIds }){
 
 //checks is conference has major meetings defined by  majorEventIds by default or conference.menus
 function hasMeetings (docs){
-  if(!Array.isArray(docs)) return docs
+  if(!Array.isArray(docs)) return []
 
   for (let i = 0; i < docs.length; i++){
     if(hasNoMenus(docs[i])){
