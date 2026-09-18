@@ -37,7 +37,7 @@ Full survey was done against `master` at `cba0cf8` (2026-08-12).
 | OTA | `@capgo/capacitor-updater` (autoUpdate off) pulling a hand-maintained S3 `index.json` and `dist.zip` per version; same-major semver gate on the baked `NUXT_ENV_VERSION`; zip layout = `capacitor/www` root. `notifyAppReady()` is called only inside the update path, never on plain launches — the current lifecycle works in production on updater v6 but is uncharacterized (rollback, interrupted download, corrupt zip, checksum unused) |
 | Auth | None. All API calls are anonymous GETs against api.cbd.int (v2013 Solr, v2016 conferences/meetings, v2017 articles, v2020 oembed) plus a cross-origin iframe + postMessage bridge into www.cbd.int for document download |
 | Config | Build-time `env:` block only, webpack-inlined. No runtime config, no `.env` |
-| Safety net | No tests, no CI, no lint script, no pinned Node version. Release is a manual zip-and-upload runbook in README.md |
+| Safety net | No tests, no CI, no lint script (Node pinned to >=22.0.0 via .nvmrc and package.json engines). Release is a manual zip-and-upload runbook in README.md |
 
 ### Current build and ship pipeline
 
