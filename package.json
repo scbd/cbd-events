@@ -4,6 +4,9 @@
   "description": "cbd-events app",
   "author": "Secretariat of the Convention on Biological Diversity <it@cbd.int>",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "rm -rf .nuxt  &&  NODE_ENV=local nuxt --open",
     "build:a": "rm -rf .nuxt && NODE_ENV=android nuxt generate && cd capacitor && yarn jetify && yarn cap sync android",
